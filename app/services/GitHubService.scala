@@ -12,8 +12,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
-  def getUserByUserName(username: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, GitHubUser] = {
-    val url = s"https://api.github.com/users/$username"
+  def getUserByUserName(urlOverride: Option[String] = None, username: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, GitHubUser] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/users/$username")
     val userOrError = gitHubConnector.getUserByUserName[GitHubUser](url)
     userOrError
   }

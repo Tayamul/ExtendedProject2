@@ -34,7 +34,7 @@ class ApplicationController @Inject()(
 
 
   def getGitHubUser(username: String):Action[AnyContent] = Action.async { request =>
-    gitHubService.getUserByUserName(username).value.map {
+    gitHubService.getUserByUserName(username = username).value.map {
       case Left(error) => Status(error.httpResponseStatus)(error.reason)
       case Right(user) => Ok{Json.toJson(user)}
     }
