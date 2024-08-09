@@ -3,7 +3,7 @@ package services
 import baseSpec.BaseSpec
 import cats.data.EitherT
 import connectors.GitHubConnector
-import models.GitHubUser
+import models.{APIError, GitHubUser}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -30,16 +30,40 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
   "getUserByUserName" should {
     val url = "username"
 
-    "retrieve the user object for a particular user" in {
+    "return a Right" when {
 
-      (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
-        .expects(url, *, *)
-        .returning(EitherT.rightT(username))
-        .once()
+      "retrieve the user object for a particular user" in {
 
-      whenReady(testService.getUserByUserName(Some(url), "username").value) { result =>
-        result shouldBe Right(username)
+        (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(url, *, *)
+          .returning(EitherT.rightT(username))
+          .once()
+
+        whenReady(testService.getUserByUserName(Some(url), "username").value) { result =>
+          result shouldBe Right(username)
+        }
       }
+
     }
+
+    "return a Left" when {
+
+      "Github connector .get() return an error" in {
+
+        val apiError: APIError = APIError.BadAPIResponse(404, "Not Found.")
+
+        (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(url, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        whenReady(testService.getUserByUserName(Some(url), "username").value) { result =>
+          result shouldBe Left(apiError)
+        }
+      }
+
+    }
+
+
   }
 }
