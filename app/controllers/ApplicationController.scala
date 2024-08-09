@@ -1,12 +1,12 @@
 package controllers
 
 import models.DataModel
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import repositories.DataRepository
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApplicationController @Inject()(
@@ -23,7 +23,16 @@ class ApplicationController @Inject()(
   }
 
 
-  def create(): Action[AnyContent] = ???
+  def create(): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[DataModel] match {
+      case JsSuccess(dataModel, _) =>
+        repository.create(dataModel).map{
+          case Right(createdDataModel) => Created(Json.toJson(createdDataModel))
+          case Left(error) => Status(error.upstreamStatus)(Json.toJson(error.upstreamMessage))
+        }
+      case JsError(_) => Future(BadRequest)
+    }
+  }
 
 
   def read(): Action[AnyContent] = ???
