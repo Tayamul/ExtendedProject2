@@ -19,15 +19,17 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     "username",
     "date created",
     "location",
-    3,
-    3,
+    3, // num followers
+    3, // num following
     "repoURL",
     "test Name"
   )
 
-  ".index" should {
-    "return a Left" when {
-      "DataRepository request has"
+  "RepoService .index" should {
+    "Return a Left" when{
+      "Data Repository encounters error" in {
+
+      }
     }
   }
 }
