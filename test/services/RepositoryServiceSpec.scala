@@ -3,9 +3,7 @@ package services
 import baseSpec.BaseSpec
 import com.mongodb.client.result.UpdateResult
 import models.{APIError, DataModel}
-import org.bson.{BsonString, BsonValue}
-import org.mongodb.scala.bson.BsonString
-import org.mongodb.scala.result
+import org.mongodb.scala.bson.{BsonString, BsonValue}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -102,7 +100,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
           .once()
 
         whenReady(testRepoService.read(username)) { result =>
-          result shouldBe Right(Some(dataModel))
+          result shouldBe Right(dataModel)
         }
       }
       "return a left" when {
@@ -143,11 +141,14 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         val username: String = "username"
         val testUpdateResult = new UpdateResult {
           override def wasAcknowledged(): Boolean = true
+
           override def getMatchedCount: Long = 1
+
           override def getModifiedCount: Long = 1
+
           override def getUpsertedId: BsonValue = BsonString("")
         }
-        (mockDataRepo.update(_: String, _:DataModel)(_: ExecutionContext))
+        (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
           .expects(username, dataModel, *)
           .returning(Future(Right(testUpdateResult)))
           .once()
@@ -158,7 +159,45 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
       }
     }
     "return a left" when {
-      "DataRepository .update returns a left" in {}
+      "DataRepository .update returns a right and result was unacknowledged" in {
+
+        val username: String = "username"
+        val testUpdateBadResult = new UpdateResult {
+          override def wasAcknowledged(): Boolean = false
+
+          override def getMatchedCount: Long = 1
+
+          override def getModifiedCount: Long = 1
+
+          override def getUpsertedId: BsonValue = BsonString("")
+        }
+        val apiError = APIError.BadAPIResponse(404, s"$testUpdateBadResult Not Found")
+
+
+        (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
+          .expects(username, dataModel, *)
+          .returning(Future(Right(testUpdateBadResult)))
+          .once()
+
+        whenReady(testRepoService.update(username, dataModel)) { result =>
+          result shouldBe Left(apiError)
+        }
+      }
+      "DataRepository .update returns a left" in {
+
+        val username: String = "username"
+        val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
+
+        (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
+          .expects(username, dataModel, *)
+          .returning(Future(Left(apiError)))
+          .once()
+
+        whenReady(testRepoService.update(username, dataModel)) { result =>
+          result shouldBe Left(apiError)
+        }
+
+      }
     }
   }
 
