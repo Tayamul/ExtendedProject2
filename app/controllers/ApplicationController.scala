@@ -14,11 +14,27 @@ class ApplicationController @Inject()(
                                        val repository: DataRepository
                                      )(implicit val ec: ExecutionContext)extends BaseController {
 
+
   def index(): Action[AnyContent] = Action.async { implicit request =>
     repository.index().map{
       case Left(error) => Status(error.upstreamStatus)(error.upstreamMessage)
       case Right(users: Seq[DataModel]) => Ok(Json.toJson(users))
     }
   }
+
+
+  def create(): Action[AnyContent] = ???
+
+
+  def read(): Action[AnyContent] = ???
+
+
+  def update():Action[AnyContent] = ???
+
+
+  def delete():Action[AnyContent] = ???
+
+
+  def getGitHubUser():Action[AnyContent] = ???
 
 }
