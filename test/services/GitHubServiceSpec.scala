@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with GuiceOneServerPerSuite {
 
   val mockConnector: GitHubConnector = mock[GitHubConnector]
-  implicit val ec: ExecutionContext = app.injector.asInstanceOf[ExecutionContext]
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val testService: GitHubService = new GitHubService(mockConnector)
 
   val username: GitHubUser = GitHubUser(
@@ -28,16 +28,18 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
   )
 
   "getUserByUserName" should {
-    val url = "testUrl"
+    val url = "username"
 
     "retrieve the user object for a particular user" in {
 
       (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
-        .expects(url, *, * )
+        .expects(url, *, *)
         .returning(EitherT.rightT(username))
         .once()
 
-      whenReady()
+      whenReady(testService.getUserByUserName(Some(url), "username").value) { result =>
+        result shouldBe Right(username)
+      }
     }
   }
 }
