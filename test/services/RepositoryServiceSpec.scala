@@ -1,9 +1,12 @@
 package services
 
 import baseSpec.BaseSpec
+import com.mongodb.client.result.UpdateResult
 import models.{APIError, DataModel}
+import org.bson.{BsonString, BsonValue}
+import org.mongodb.scala.bson.BsonString
+import org.mongodb.scala.result
 import org.scalamock.scalatest.MockFactory
-
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import repositories.DataRepoMethods
@@ -137,7 +140,21 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
   "RepoService .update" should {
     "return a right" when {
       "DataRepository .update returns a right and result was acknowledged" in {
+        val username: String = "username"
+        val testUpdateResult = new UpdateResult {
+          override def wasAcknowledged(): Boolean = true
+          override def getMatchedCount: Long = 1
+          override def getModifiedCount: Long = 1
+          override def getUpsertedId: BsonValue = BsonString("")
+        }
+        (mockDataRepo.update(_: String, _:DataModel)(_: ExecutionContext))
+          .expects(username, dataModel, *)
+          .returning(Future(Right(testUpdateResult)))
+          .once()
 
+        whenReady(testRepoService.update(username, dataModel)) { result =>
+          result shouldBe Right(testUpdateResult)
+        }
       }
     }
     "return a left" when {
