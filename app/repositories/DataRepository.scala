@@ -11,7 +11,7 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
+
 class DataRepository @Inject()(
                                 mongoComponent: MongoComponent
                               )(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
@@ -35,39 +35,39 @@ class DataRepository @Inject()(
       }
   }
 
-  def create(book: DataModel): Future[Either[APIError.BadAPIResponse, DataModel]] =
+  def create(user: DataModel): Future[Either[APIError.BadAPIResponse, DataModel]] =
     collection
-      .insertOne(book)
-      .toFuture().map(_ => Right(book)
+      .insertOne(user)
+      .toFuture().map(_ => Right(user)
       ).recover{
-        case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred when trying to add book with id: ${book._id}"))
+        case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred when trying to add book with id: ${user._username}"))
       }
 
-  private def byID(id: String): Bson =
+  private def byUserName(username: String): Bson =
     Filters.and(
-      Filters.equal("_id", id)
+      Filters.equal("_username", username)
     )
 
-  def read(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Option[DataModel]]] =
-    collection.find(byID(id)).headOption().map { data =>
+  def read(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Option[DataModel]]] =
+    collection.find(byUserName(username)).headOption().map { data =>
       Right(data)
     }.recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
-  def update(id: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] =
+  def update(username: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] =
     collection.replaceOne(
-      filter = byID(id),
+      filter = byUserName(username),
       replacement = book,
       options = new ReplaceOptions().upsert(true) // if upsert set to false, no document created if no match, will throw error
     ).toFuture().map(Right(_)).recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
-  def delete(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
-    collection.deleteOne(byID(id)).toFuture().map { deleteResult =>
+  def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
+    collection.deleteOne(byUserName(username)).toFuture().map { deleteResult =>
       if (deleteResult.getDeletedCount > 0) Right(deleteResult)
-      else Left(APIError.BadAPIResponse(404, s"No item found with id: $id"))
+      else Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
     }.recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
