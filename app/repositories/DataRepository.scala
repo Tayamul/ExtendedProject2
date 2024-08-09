@@ -75,4 +75,3 @@ class DataRepository @Inject()(
   def deleteAll(): Future[Unit] = collection.deleteMany(Filters.empty()).toFuture().map(_ => ())
 }
 
-
