@@ -3,12 +3,12 @@ package services
 import com.mongodb.client.result.UpdateResult
 import models.{APIError, DataModel}
 import org.mongodb.scala.result
-import repositories.DataRepository
+import repositories.DataRepoMethods
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepositoryService @Inject()(repository: DataRepository){
+class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: ExecutionContext){
 
 
   def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
@@ -27,28 +27,27 @@ class RepositoryService @Inject()(repository: DataRepository){
   }
 
 
-  def read(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
-    repository.read(id).map{
+  def read(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
+    repository.read(username).map{
       case Left(error) => Left(error)
       case Right(Some(item)) => Right(item)
-      case Right(None) => Left(APIError.BadAPIResponse(404, s"No Book Found with id: $id"))
+      case Right(None) => Left(APIError.BadAPIResponse(404, s"No Book Found with username: $username"))
     }
   }
 
 
-  def update(id: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] = {
-    repository.update(id, book).map {
+  def update(username: String, user: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] = {
+    repository.update(username, user).map {
       case Left(error) => Left(error)
       case Right(result: UpdateResult) =>
         if(result.wasAcknowledged()) Right(result)
         else Left(APIError.BadAPIResponse(404, s"$result Not Found"))
-      case Right(_) => Left(APIError.BadAPIResponse(500, "unexpected error occurred"))
     }
   }
 
 
-  def delete(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] = {
-    repository.delete(id).map {
+  def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] = {
+    repository.delete(username).map {
       case Left(error) => Left(error)
       case Right(value) => Right(value)
     }
