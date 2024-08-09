@@ -16,7 +16,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
   val testRepoService = new RepositoryService(mockDataRepo)
 
   private val dataModel: DataModel = DataModel(
-    "_username",
+    "username",
     "date created",
     "location",
     3, // num followers
@@ -56,26 +56,105 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     }
   }
 
+
   "RepoService .create" should {
     "return a right" when {
       "DataRepository .create returns a right" in {
-        (mockDataRepo.create(dataModel)(_: ExecutionContext))
-          .expects(*)
+        (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
+          .expects(dataModel, *)
           .returning(Future(Right(dataModel)))
           .once()
 
         whenReady(testRepoService.create(dataModel)) { result =>
           result shouldBe Right(dataModel)
+        }
+      }
+      "return a left" when {
+        "DataRepository .create returns a left" in {
+          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
+
+          (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
+            .expects(dataModel, *)
+            .returning(Future(Left(apiError)))
+            .once()
+
+          whenReady(testRepoService.create(dataModel)) { result =>
+            result shouldBe Left(apiError)
+          }
+        }
+      }
+    }
+  }
+
+
+  "RepoService .read" should {
+    "return a right" when {
+      "DataRepository .read returns a right Some" in {
+
+        val username: String = "username"
+
+        (mockDataRepo.read(_: String)(_: ExecutionContext))
+          .expects(username, *)
+          .returning(Future(Right(Some(dataModel))))
+          .once()
+
+        whenReady(testRepoService.read(username)) { result =>
+          result shouldBe Right(Some(dataModel))
+        }
+      }
+      "return a left" when {
+        "DataRepository .read returns a left" in {
+          val username: String = "username"
+          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
+
+          (mockDataRepo.read(_: String)(_: ExecutionContext))
+            .expects(username, *)
+            .returning(Future(Left(apiError)))
+            .once()
+
+          whenReady(testRepoService.read(username)) { result =>
+            result shouldBe Left(apiError)
+          }
+        }
+        "DataRepository .read returns a right None" in {
+          val username: String = "username"
+          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(404, s"No Book Found with username: $username")
+
+          (mockDataRepo.read(_: String)(_: ExecutionContext))
+            .expects(username, *)
+            .returning(Future(Right(None)))
+            .once()
+
+          whenReady(testRepoService.read(username)) { result =>
+            result shouldBe Left(apiError)
+          }
+        }
+
+      }
+    }
+
+  }
+  "RepoService .update" should {
+    "return a right" when {
+      "DataRepository .update returns a right and result was acknowledged" in {
+
       }
     }
     "return a left" when {
-      "DataRepository .create returns a left" in {
-      true}
+      "DataRepository .update returns a left" in {}
     }
+  }
+
+
+  "RepoService .delete" should {
+    "return a right" when {
+      "DataRepository .delete returns a right" in {}
+    }
+    "return a left" when {
+      "DataRepository .delete returns a left" in {}
     }
   }
 }
-
 // TEMPLATE
 // "RepoService .method" should {
 //   "return a right" when {
