@@ -18,12 +18,14 @@ class RepositoryService @Inject()(repository: DataRepository){
     }
   }
 
+
   def create(newUser: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
     repository.create(newUser).map{
       case Left(error) => Left(error)
       case Right(item) => Right(item)
     }
   }
+
 
   def read(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
     repository.read(id).map{
@@ -32,6 +34,7 @@ class RepositoryService @Inject()(repository: DataRepository){
       case Right(None) => Left(APIError.BadAPIResponse(404, s"No Book Found with id: $id"))
     }
   }
+
 
   def update(id: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] = {
     repository.update(id, book).map {
@@ -42,6 +45,7 @@ class RepositoryService @Inject()(repository: DataRepository){
       case Right(_) => Left(APIError.BadAPIResponse(500, "unexpected error occurred"))
     }
   }
+
 
   def delete(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] = {
     repository.delete(id).map {

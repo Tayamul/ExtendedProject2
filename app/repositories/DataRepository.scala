@@ -1,17 +1,14 @@
 package repositories
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject._
 import models.{APIError, DataModel}
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Filters.{empty, equal}
-import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-
 import scala.concurrent.{ExecutionContext, Future}
 
-
+@Singleton
 class DataRepository @Inject()(
                                 mongoComponent: MongoComponent
                               )(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
@@ -22,8 +19,8 @@ class DataRepository @Inject()(
     Indexes.ascending("_username")
   )),
   replaceIndexes = false
-){
-  def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
+) with DataRepoMethods {
+  def index(): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
     collection
       .find()
       .toFuture()
@@ -48,14 +45,14 @@ class DataRepository @Inject()(
       Filters.equal("_username", username)
     )
 
-  def read(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Option[DataModel]]] =
+  def read(username: String): Future[Either[APIError.BadAPIResponse, Option[DataModel]]] =
     collection.find(byUserName(username)).headOption().map { data =>
       Right(data)
     }.recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
-  def update(username: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] =
+  def update(username: String, book: DataModel): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] =
     collection.replaceOne(
       filter = byUserName(username),
       replacement = book,
@@ -64,7 +61,7 @@ class DataRepository @Inject()(
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
-  def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
+  def delete(username: String): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
     collection.deleteOne(byUserName(username)).toFuture().map { deleteResult =>
       if (deleteResult.getDeletedCount > 0) Right(deleteResult)
       else Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
