@@ -5,11 +5,13 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
 case class GitHubUser(
-                     login:String,
-                     location: String,
+                     login: String,
+                     location: Option[String],
                      followers: Int,
-                     following:Int,
-                     created_at: LocalDate
+                     following: Int,
+                     created_at: String,
+                     repos_url: String,
+                     name: Option[String]
                      )
 object GitHubUser {
   implicit val formats: OFormat[GitHubUser] = Json.format[GitHubUser]
