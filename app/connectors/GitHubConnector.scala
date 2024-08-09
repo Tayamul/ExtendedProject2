@@ -12,19 +12,22 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class GitHubConnector @Inject()(ws: WSClient) {
 
-  def getUserByUserName[GitHubUser](url: String)(implicit rds: OFormat[GitHubUser], ec: ExecutionContext): Future[Either[APIError, GitHubUser]] = {
+  def getUserByUserName[Response](url: String)(implicit rds: OFormat[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
     val request = ws.url(url)
     val response = request.get()
 
-    response.map { result =>
-      val json = result.json
-      json.validate[GitHubUser] match {
-        case JsSuccess(user, _) => Right(user)
-        case JsError(errors) => Left(APIError.BadAPIResponse(500, s"Error parsing JSON response. Message: ${errors}"))
+    EitherT {
+      response.map { result =>
+        if (result.status == 200) {
+          Right(result.json.as[Response])
+        } else {
+          Left(APIError.BadAPIResponse(result.status, result.statusText))
+        }
+      }.recover { case _: WSResponse =>
+        Left(APIError.BadAPIResponse(500, "Could not connect to API."))
       }
-    }.recover { case _: WSResponse =>
-      Left(APIError.BadAPIResponse(500, "Could not connect to the database."))
     }
+
   }
 
 }
