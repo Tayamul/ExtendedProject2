@@ -2,40 +2,26 @@ package controllers
 
 import models.DataModel
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
-import repositories.DataRepository
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
 
+import services.RepositoryService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
-                                       val repository: DataRepository
+                                       val repoService: RepositoryService
                                      )(implicit val ec: ExecutionContext)extends BaseController {
 
 
-  def index(): Action[AnyContent] = Action.async { implicit request =>
-    repository.index().map{
-      case Left(error) => Status(error.upstreamStatus)(error.upstreamMessage)
-      case Right(users: Seq[DataModel]) => Ok(Json.toJson(users))
-    }
-  }
+  def index(): Action[AnyContent] = ???
 
 
-  def create(): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[DataModel] match {
-      case JsSuccess(dataModel, _) =>
-        repository.create(dataModel).map{
-          case Right(createdDataModel) => Created(Json.toJson(createdDataModel))
-          case Left(error) => Status(error.upstreamStatus)(Json.toJson(error.upstreamMessage))
-        }
-      case JsError(_) => Future(BadRequest)
-    }
-  }
+  def create(): Action[JsValue] = ???
 
 
-  def read(): Action[AnyContent] = ???
+  def read(id: String): Action[AnyContent] = ???
 
 
   def update():Action[AnyContent] = ???
