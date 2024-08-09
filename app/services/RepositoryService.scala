@@ -43,6 +43,10 @@ class RepositoryService @Inject()(repository: DataRepository){
     }
   }
 
-
-
+  def delete(id: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] = {
+    repository.delete(id).map {
+      case Left(error) => Left(error)
+      case Right(value) => Right(value)
+    }
+  }
 }
