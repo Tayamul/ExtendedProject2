@@ -4,6 +4,7 @@ import cats.data.EitherT
 import models.DataModel
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
+import repositories.DataRepoMethods
 import services.{GitHubService, RepositoryService}
 
 import javax.inject.{Inject, Singleton}
@@ -12,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
-                                       val repoService: RepositoryService,
+                                       val repoService: DataRepoMethods,
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController {
 

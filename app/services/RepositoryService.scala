@@ -8,7 +8,7 @@ import repositories.DataRepoMethods
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepositoryService @Inject()(repository: DataRepoMethods){
+class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: ExecutionContext){
 
 
   def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
