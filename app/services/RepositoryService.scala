@@ -3,12 +3,12 @@ package services
 import com.mongodb.client.result.UpdateResult
 import models.{APIError, DataModel}
 import org.mongodb.scala.result
-import repositories.DataRepository
+import repositories.DataRepoMethods
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RepositoryService @Inject()(repository: DataRepository){
+class RepositoryService @Inject()(repository: DataRepoMethods){
 
 
   def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
