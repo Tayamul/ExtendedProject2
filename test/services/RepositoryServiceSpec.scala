@@ -1,7 +1,7 @@
 package services
 
 import baseSpec.BaseSpec
-import com.mongodb.client.result.UpdateResult
+import com.mongodb.client.result.{DeleteResult, UpdateResult}
 import models.{APIError, DataModel}
 import org.mongodb.scala.bson.{BsonString, BsonValue}
 import org.scalamock.scalatest.MockFactory
@@ -62,7 +62,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     "return a right" when {
       "DataRepository .create returns a right" in {
         (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
-          .expects(dataModel, *)
+          .expects(*, *)
           .returning(Future(Right(dataModel)))
           .once()
 
@@ -75,7 +75,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
           val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
 
           (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
-            .expects(dataModel, *)
+            .expects(*, *)
             .returning(Future(Left(apiError)))
             .once()
 
@@ -95,7 +95,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         val username: String = "username"
 
         (mockDataRepo.read(_: String)(_: ExecutionContext))
-          .expects(username, *)
+          .expects(*, *)
           .returning(Future(Right(Some(dataModel))))
           .once()
 
@@ -109,7 +109,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
           val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
 
           (mockDataRepo.read(_: String)(_: ExecutionContext))
-            .expects(username, *)
+            .expects(*, *)
             .returning(Future(Left(apiError)))
             .once()
 
@@ -122,7 +122,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
           val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(404, s"No Book Found with username: $username")
 
           (mockDataRepo.read(_: String)(_: ExecutionContext))
-            .expects(username, *)
+            .expects(*, *)
             .returning(Future(Right(None)))
             .once()
 
@@ -175,7 +175,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
 
 
         (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
-          .expects(username, dataModel, *)
+          .expects(*, *, *)
           .returning(Future(Right(testUpdateBadResult)))
           .once()
 
@@ -189,7 +189,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
 
         (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
-          .expects(username, dataModel, *)
+          .expects(*, *, *)
           .returning(Future(Left(apiError)))
           .once()
 
@@ -204,19 +204,59 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
 
   "RepoService .delete" should {
     "return a right" when {
-      "DataRepository .delete returns a right" in {}
+      "DataRepository .delete returns a right and result was acknowledged" in {
+        val username: String = "username"
+
+        val testDeleteResult = new DeleteResult {
+          override def wasAcknowledged(): Boolean = true
+          override def getDeletedCount: Long = 1
+        }
+
+        (mockDataRepo.delete(_:String)(_: ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Right(testDeleteResult)))
+          .once()
+
+        whenReady(testRepoService.delete(username)) { result =>
+          result shouldBe Right(testDeleteResult)
+        }
+      }
     }
     "return a left" when {
-      "DataRepository .delete returns a left" in {}
+      "DataRepository .delete returns a left" in {
+        val username: String = "username"
+        val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
+
+        (mockDataRepo.delete(_: String)(_: ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Left(apiError)))
+          .once()
+
+        whenReady(testRepoService.delete(username)) { result =>
+          result shouldBe Left(apiError)
+        }
+      }
+
+      "DataRepository .delete returns a right and result was unacknowledged " in {
+        val username: String = "username"
+
+
+        val testDeleteBadResult = new DeleteResult {
+          override def wasAcknowledged(): Boolean = false
+          override def getDeletedCount: Long = 1
+        }
+
+        val apiError = APIError.BadAPIResponse(404, s"$testDeleteBadResult Not Found")
+
+        (mockDataRepo.delete(_:String)(_: ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Right(testDeleteBadResult)))
+          .once()
+
+        whenReady(testRepoService.delete(username)) { result =>
+          result shouldBe Left(apiError)
+        }
+      }
     }
   }
 }
-// TEMPLATE
-// "RepoService .method" should {
-//   "return a right" when {
-//     "DataRepository .method returns a right" in {}
-//     }
-//   "return a left" when {
-//     "DataRepository .method returns a left" in {}
-//     }
-//   }

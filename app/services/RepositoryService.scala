@@ -3,6 +3,7 @@ package services
 import com.mongodb.client.result.UpdateResult
 import models.{APIError, DataModel}
 import org.mongodb.scala.result
+import org.mongodb.scala.result.DeleteResult
 import repositories.DataRepoMethods
 
 import javax.inject.Inject
@@ -49,7 +50,9 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
   def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] = {
     repository.delete(username).map {
       case Left(error) => Left(error)
-      case Right(value) => Right(value)
+      case Right(result: DeleteResult) =>
+        if(result.wasAcknowledged()) Right(result)
+        else Left(APIError.BadAPIResponse(404, s"$result Not Found"))
     }
   }
 
