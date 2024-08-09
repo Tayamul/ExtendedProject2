@@ -25,9 +25,10 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     "test Name"
   )
 
+
   "RepoService .index" should {
     "return a Right" when {
-      "dataRepository .index returns a Right" in {
+      "DataRepository .index returns a Right" in {
         (mockDataRepo.index()(_: ExecutionContext))
           .expects(*)
           .returning(Future(Right(Seq(dataModel))))
@@ -40,7 +41,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     }
 
     "return a Left" when {
-      "dataRepository .index returns a Left" in {
+      "DataRepository .index returns a Left" in {
         val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
 
         (mockDataRepo.index()(_: ExecutionContext))
@@ -54,4 +55,33 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
       }
     }
   }
+
+  "RepoService .create" should {
+    "return a right" when {
+      "DataRepository .create returns a right" in {
+        (mockDataRepo.create(dataModel)(_: ExecutionContext))
+          .expects(*)
+          .returning(Future(Right(dataModel)))
+          .once()
+
+        whenReady(testRepoService.create(dataModel)) { result =>
+          result shouldBe Right(dataModel)
+      }
+    }
+    "return a left" when {
+      "DataRepository .create returns a left" in {
+      true}
+    }
+    }
+  }
 }
+
+// TEMPLATE
+// "RepoService .method" should {
+//   "return a right" when {
+//     "DataRepository .method returns a right" in {}
+//     }
+//   "return a left" when {
+//     "DataRepository .method returns a left" in {}
+//     }
+//   }
