@@ -1,5 +1,5 @@
 package repositories
-import com.google.inject.ImplementedBy
+import com.google.inject.{ImplementedBy, Inject}
 import models.{APIError, DataModel}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.{empty, equal}
@@ -8,6 +8,8 @@ import org.mongodb.scala.model._
 import org.mongodb.scala.result
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DataRepository @Inject()(
