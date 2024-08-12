@@ -86,5 +86,4 @@ class ApplicationController @Inject()(
       case Right(user) => Ok{Json.toJson(user)}
     }
   }
-
 }
