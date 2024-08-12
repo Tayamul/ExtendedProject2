@@ -3,7 +3,10 @@ package controllers
 import baseSpec.BaseSpecWithApplication
 import models.DataModel
 import org.scalamock.scalatest.MockFactory
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.api.http.Status._
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout, status}
 import services.RepositoryService
 
 class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory {
@@ -28,6 +31,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
   "Application Controller .index" should {
     "return 200 Ok with body" in {
 
+      val indexRequest:FakeRequest[AnyContent] = testRequest.buildGet("/api/users")
+      val indexResult = TestController.index()(indexRequest)
+      status(indexResult) shouldBe OK
     }
   }
 
