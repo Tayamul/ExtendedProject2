@@ -31,6 +31,15 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User"
   )
+  val updateUserDataModel: DataModel = DataModel(
+    _id = "testUserName",
+    dateCreated = "2020-10-16T09:59:16Z",
+    location = "London",
+    numFollowers = 1,
+    numFollowing = 10,
+    repoUrl = "https://api.github.com/users/tbg2003/repos",
+    name = "Test User"
+  )
 
   "ApplicationController .index" should {
     "return 200 Ok with body" when {
@@ -71,16 +80,14 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       afterEach()
     }
 
-    "return 409 Internal Server Error when user already exists" in {
+    "return 500 Internal Server Error" in {
       beforeEach()
-
 
       val request:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val request2:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
 
       val createdResult: Future[Result] = TestController.create()(request)
 //      status(createdResult) shouldBe CREATED
-
 
       val createdResult2: Future[Result] = TestController.create()(request2)
       status(createdResult2) shouldBe CONFLICT
@@ -140,28 +147,27 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       val createdResult: Future[Result] = TestController.create()(createRequest)
       status(createdResult) shouldBe Status.CREATED
 
-      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${userTestDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
       val updateResult: Future[Result] = TestController.update("testUserName")(updateRequest)
 
       status(updateResult) shouldBe Status.ACCEPTED
-      contentAsJson(updateResult).as[DataModel] shouldBe userTestDataModel
+      contentAsJson(updateResult).as[DataModel] shouldBe updateUserDataModel
 
       afterEach()
     }
 
-    "return 500 Internal Server Error" in {
+    "return 404 Internal Server Error" in {
       beforeEach()
 
-      val apiError:APIError = APIError.BadAPIResponse(500, "error message")
-
+      val apiError:APIError = APIError.BadAPIResponse(404, s"No item found with id: nonExistingUserName")
       val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val createdResult: Future[Result] = TestController.create()(createRequest)
 //      status(createdResult) shouldBe Status.CREATED
 
-      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${userTestDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
       val updateResult: Future[Result] = TestController.update("nonExistingUserName")(updateRequest)
 
-      status(updateResult) shouldBe apiError.httpResponseStatus
+      status(updateResult) shouldBe NOT_FOUND
 
       afterEach()
     }
@@ -184,7 +190,25 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
   }
 
-  "ApplicationController .delete"
+  "ApplicationController .delete" should {
+    "return 202 Accepted" in {
+      beforeEach()
+      val request = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createdResult: Future[Result] = TestController.create()(request)
+      status(createdResult) shouldBe Status.CREATED
+
+      val deleteResult = TestController.delete(s"${userTestDataModel._id}")(FakeRequest())
+
+      status(deleteResult) shouldBe ACCEPTED
+      afterEach()
+    }
+    "return 404 Not Found Error" in {
+      beforeEach()
+      val deleteResult = TestController.delete("abc")(FakeRequest())
+      status(deleteResult) shouldBe NOT_FOUND
+      afterEach()
+    }
+  }
 
   override def beforeEach(): Unit = await(repository.deleteAll())
   override def afterEach(): Unit = await(repository.deleteAll())
