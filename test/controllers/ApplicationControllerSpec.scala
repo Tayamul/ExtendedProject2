@@ -28,9 +28,8 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     name = "Test User"
   )
 
-  "Application Controller .index" should {
+  "ApplicationController .index" should {
     "return 200 Ok with body" in {
-
       val indexRequest:FakeRequest[AnyContent] = testRequest.buildGet("/api/users")
       val indexResult = TestController.index()(indexRequest)
       status(indexResult) shouldBe OK
