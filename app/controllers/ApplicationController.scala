@@ -94,4 +94,11 @@ class ApplicationController @Inject()(
     }
   }
 
+  def getUserRepos(username:String): Action[AnyContent] = Action.async { request =>
+    gitHubService.getUserRepos(None, username).value.map {
+      case Left(error) => resultError(error)
+      case Right(repos) => Ok{Json.toJson(repos)}
+    }
+  }
+
 }
