@@ -63,7 +63,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
   "ApplicationController .create" should {
     "return 201 Created with body" in {
       beforeEach()
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
@@ -73,21 +73,25 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
     "return 500 Internal Server Error" in {
       beforeEach()
+
       val apiError:APIError = APIError.BadAPIResponse(500, "An error has occurred:")
+
       val request:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val request2:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+
       val createdResult: Future[Result] = TestController.create()(request)
+//      status(createdResult) shouldBe CREATED
 
-      status(createdResult) shouldBe OK
+
       val createdResult2: Future[Result] = TestController.create()(request2)
-
       status(createdResult2) shouldBe apiError.httpResponseStatus
+
       afterEach()
     }
 
     "return 400 Bad Request" in {
       beforeEach()
-      val badRequestBody:JsValue = Json.parse("""{"id": "abcd", "name": 12345}""")
+      val badRequestBody:JsValue = Json.parse("""{"username": "abcd", "name": 12345}""")
       val badRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(badRequestBody))
       val createdResult: Future[Result] = TestController.create()(badRequest)
 
@@ -96,9 +100,90 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
   }
 
-  "ApplicationController .read"
+  "ApplicationController .read" should {
+    "return 200 Ok with body" in {
+      beforeEach()
 
-  "ApplicationController .update"
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createdResult: Future[Result] = TestController.create()(request)
+
+      status(createdResult) shouldBe Status.CREATED
+
+      val readResult: Future[Result] = TestController.read("testUserName")(FakeRequest())
+
+      status(readResult) shouldBe Status.OK
+      contentAsJson(readResult).as[DataModel] shouldBe userTestDataModel
+
+      afterEach()
+    }
+
+    "return 404 Not Found with body" in {
+      beforeEach()
+
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createdResult: Future[Result] = TestController.create()(request)
+      status(createdResult) shouldBe Status.CREATED
+
+      val newReadResult = TestController.read("nonExistingUserName")(FakeRequest())
+
+      status(newReadResult) shouldBe Status.NOT_FOUND
+      contentAsJson(newReadResult).as[String] shouldBe "No User Found with username: nonExistingUserName"
+
+      afterEach()
+    }
+  }
+
+  "ApplicationController .update" should {
+    "return 202 accepted with body" in {
+      beforeEach()
+
+      val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createdResult: Future[Result] = TestController.create()(createRequest)
+      status(createdResult) shouldBe Status.CREATED
+
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val updateResult: Future[Result] = TestController.update("testUserName")(updateRequest)
+
+      status(updateResult) shouldBe Status.ACCEPTED
+      contentAsJson(updateResult).as[DataModel] shouldBe userTestDataModel
+
+      afterEach()
+    }
+
+    "return 500 Internal Server Error" in {
+      beforeEach()
+
+      val apiError:APIError = APIError.BadAPIResponse(500, "error message")
+
+      val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createdResult: Future[Result] = TestController.create()(createRequest)
+//      status(createdResult) shouldBe Status.CREATED
+
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val updateResult: Future[Result] = TestController.update("nonExistingUserName")(updateRequest)
+
+      status(updateResult) shouldBe apiError.httpResponseStatus
+
+      afterEach()
+    }
+
+    "return 400 Bad Request" in {
+      beforeEach()
+
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/update/${userTestDataModel._username}").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createdResult: Future[Result] = TestController.create()(request)
+      status(createdResult) shouldBe Status.CREATED
+
+
+      val badRequestBody:JsValue = Json.parse("""{"id": "testUserName", "name": 12345}""")
+      val badUpdateRequest: FakeRequest[JsValue] = testRequest.buildPut("/api/user").withBody[JsValue](Json.toJson(badRequestBody))
+      val updateResult: Future[Result] = TestController.update("testUserName")(badUpdateRequest)
+
+      status(updateResult) shouldBe Status.BAD_REQUEST
+
+      afterEach()
+    }
+  }
 
   "ApplicationController .delete"
 

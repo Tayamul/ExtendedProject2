@@ -119,7 +119,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         }
         "DataRepository .read returns a right None" in {
           val username: String = "username"
-          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(404, s"No Book Found with username: $username")
+          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(404, s"No User Found with username: $username")
 
           (mockDataRepo.read(_: String)(_: ExecutionContext))
             .expects(*, *)

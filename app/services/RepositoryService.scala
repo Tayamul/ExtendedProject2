@@ -35,7 +35,7 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     repository.read(username).map{
       case Left(error) => Left(error)
       case Right(Some(item)) => Right(item)
-      case Right(None) => Left(APIError.BadAPIResponse(404, s"No Book Found with username: $username"))
+      case Right(None) => Left(APIError.BadAPIResponse(404, s"No User Found with username: $username"))
     }
   }
 
