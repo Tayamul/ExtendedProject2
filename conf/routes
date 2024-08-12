@@ -11,7 +11,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 # GitHub API
 GET     /api/user/:username     controllers.ApplicationController.getGitHubUser(username)
-GET     /api/user/:username/repo     controllers.ApplicationController.getUserObj(username)
+GET     /api/user/:username/store-to-db     controllers.ApplicationController.getUserObj(username)
 
 
 # Data Repo Crud Endpoints
