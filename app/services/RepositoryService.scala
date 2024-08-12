@@ -2,7 +2,7 @@ package services
 
 import com.mongodb.client.result.UpdateResult
 import models.APIError.BadAPIResponse
-import models.{APIError, DataModel}
+import models.{APIError, DataModel, GitHubUser}
 import org.mongodb.scala.result
 import org.mongodb.scala.result.DeleteResult
 import repositories.DataRepoMethods
@@ -22,12 +22,23 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     }
   }
 
-
   def create(newUser: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
     repository.create(newUser).map{
       case Left(error) => Left(error)
       case Right(item) => Right(item)
     }
+  }
+
+  private def convertDataType(user: GitHubUser): DataModel = {
+    DataModel(
+      _id = user.login,
+      dateCreated = user.created_at,
+      location = user.location.getOrElse(""),
+      numFollowers = user.followers,
+      numFollowing = user.following,
+      repoUrl = user.repos_url,
+      name = user.name.getOrElse("")
+    )
   }
 
 
