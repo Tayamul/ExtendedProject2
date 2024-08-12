@@ -27,7 +27,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
     // Create tests
     "successfully create and retrieve a DataModel" in {
       val dataModel = DataModel(
-        _username = "test_user",
+        _id = "test_user",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -45,7 +45,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
     "return an error when creating a DataModel with a duplicate username" in {
       val dataModel1 = DataModel(
-        _username = "duplicate_user",
+        _id = "duplicate_user",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -72,7 +72,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
     "return a DataModel if it exists" in {
       val dataModel = DataModel(
-        _username = "test_user",
+        _id = "test_user",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -90,7 +90,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
     // Update tests
     "update a DataModel by username" in {
       val dataModel = DataModel(
-        _username = "test_user",
+        _id = "test_user",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -115,7 +115,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
     "return an error when updating a non-existent DataModel" in {
       val dataModel = DataModel(
-        _username = "non_existent_user",
+        _id = "non_existent_user",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -139,7 +139,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
     // Delete tests
     "delete a DataModel by username" in {
       val dataModel = DataModel(
-        _username = "test_user",
+        _id = "test_user",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -180,7 +180,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
     "return a sequence of DataModels when index is called and there are records" in {
       val dataModel1 = DataModel(
-        _username = "test_user1",
+        _id = "test_user1",
         dateCreated = LocalDate.now().toString,
         location = "London",
         numFollowers = 150,
@@ -189,7 +189,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         name = "Test User 1"
       )
       val dataModel2 = DataModel(
-        _username = "test_user2",
+        _id = "test_user2",
         dateCreated = LocalDate.now().toString,
         location = "Paris",
         numFollowers = 200,

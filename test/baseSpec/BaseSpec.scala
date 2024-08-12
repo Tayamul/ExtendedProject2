@@ -1,6 +1,7 @@
 package baseSpec
 
 import akka.stream.Materializer
+import connectors.GitHubConnector
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -12,6 +13,8 @@ import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.mvc.MessagesControllerComponents
+import repositories.DataRepository
+import services.{GitHubService, RepositoryService}
 import shared.TestRequest
 
 import scala.concurrent.ExecutionContext
@@ -25,6 +28,11 @@ trait BaseSpecWithApplication extends BaseSpec with GuiceOneServerPerSuite with 
   implicit val ws: WSClient = app.injector.instanceOf[WSClient]
 
   lazy val component: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
+  lazy val repository: DataRepository = injector.instanceOf[DataRepository]
+  lazy val repoService: RepositoryService = injector.instanceOf[RepositoryService]
+  lazy val gitConnector: GitHubConnector = injector.instanceOf[GitHubConnector]
+  lazy val gitService: GitHubService = injector.instanceOf[GitHubService]
+
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   lazy val injector: Injector = app.injector
@@ -32,7 +40,7 @@ trait BaseSpecWithApplication extends BaseSpec with GuiceOneServerPerSuite with 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(Map(
-        "mongodb.uri"                                    -> "mongodb://localhost:27017/gitHubTutorial"
+        "mongodb.uri"                                    -> "mongodb://localhost:27017/githubTutorial"
       ))
       .build()
 

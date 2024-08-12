@@ -1,6 +1,7 @@
 package services
 
 import com.mongodb.client.result.UpdateResult
+import models.APIError.BadAPIResponse
 import models.{APIError, DataModel}
 import org.mongodb.scala.result
 import org.mongodb.scala.result.DeleteResult
@@ -15,7 +16,9 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
   def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
     repository.index().map{
       case Left(error) => Left(error)
-      case Right(users) => Right(users)
+      case Right(users) =>
+        if(users.length < 1) Left(APIError.BadAPIResponse(404, "No Users In Database"))
+        else Right(users)
     }
   }
 
@@ -32,7 +35,7 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     repository.read(username).map{
       case Left(error) => Left(error)
       case Right(Some(item)) => Right(item)
-      case Right(None) => Left(APIError.BadAPIResponse(404, s"No Book Found with username: $username"))
+      case Right(None) => Left(APIError.BadAPIResponse(404, s"No User Found with username: $username"))
     }
   }
 
@@ -41,7 +44,7 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     repository.update(username, user).map {
       case Left(error) => Left(error)
       case Right(result: UpdateResult) =>
-        if(result.wasAcknowledged()) Right(result)
+        if (result.wasAcknowledged()) Right(result)
         else Left(APIError.BadAPIResponse(404, s"$result Not Found"))
     }
   }

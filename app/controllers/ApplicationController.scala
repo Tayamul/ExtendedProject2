@@ -30,9 +30,10 @@ class ApplicationController @Inject()(
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     repoService.index().map{
+      // TODO implement a no items in database view? - error 404 or 500
       case Left(error) => Status(error.upstreamStatus)(Json.toJson(error.upstreamMessage))
-      // TODO implement a no items in database view?
-      case Right(item: Seq[DataModel]) => Ok {Json.toJson(item)}
+
+      case Right(users: Seq[DataModel]) => Ok {Json.toJson(users)}
     }
   }
 /** ---- REPO SERVICE CRUD OPERATIONS ---- */
