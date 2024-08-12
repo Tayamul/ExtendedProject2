@@ -83,9 +83,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
 
   val mockWsClient: WSClient = mock[WSClient]
   val mockRequest: WSRequest = mock[WSRequest]
-//  val mockResponse: WSResponse = mock[WSResponse]
   val connector: GitHubConnector = new GitHubConnector(mockWsClient)
-//  val connector: GitHubConnector = new GitHubConnector(ws)
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   val testUser: GitHubUser = GitHubUser(
@@ -109,7 +107,6 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockResponse.status _).expects().returning(200).once()
         (mockResponse.json _).expects().returning(Json.toJson(testUser)).once()
 
-        // Mock the WSRequest to return the mockResponse
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.successful(mockResponse)).once()
 
@@ -130,9 +127,19 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.successful(mockResponse)).once()
 
-
         whenReady(connector.getUserByUserName[GitHubUser](url).value) { result =>
           result shouldBe Left(error)
+        }
+      }
+
+
+      "the API request fails with an exception" in {
+        (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
+        (mockRequest.get _).expects().returning(Future.failed(new RuntimeException("Network Error"))).once()
+
+        whenReady(connector.getUserByUserName[GitHubUser](url).value.failed) { ex =>
+          ex shouldBe a [RuntimeException]
+          ex.getMessage shouldEqual "Network Error"
         }
       }
 
