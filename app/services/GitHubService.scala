@@ -31,4 +31,10 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     val userRepoResponse = gitHubConnector.get[Seq[Repository]](url)
     userRepoResponse
   }
+
+  def getUserRepoByRepoName(urlOverride: Option[String] = None, username: String, repoName: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Repository] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName")
+    val userRepoOrError = gitHubConnector.get[Repository](url)
+    userRepoOrError
+  }
 }
