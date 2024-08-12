@@ -113,23 +113,28 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
       readUpdatedResult mustBe Right(Some(updatedDataModel))
     }
 
-//    "return an error when updating a non-existent DataModel" in {
-//      val dataModel = DataModel(
-//        _username = "non_existent_user",
-//        dateCreated = LocalDate.now().toString,
-//        location = "London",
-//        numFollowers = 150,
-//        numFollowing = 75,
-//        repoUrl = "https://github.com/non_existent_user",
-//        name = "Non Existent User"
-//      )
-//
-//      val updateResult = await(repository.update("non_existent_user", dataModel))
-//      updateResult match {
-//        case Left(APIError.BadAPIResponse(404, "No item found with id: non_existent_user")) => succeed
-//        case _ => fail("Expected an error for non-existent username")
-//      }
-//    }
+    "return an error when updating a non-existent DataModel" in {
+      val dataModel = DataModel(
+        _username = "non_existent_user",
+        dateCreated = LocalDate.now().toString,
+        location = "London",
+        numFollowers = 150,
+        numFollowing = 75,
+        repoUrl = "https://github.com/non_existent_user",
+        name = "Non Existent User"
+      )
+
+      val updateResult = await(repository.update("non_existent_user", dataModel))
+
+      updateResult match {
+        case Left(APIError.BadAPIResponse(404, "No item found with id: non_existent_user")) => succeed
+        case Left(error) =>
+          fail(s"Expected error 'BadAPIResponse(404, No item found with id: non_existent_user)' but got: $error")
+        case Right(_) =>
+          fail("Expected an error for non-existent username but got a successful update result")
+      }
+    }
+
 
     // Delete tests
     "delete a DataModel by username" in {
@@ -152,21 +157,18 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
       readDeletedResult mustBe Right(None)
     }
 
-//    "return an error when deleting a non-existent DataModel" in {
-//      val deleteResult = await(repository.delete("non_existent_user"))
-//
-//      deleteResult match {
-//        case Left(APIError.BadAPIResponse(404, "No item found with id: non_existent_user")) =>
-//          // The error response is as expected
-//          succeed
-//        case Left(error) =>
-//          // Fail if the error is not as expected
-//          fail(s"Expected error 'BadAPIResponse(404, No item found with id: non_existent_user)' but got: $error")
-//        case Right(_) =>
-//          // Fail if no error was returned
-//          fail("Expected an error for non-existent username but got a successful delete result")
-//      }
-//    }
+    "return an error when deleting a non-existent DataModel" in {
+      val deleteResult = await(repository.delete("non_existent_user"))
+
+      deleteResult match {
+        case Left(APIError.BadAPIResponse(404, "No item found with id: non_existent_user")) => succeed
+        case Left(error) =>
+          fail(s"Expected error 'BadAPIResponse(404, No item found with id: non_existent_user)' but got: $error")
+        case Right(_) =>
+          fail("Expected an error for non-existent username but got a successful delete result")
+      }
+    }
+
 
 
 

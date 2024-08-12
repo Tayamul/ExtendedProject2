@@ -51,25 +51,28 @@ class DataRepository @Inject()(
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
-  def update(username: String, user: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] =
+  def update(username: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] = {
     collection.replaceOne(
       filter = byUserName(username),
-      replacement = user,
-      options = new ReplaceOptions().upsert(true)
-    ).toFuture().map(Right(_)).recover {
-      case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
-    }
-
-  def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
-    collection.deleteOne(byUserName(username)).toFuture().map { deleteResult =>
-      if (deleteResult.getDeletedCount > 0) {
-        Right(deleteResult)
-      } else {
-        Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
-      }
+      replacement = book,
+      options = new ReplaceOptions().upsert(false) // Change upsert to false
+    ).toFuture().map { result =>
+      if (result.getModifiedCount > 0) Right(result)
+      else Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
     }.recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
+  }
+
+
+  def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
+    collection.deleteOne(byUserName(username)).toFuture().map { deleteResult =>
+      if (deleteResult.getDeletedCount > 0) Right(deleteResult)
+      else Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
+    }.recover {
+      case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
+    }
+
 
 
   def deleteAll(): Future[Unit] = collection.deleteMany(Filters.empty()).toFuture().map(_ => ())
