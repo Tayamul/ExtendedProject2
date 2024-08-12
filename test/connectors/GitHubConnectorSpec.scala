@@ -110,7 +110,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.successful(mockResponse)).once()
 
-        whenReady(connector.getUserByUserName[GitHubUser](url).value) { result =>
+        whenReady(connector.get[GitHubUser](url).value) { result =>
           result shouldBe Right(testUser)
         }
       }
@@ -127,7 +127,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.successful(mockResponse)).once()
 
-        whenReady(connector.getUserByUserName[GitHubUser](url).value) { result =>
+        whenReady(connector.get[GitHubUser](url).value) { result =>
           result shouldBe Left(error)
         }
       }
@@ -137,12 +137,11 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.failed(new RuntimeException("Network Error"))).once()
 
-        whenReady(connector.getUserByUserName[GitHubUser](url).value.failed) { ex =>
+        whenReady(connector.get[GitHubUser](url).value.failed) { ex =>
           ex shouldBe a [RuntimeException]
           ex.getMessage shouldEqual "Network Error"
         }
       }
-
     }
   }
 }

@@ -40,8 +40,6 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User"
   )
-
-
   val updateUserDataModel: DataModel = DataModel(
     _id = "testUserName",
     dateCreated = "2020-10-16T09:59:16Z",

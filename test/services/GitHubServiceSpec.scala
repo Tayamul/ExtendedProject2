@@ -34,7 +34,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
 
       "GitHub connector .get() returns a user object" in {
 
-        (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+        (mockConnector.get[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
           .expects(url, *, *)
           .returning(EitherT.rightT(username))
           .once()
@@ -52,7 +52,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
 
         val apiError: APIError = APIError.BadAPIResponse(404, "Not Found.")
 
-        (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+        (mockConnector.get[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
           .expects(url, *, *)
           .returning(EitherT.leftT(apiError))
           .once()
@@ -66,7 +66,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
 
         val apiError: APIError = APIError.BadAPIResponse(500, "Internal Server Error.®")
 
-        (mockConnector.getUserByUserName[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+        (mockConnector.get[GitHubUser](_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
           .expects(url, *, *)
           .returning(EitherT.leftT(apiError))
           .once()
