@@ -31,6 +31,17 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User"
   )
+  val userTestDataModelDupe: DataModel = DataModel(
+    _id = "testUserName",
+    dateCreated = "2020-10-16T09:59:16Z",
+    location = "London",
+    numFollowers = 1,
+    numFollowing = 2,
+    repoUrl = "https://api.github.com/users/tbg2003/repos",
+    name = "Test User"
+  )
+
+
   val updateUserDataModel: DataModel = DataModel(
     _id = "testUserName",
     dateCreated = "2020-10-16T09:59:16Z",
@@ -80,14 +91,14 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       afterEach()
     }
 
-    "return 500 Internal Server Error" in {
+    "return 409 when duplicate username" in {
       beforeEach()
 
       val request:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
-      val request2:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request2:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModelDupe))
 
       val createdResult: Future[Result] = TestController.create()(request)
-//      status(createdResult) shouldBe CREATED
+      status(createdResult) shouldBe CREATED
 
       val createdResult2: Future[Result] = TestController.create()(request2)
       status(createdResult2) shouldBe CONFLICT
