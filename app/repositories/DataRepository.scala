@@ -60,7 +60,7 @@ class DataRepository @Inject()(
       if (result.getModifiedCount > 0) Right(result)
       else Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
     }.recover {
-      case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
+      case _ => Left(APIError.BadAPIResponse(500, "An error occurred"))
     }
   }
 

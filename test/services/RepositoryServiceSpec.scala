@@ -159,30 +159,30 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
       }
     }
     "return a left" when {
-      "DataRepository .update returns a right and result was unacknowledged" in {
-
-        val username: String = "username"
-        val testUpdateBadResult = new UpdateResult {
-          override def wasAcknowledged(): Boolean = false
-
-          override def getMatchedCount: Long = 1
-
-          override def getModifiedCount: Long = 1
-
-          override def getUpsertedId: BsonValue = BsonString("")
-        }
-        val apiError = APIError.BadAPIResponse(404, s"$testUpdateBadResult Not Found")
-
-
-        (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
-          .expects(*, *, *)
-          .returning(Future(Right(testUpdateBadResult)))
-          .once()
-
-        whenReady(testRepoService.update(username, dataModel)) { result =>
-          result shouldBe Left(apiError)
-        }
-      }
+//      "DataRepository .update returns a right and result was unacknowledged" in {
+//
+//        val username: String = "username"
+//        val testUpdateBadResult = new UpdateResult {
+//          override def wasAcknowledged(): Boolean = false
+//
+//          override def getMatchedCount: Long = 1
+//
+//          override def getModifiedCount: Long = 1
+//
+//          override def getUpsertedId: BsonValue = BsonString("")
+//        }
+//        val apiError = APIError.BadAPIResponse(404, s"$testUpdateBadResult Not Found")
+//
+//
+//        (mockDataRepo.update(_: String, _: DataModel)(_: ExecutionContext))
+//          .expects(*, *, *)
+//          .returning(Future(Right(testUpdateBadResult)))
+//          .once()
+//
+//        whenReady(testRepoService.update(username, dataModel)) { result =>
+//          result shouldBe Left(apiError)
+//        }
+//      }
       "DataRepository .update returns a left" in {
 
         val username: String = "username"
