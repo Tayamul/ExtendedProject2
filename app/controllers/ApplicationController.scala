@@ -82,4 +82,16 @@ class ApplicationController @Inject()(
       case Right(user) => Ok{Json.toJson(user)}
     }
   }
+
+  def getUserObj(username: String): Action[AnyContent] = Action.async { implicit result =>
+    gitHubService.getUserObjToStore(username = username).value.flatMap {
+      case Right(user) =>
+        repoService.createUserObjToStore(user).map {
+          case Right(_) => Ok(Json.toJson(user))
+          case Left(error) => resultError(error)
+        }
+      case Left(error) => Future.successful(resultError(error))
+    }
+  }
+
 }
