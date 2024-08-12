@@ -59,10 +59,8 @@ class ApplicationController @Inject()(
       case JsSuccess(dataModel, _) =>
         repoService.update(username, dataModel).map {
           case Left(error) => resultError(error)
-          case Right(value) => ???
+          case Right(result) => Accepted(Json.toJson(dataModel))
         }
-
-
     }
   }
 
