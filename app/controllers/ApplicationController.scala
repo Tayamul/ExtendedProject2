@@ -82,4 +82,6 @@ class ApplicationController @Inject()(
       case Right(user) => Ok{Json.toJson(user)}
     }
   }
+
+  def getUserObj(username: String): Action[AnyContent] = ???
 }
