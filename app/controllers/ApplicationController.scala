@@ -35,8 +35,7 @@ class ApplicationController @Inject()(
       case Right(item: Seq[DataModel]) => Ok {Json.toJson(item)}
     }
   }
-
-
+/** ---- REPO SERVICE CRUD OPERATIONS ---- */
   def create(): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
       case JsError(_) => Future(BadRequest)
@@ -49,14 +48,12 @@ class ApplicationController @Inject()(
     }
   }
 
-
   def read(username: String): Action[AnyContent] = Action.async{implicit request: Request[AnyContent] =>
     repoService.read(username).map {
       case Left(error) => Status(error.upstreamStatus)(Json.toJson(error.upstreamMessage))
       case Right(item: DataModel) => Ok(Json.toJson(item))
     }
   }
-
 
   def update(username: String): Action[JsValue] = Action.async(parse.json){implicit request =>
     request.body.validate[DataModel] match {
@@ -69,14 +66,12 @@ class ApplicationController @Inject()(
     }
   }
 
-
   def delete(username: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     repoService.delete(username).map {
       case Left(error) => resultError(error)
       case Right(result) => Accepted(Json.toJson(s"Successfully Deleted User: $username"))
     }
   }
-
 
   /** ---- GITHUB SERVICE OPERATIONS ---- */
 

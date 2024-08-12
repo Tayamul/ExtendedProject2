@@ -1,4 +1,5 @@
 package repositories
+
 import com.google.inject._
 import models.{APIError, DataModel}
 import org.mongodb.scala.bson.conversions.Bson
@@ -20,46 +21,49 @@ class DataRepository @Inject()(
   )),
   replaceIndexes = false
 ) with DataRepoMethods {
-  def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]]  = {
+
+  def index()(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]] = {
     collection
       .find()
       .toFuture()
-      .map { books =>
-        Right(books)
-      }.recover {
-        case _ =>
-          Left(APIError.BadAPIResponse(500, s"An error occurred"))
+      .map(models => Right(models))
+      .recover {
+        case _ => Left(APIError.BadAPIResponse(500, "An error occurred"))
       }
   }
 
-  def create(user: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] =
-    collection
-      .insertOne(user)
-      .toFuture().map(_ => Right(user)
-      ).recover{
-        case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred when trying to add book with id: ${user._username}"))
-      }
+  def create(user: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
+    collection.find(byUserName(user._username)).headOption().flatMap {
+      case Some(_) =>
+        Future.successful(Left(APIError.BadAPIResponse(409, "Username already exists")))
+      case None =>
+        collection.insertOne(user).toFuture().map(_ => Right(user)).recover {
+          case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred when trying to add user with id: ${user._username}"))
+        }
+    }
+  }
 
   private def byUserName(username: String): Bson =
-    Filters.and(
-      Filters.equal("_username", username)
-    )
+    Filters.and(Filters.equal("_username", username))
 
   def read(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Option[DataModel]]] =
-    collection.find(byUserName(username)).headOption().map { data =>
-      Right(data)
-    }.recover {
+    collection.find(byUserName(username)).headOption().map(data => Right(data)).recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
-  def update(username: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] =
+  def update(username: String, book: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] = {
     collection.replaceOne(
       filter = byUserName(username),
       replacement = book,
-      options = new ReplaceOptions().upsert(true) // if upsert set to false, no document created if no match, will throw error
-    ).toFuture().map(Right(_)).recover {
+      options = new ReplaceOptions().upsert(false) // Change upsert to false
+    ).toFuture().map { result =>
+      if (result.getModifiedCount > 0) Right(result)
+      else Left(APIError.BadAPIResponse(404, s"No item found with id: $username"))
+    }.recover {
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
+  }
+
 
   def delete(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.DeleteResult]] =
     collection.deleteOne(byUserName(username)).toFuture().map { deleteResult =>
@@ -69,6 +73,7 @@ class DataRepository @Inject()(
       case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred: ${ex.getMessage}"))
     }
 
+
+
   def deleteAll(): Future[Unit] = collection.deleteMany(Filters.empty()).toFuture().map(_ => ())
 }
-
