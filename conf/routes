@@ -15,6 +15,7 @@ GET     /api/user/:username     controllers.ApplicationController.getGitHubUser(
 
 # Data Repo Crud Endpoints
 POST    /api/user                        controllers.ApplicationController.create()
+GET     /api/users                        controllers.ApplicationController.index()
 GET     /api/user/:username                controllers.ApplicationController.read(username: String)
 PUT     /api/user/:username              controllers.ApplicationController.update(username: String)
 DELETE  /api/user/:username              controllers.ApplicationController.delete(username: String)

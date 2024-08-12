@@ -43,9 +43,7 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
   def update(username: String, user: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, result.UpdateResult]] = {
     repository.update(username, user).map {
       case Left(error) => Left(error)
-      case Right(result: UpdateResult) =>
-        if(result.wasAcknowledged()) Right(result)
-        else Left(APIError.BadAPIResponse(404, s"$result Not Found"))
+      case Right(result: UpdateResult) => Right(result)
     }
   }
 

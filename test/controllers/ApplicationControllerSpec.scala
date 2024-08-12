@@ -23,7 +23,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
 
   val userTestDataModel: DataModel = DataModel(
-    _username = "testUserName",
+    _id = "testUserName",
     dateCreated = "2020-10-16T09:59:16Z",
     location = "London",
     numFollowers = 1,
@@ -71,10 +71,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       afterEach()
     }
 
-    "return 500 Internal Server Error" in {
+    "return 409 Internal Server Error when user already exists" in {
       beforeEach()
 
-      val apiError:APIError = APIError.BadAPIResponse(500, "An error has occurred:")
 
       val request:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val request2:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
@@ -84,7 +83,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
 
       val createdResult2: Future[Result] = TestController.create()(request2)
-      status(createdResult2) shouldBe apiError.httpResponseStatus
+      status(createdResult2) shouldBe CONFLICT
 
       afterEach()
     }
@@ -159,7 +158,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       val createdResult: Future[Result] = TestController.create()(createRequest)
 //      status(createdResult) shouldBe Status.CREATED
 
-      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val updateResult: Future[Result] = TestController.update("nonExistingUserName")(updateRequest)
 
       status(updateResult) shouldBe apiError.httpResponseStatus
@@ -170,7 +169,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 400 Bad Request" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/update/${userTestDataModel._username}").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/update/${userTestDataModel._id}").withBody[JsValue](Json.toJson(userTestDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
       status(createdResult) shouldBe Status.CREATED
 

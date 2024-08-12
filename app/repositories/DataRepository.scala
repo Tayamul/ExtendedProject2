@@ -17,7 +17,7 @@ class DataRepository @Inject()(
   mongoComponent = mongoComponent,
   domainFormat = DataModel.formats,
   indexes = Seq(IndexModel(
-    Indexes.ascending("_username")
+    Indexes.ascending("_id")
   )),
   replaceIndexes = false
 ) with DataRepoMethods {
@@ -33,18 +33,18 @@ class DataRepository @Inject()(
   }
 
   def create(user: DataModel)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
-    collection.find(byUserName(user._username)).headOption().flatMap {
+    collection.find(byUserName(user._id)).headOption().flatMap {
       case Some(_) =>
         Future.successful(Left(APIError.BadAPIResponse(409, "Username already exists")))
       case None =>
         collection.insertOne(user).toFuture().map(_ => Right(user)).recover {
-          case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred when trying to add user with id: ${user._username}"))
+          case ex: Exception => Left(APIError.BadAPIResponse(500, s"An error occurred when trying to add user with id: ${user._id}"))
         }
     }
   }
 
   private def byUserName(username: String): Bson =
-    Filters.and(Filters.equal("_username", username))
+    Filters.and(Filters.equal("_id", username))
 
   def read(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, Option[DataModel]]] =
     collection.find(byUserName(username)).headOption().map(data => Right(data)).recover {
