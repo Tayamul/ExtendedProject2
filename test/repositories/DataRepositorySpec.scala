@@ -12,6 +12,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuite with BeforeAndAfterEach {
+
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
   val repository: DataRepository = inject[DataRepository]
@@ -83,15 +84,15 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
       deleteResult.isRight mustBe true
 
       val readDeletedResult = await(repository.read("test_user"))
-      readDeletedResult mustBe Right(None)
+      readDeletedResult mustBe Right (None)
     }
 
-    "return an empty sequence when index is called and there are no records" in {
+    "return an empty sequence when index is called and there are no accounts" in {
       val indexResult = await(repository.index())
       indexResult mustBe Right(Seq.empty)
     }
 
-    "return a sequence of DataModels when index is called and there are records" in {
+    "return a sequence of DataModels when index is called and there are no records" in {
       val dataModel1 = DataModel(
         _username = "test_user1",
         dateCreated = LocalDate.now().toString,
