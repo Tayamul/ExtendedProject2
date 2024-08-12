@@ -17,13 +17,16 @@ class ApplicationController @Inject()(
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController {
 
-/** ---- REPO SERVICE CRUD OPERATIONS ---- */
+  // convert api errors to Status result
   private def resultError(error:APIError):Result = {
     error match {
       case BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
       case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
     }
   }
+
+
+/** ---- REPO SERVICE CRUD OPERATIONS ---- */
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     repoService.index().map{
@@ -32,6 +35,7 @@ class ApplicationController @Inject()(
       case Right(item: Seq[DataModel]) => Ok {Json.toJson(item)}
     }
   }
+
 
   def create(): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
@@ -44,6 +48,7 @@ class ApplicationController @Inject()(
         }
     }
   }
+
 
   def read(username: String): Action[AnyContent] = Action.async{implicit request: Request[AnyContent] =>
     repoService.read(username).map {
@@ -65,8 +70,15 @@ class ApplicationController @Inject()(
   }
 
 
-  def delete():Action[AnyContent] = ???
+  def delete(username: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    repoService.delete(username).map {
+      case Left(error) => resultError(error)
+      case Right(result) => Accepted(Json.toJson(s"Successfully Deleted User: $username"))
+    }
+  }
 
+
+  /** ---- GITHUB SERVICE OPERATIONS ---- */
 
   def getGitHubUser(username: String):Action[AnyContent] = Action.async { request =>
     gitHubService.getUserByUserName(username).value.map {
