@@ -11,3 +11,10 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 # GitHub API
 GET     /api/user/:username     controllers.ApplicationController.getGitHubUser(username)
+
+
+# Data Repo Crud Endpoints
+POST    /api/create                        controllers.ApplicationController.create()
+GET     /api/read/:username                controllers.ApplicationController.read(username: String)
+PUT     /api/update/:username              controllers.ApplicationController.update(username: String)
+DELETE  /api/delete/:username              controllers.ApplicationController.delete(username: String)
