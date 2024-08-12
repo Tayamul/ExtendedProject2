@@ -4,6 +4,7 @@ import baseSpec.BaseSpecWithApplication
 import models.DataModel
 import org.scalamock.scalatest.MockFactory
 import play.api.http.Status._
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout, status}
@@ -29,10 +30,32 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
   )
 
   "ApplicationController .index" should {
-    "return 200 Ok with body" in {
-      val indexRequest:FakeRequest[AnyContent] = testRequest.buildGet("/api/users")
-      val indexResult = TestController.index()(indexRequest)
-      status(indexResult) shouldBe OK
+    "return 200 Ok with body" when {
+      "Items in database" in {
+        beforeEach()
+
+        val createUserRequest:FakeRequest[JsValue] = testRequest.buildPost("api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+        val createdResult = TestController.create()(createUserRequest)
+        status(createdResult) shouldBe CREATED
+
+        val indexResult = TestController.index()(FakeRequest())
+        status(indexResult) shouldBe OK
+
+        afterEach()
+      }
+
+    }
+
+    "return 404 Not Found" when {
+      "No items in database" in {
+        beforeEach()
+
+        val indexResult = TestController.index()(FakeRequest())
+        status(indexResult) shouldBe NOT_FOUND
+
+        afterEach()
+      }
+
     }
   }
 
