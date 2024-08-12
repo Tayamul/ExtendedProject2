@@ -31,4 +31,10 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     )
   }
 
+  def getUserObjToStore(urlOverride: Option[String] = None, username: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, GitHubUser] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/users/$username")
+    val retrieveUserObj = gitHubConnector.getUserObjToStore[GitHubUser](url)
+    retrieveUserObj
+  }
+
 }
