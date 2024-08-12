@@ -41,6 +41,13 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     )
   }
 
+  def createUserObjToStore(user: GitHubUser)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
+    val dataModel = convertDataType(user)
+    repository.create(dataModel).map{
+      case Left(error) => Left(error)
+      case Right(item) => Right(item)
+    }
+  }
 
   def read(username: String)(implicit ec: ExecutionContext): Future[Either[APIError.BadAPIResponse, DataModel]] = {
     repository.read(username).map{
