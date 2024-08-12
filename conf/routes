@@ -14,6 +14,7 @@ GET     /api/user/:username     controllers.ApplicationController.getGitHubUser(
 GET     /api/user/:username/store-to-db     controllers.ApplicationController.getUserObj(username)
 
 GET     /api/user/:username/repos     controllers.ApplicationController.getUserRepos(username)
+GET     /api/user/:username/repos/:repoName     controllers.ApplicationController.getUserRepoByRepoName(username: String, repoName: String)
 
 
 # Data Repo Crud Endpoints
