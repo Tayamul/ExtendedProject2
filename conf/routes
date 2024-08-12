@@ -13,7 +13,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 GET     /api/user/:username     controllers.ApplicationController.getGitHubUser(username)
 GET     /api/user/:username/store-to-db     controllers.ApplicationController.getUserObj(username)
 
-GET     /api/user/:username/repositories     controllers.ApplicationController.getUserRepos(username)
+GET     /api/user/:username/repos     controllers.ApplicationController.getUserRepos(username)
 
 
 # Data Repo Crud Endpoints
