@@ -1,7 +1,7 @@
 package controllers
 
 import baseSpec.BaseSpecWithApplication
-import cats.data.EitherT
+import cats.data.{EitherT, NonEmptyMap}
 import connectors.GitHubConnector
 import models.{APIError, DataModel, GitHubUser, Repository}
 import org.scalamock.scalatest.MockFactory
@@ -378,6 +378,37 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
         val getReposResult = TestControllerMockServices.getUserRepos(testUserName)(FakeRequest())
         status(getReposResult) shouldBe OK
+      }
+    }
+    "return 404 Not Found error" when {
+      "user doesn't exists" in {
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName/repos"
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+
+        (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getReposResult = TestControllerMockServices.getUserRepos(testUserName)(FakeRequest())
+        status(getReposResult) shouldBe NOT_FOUND
+      }
+    }
+    "return 500 internal server error" when {
+      "internal server error encountered with GitHub API" in {
+        val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
+
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName"
+
+        (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
+        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
