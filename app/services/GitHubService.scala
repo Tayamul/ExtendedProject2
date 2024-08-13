@@ -52,19 +52,22 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   }
 
   def getUserRepoFileContent(urlOverride: Option[String] = None, username: String, repoName: String, path:String)(implicit ec: ExecutionContext): EitherT[Future, APIError, RepoFileItem] = {
-    val encodedPath = baseEncodePath(path)
-    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$encodedPath")
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$path")
     val userRepoContentOrError = gitHubConnector.get[RepoFileItem](url)
-    userRepoContentOrError.map { repoFileItem =>
-      val plainTextContent = convertContentToPlainText(repoFileItem.content)
-      repoFileItem.copy(content = plainTextContent)
-    }
     userRepoContentOrError
   }
 
-  def convertContentToPlainText(content:String):String = {
-    val decodedContent = new String(Base64.getDecoder.decode(content), "UTF-8")
-    decodedContent
+  def convertContentToPlainText(content: String): String = {
+    try {
+      // Remove newline characters from the base64 encoded string
+      val cleanedContent = content.replaceAll("\\n", "")
+      val decodedContent = new String(Base64.getDecoder.decode(cleanedContent), "UTF-8")
+      decodedContent
+    } catch {
+      case e: IllegalArgumentException =>
+        // Handle the case where content is not a valid Base64 encoded string
+        throw new IllegalArgumentException(s"Failed to decode content: ${e.getMessage}")
+    }
   }
 
   def baseEncodePath(path:String):String = {
