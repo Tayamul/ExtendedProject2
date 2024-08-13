@@ -112,6 +112,20 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         }
       }
 
+      "return a Left" when {
+        "the DataRepository fails to retrieve data from the API" in {
+          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
+
+          (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
+            .expects(*, *)
+            .returning(Future(Left(apiError)))
+            .once()
+
+          whenReady(testRepoService.createUserObjToStore(gitHubUserModel)) { result =>
+            result shouldBe Left(apiError)
+          }
+        }
+      }
     }
   }
 
