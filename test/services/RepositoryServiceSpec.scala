@@ -2,7 +2,7 @@ package services
 
 import baseSpec.BaseSpec
 import com.mongodb.client.result.{DeleteResult, UpdateResult}
-import models.{APIError, DataModel}
+import models.{APIError, DataModel, GitHubUser}
 import org.mongodb.scala.bson.{BsonString, BsonValue}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
@@ -24,6 +24,16 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     3, // num following
     "repoURL",
     "test Name"
+  )
+
+  private val gitHubUserModel: GitHubUser = GitHubUser(
+    "username",
+    Some("location"),
+    3, // num followers
+    3, // num following
+    "date created",
+    "repoURL",
+    Some("test Name")
   )
 
 
@@ -80,6 +90,71 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
             .once()
 
           whenReady(testRepoService.create(dataModel)) { result =>
+            result shouldBe Left(apiError)
+          }
+        }
+      }
+    }
+  }
+
+  "RepoService .covertDataType" should {
+
+    "correctly convert a GitHubUser to a DataModel" in {
+      testRepoService.convertDataType(gitHubUserModel) shouldEqual dataModel
+    }
+
+
+    "handle optional fields correctly when they are missing" in {
+      val dataModelMissingOptionalFields: DataModel = DataModel(
+        "username",
+        "date created",
+        "",
+        3, // num followers
+        3, // num following
+        "repoURL",
+        ""
+      )
+
+      val gitHubUserModelMissingOptionalFields: GitHubUser = GitHubUser(
+        "username",
+        None,
+        3, // num followers
+        3, // num following
+        "date created",
+        "repoURL",
+        None
+      )
+
+      testRepoService.convertDataType(gitHubUserModelMissingOptionalFields) shouldEqual dataModelMissingOptionalFields
+    }
+
+  }
+
+
+  "RepoService .createUserObjToStore" should {
+
+    "return a Right" when {
+      "the DataRepository successfully retrieves a user object from the API" in {
+        (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Right(dataModel)))
+          .once()
+
+        whenReady(testRepoService.createUserObjToStore(gitHubUserModel)) { result =>
+          result shouldBe Right(dataModel)
+        }
+      }
+
+      "return a Left" when {
+        "the DataRepository fails to retrieve data from the API" in {
+          val apiError: APIError.BadAPIResponse = APIError.BadAPIResponse(500, s"An error occurred")
+
+          (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
+            .expects(*, *)
+            .returning(Future(Left(apiError)))
+            .once()
+
+          whenReady(testRepoService.createUserObjToStore(gitHubUserModel)) { result =>
             result shouldBe Left(apiError)
           }
         }
