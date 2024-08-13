@@ -3,11 +3,11 @@ package controllers
 import baseSpec.BaseSpecWithApplication
 import cats.data.EitherT
 import connectors.GitHubConnector
-import models.{APIError, DataModel, GitHubUser}
+import models.{APIError, DataModel, GitHubUser, Repository}
 import org.scalamock.scalatest.MockFactory
 import play.api.http.Status
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{JsValue, Json, OFormat, Reads}
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
@@ -361,7 +361,26 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
   }
 
-  "ApplicationController .getUserRepos"
+  "ApplicationController .getUserRepos" should {
+    "return 200 Ok and a list of repositories for given user" when {
+      "user exists and no errors encountered" in {
+
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName"
+        val testUserRepos = Seq(
+          Repository(name = "Test Name", `private` = false, html_url = "testURL", description = "Test Description")
+        )
+
+        (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.rightT(testUserRepos))
+          .once()
+
+        val getReposResult = TestControllerMockServices.getUserRepos(testUserName)(FakeRequest())
+        status(getReposResult) shouldBe OK
+      }
+    }
+  }
   "ApplicationController .getUserRepoByRepoName"
   "ApplicationController .getUserRepoContent"
   "ApplicationController .getUserRepoDirContent"
