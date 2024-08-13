@@ -303,15 +303,60 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
     "return 409 Conflict error" when {
       "User already exists in database" in {
-        val apiError = APIError.BadAPIResponse(409, "Username already exists")
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName"
+
+        (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.rightT(testGitHubUser))
+          .once()
+
+        val duplicateUserError = APIError.BadAPIResponse(409, "Username already exists")
+        (mockDataRepo.create(_:DataModel)(_:ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Left(duplicateUserError)))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
+        status(getUserObjResult) shouldBe CONFLICT
+
       }
     }
     "return 500 Internal server error" when {
       "internal server error from GitHub API" in {
         val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
+
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName"
+
+        (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
+        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+
       }
       "internal server error from MongoDB" in {
         val apiError = APIError.BadAPIResponse(500, s"An error occurred when trying to add user with id: ${testUserDataModel._id}")
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName"
+
+        (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.rightT(testGitHubUser))
+          .once()
+
+        (mockDataRepo.create(_:DataModel)(_:ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Left(apiError)))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
+        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+
+
       }
     }
   }
