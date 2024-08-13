@@ -41,7 +41,13 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   def getUserRepoContent(urlOverride: Option[String] = None, username: String, repoName: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]] = {
     val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents")
     val userRepoContentOrError = gitHubConnector.get[Seq[RepoContentItem]](url)
-    userRepoContentOrError
+
+    userRepoContentOrError.map { repoContentItems =>
+      repoContentItems.map { repoContentItem =>
+        val encodedPath = baseEncodePath(repoContentItem.path)
+        repoContentItem.copy(path = encodedPath)
+      }
+    }
   }
 
 
