@@ -29,7 +29,7 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     }
   }
 
-  private def convertDataType(user: GitHubUser): DataModel = {
+  def convertDataType(user: GitHubUser): DataModel = {
     DataModel(
       _id = user.login,
       dateCreated = user.created_at,
