@@ -61,8 +61,8 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     try {
       val cleanedContent = content.replaceAll("\\n", "")
       val decodedContent = new String(Base64.getDecoder.decode(cleanedContent), "UTF-8")
-      val cleanedContent2 = decodedContent.replaceAll("\\n", "")
-      cleanedContent2
+      val cleanedNewLines = decodedContent.replaceAll("\\n", " ")
+      cleanedNewLines
     } catch {
       case e: IllegalArgumentException =>
         throw new IllegalArgumentException(s"Failed to decode content: ${e.getMessage}")
