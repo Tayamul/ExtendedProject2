@@ -18,7 +18,7 @@ class ApplicationController @Inject()(
                                      )(implicit val ec: ExecutionContext) extends BaseController {
 
   // convert api errors to Status result
-  private def resultError(error:APIError):Result = {
+  private def resultError(error: APIError): Result = {
     error match {
       case BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
       case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
@@ -26,37 +26,40 @@ class ApplicationController @Inject()(
   }
 
 
-/** ---- REPO SERVICE CRUD OPERATIONS ---- */
+  /** ---- REPO SERVICE CRUD OPERATIONS ---- */
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
-    repoService.index().map{
+    repoService.index().map {
       // TODO implement a no items in database view? - error 404 or 500
       case Left(error) => Status(error.upstreamStatus)(Json.toJson(error.upstreamMessage))
 
-      case Right(users: Seq[DataModel]) => Ok {Json.toJson(users)}
+      case Right(users: Seq[DataModel]) => Ok {
+        Json.toJson(users)
+      }
     }
   }
-/** ---- REPO SERVICE CRUD OPERATIONS ---- */
+
+  /** ---- REPO SERVICE CRUD OPERATIONS ---- */
   def create(): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
       case JsError(_) => Future(BadRequest)
       // _ = JsPath
       case JsSuccess(dataModel, _) =>
-        repoService.create(dataModel).map{
+        repoService.create(dataModel).map {
           case Right(createdDataModel) => Created(Json.toJson(createdDataModel))
           case Left(error) => resultError(error)
         }
     }
   }
 
-  def read(username: String): Action[AnyContent] = Action.async{implicit request: Request[AnyContent] =>
+  def read(username: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     repoService.read(username).map {
       case Left(error) => Status(error.upstreamStatus)(Json.toJson(error.upstreamMessage))
       case Right(item: DataModel) => Ok(Json.toJson(item))
     }
   }
 
-  def update(username: String): Action[JsValue] = Action.async(parse.json){implicit request =>
+  def update(username: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
       case JsError(errors) => Future(BadRequest)
       case JsSuccess(dataModel, _) =>
@@ -76,10 +79,12 @@ class ApplicationController @Inject()(
 
   /** ---- GITHUB SERVICE OPERATIONS ---- */
 
-  def getGitHubUser(username: String):Action[AnyContent] = Action.async { request =>
-    gitHubService.getUserByUserName(username=username).value.map {
+  def getGitHubUser(username: String): Action[AnyContent] = Action.async { request =>
+    gitHubService.getUserByUserName(username = username).value.map {
       case Left(error) => resultError(error)
-      case Right(user) => Ok{Json.toJson(user)}
+      case Right(user) => Ok {
+        Json.toJson(user)
+      }
     }
   }
 
@@ -94,24 +99,51 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getUserRepos(username:String): Action[AnyContent] = Action.async { request =>
+  def getUserRepos(username: String): Action[AnyContent] = Action.async { request =>
     gitHubService.getUserRepos(None, username).value.map {
       case Left(error) => resultError(error)
-      case Right(repos) => Ok{Json.toJson(repos)}
+      case Right(repos) => Ok {
+        Json.toJson(repos)
+      }
     }
   }
 
   def getUserRepoByRepoName(username: String, repoName: String): Action[AnyContent] = Action.async { result =>
     gitHubService.getUserRepoByRepoName(None, username, repoName).value.map {
       case Left(error) => resultError(error)
-      case Right(repos) => Ok{Json.toJson(repos)}
+      case Right(repos) => Ok {
+        Json.toJson(repos)
+      }
     }
   }
 
+
   def getUserRepoContent(username: String, repoName: String): Action[AnyContent] = Action.async { result =>
-    gitHubService.getUserRepoContent(None, username, repoName).value.map{
+    gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok{Json.toJson(repoContent)}
+      case Right(repoContent) => Ok {
+        Json.toJson(repoContent)
+      }
+    }
+  }
+
+
+  def getUserRepoDirContent(username: String, repoName: String, path: String) = Action.async { result =>
+    gitHubService.getUserRepoContent(None, username, repoName).value.map {
+      case Left(error) => resultError(error)
+      case Right(repoContent) => Ok {
+        Json.toJson(repoContent)
+      }
+    }
+  }
+
+
+  def getUserRepoFileContent(username: String, repoName: String, path: String) = Action.async { result =>
+    gitHubService.getUserRepoContent(None, username, repoName).value.map {
+      case Left(error) => resultError(error)
+      case Right(repoContent) => Ok {
+        Json.toJson(repoContent)
+      }
     }
   }
 

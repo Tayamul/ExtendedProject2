@@ -17,6 +17,9 @@ GET     /api/user/:username/repos     controllers.ApplicationController.getUserR
 GET     /api/user/:username/repos/:repoName     controllers.ApplicationController.getUserRepoByRepoName(username: String, repoName: String)
 
 GET     /api/user/:username/repos/:repoName/contents     controllers.ApplicationController.getUserRepoContent(username: String, repoName: String)
+GET    /api/user/:username/repos/:repoName/file/:path     controllers.ApplicationController.getUserRepoFileContent(username: String, repoName: String, path:String)
+GET    /api/user/:username/repos/:repoName/dir/:path     controllers.ApplicationController.getUserRepoDirContent(username: String, repoName: String, path:String)
+
 
 
 # Data Repo Crud Endpoints
