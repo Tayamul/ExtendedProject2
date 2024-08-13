@@ -103,6 +103,31 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
       testRepoService.convertDataType(gitHubUserModel) shouldEqual dataModel
     }
 
+
+    "handle optional fields correctly when they are missing" in {
+      val dataModelMissingOptionalFields: DataModel = DataModel(
+        "username",
+        "date created",
+        "",
+        3, // num followers
+        3, // num following
+        "repoURL",
+        ""
+      )
+
+      val gitHubUserModelMissingOptionalFields: GitHubUser = GitHubUser(
+        "username",
+        None,
+        3, // num followers
+        3, // num following
+        "date created",
+        "repoURL",
+        None
+      )
+
+      testRepoService.convertDataType(gitHubUserModelMissingOptionalFields) shouldEqual dataModelMissingOptionalFields
+    }
+
   }
 
 
