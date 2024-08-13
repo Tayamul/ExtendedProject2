@@ -1,5 +1,5 @@
 package services
-
+import java.util.Base64
 import cats.data.EitherT
 import connectors.GitHubConnector
 import models.{APIError, DataModel, GitHubUser, RepoContentItem, RepoFileItem, Repository}
@@ -52,8 +52,23 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   }
 
   def getUserRepoFileContent(urlOverride: Option[String] = None, username: String, repoName: String, path:String)(implicit ec: ExecutionContext): EitherT[Future, APIError, RepoFileItem] = {
-    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$path")
+    val encodedPath = baseEncodePath(path)
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$encodedPath")
     val userRepoContentOrError = gitHubConnector.get[RepoFileItem](url)
+    userRepoContentOrError.map { repoFileItem =>
+      val plainTextContent = convertContentToPlainText(repoFileItem.content)
+      repoFileItem.copy(content = plainTextContent)
+    }
     userRepoContentOrError
+  }
+
+  def convertContentToPlainText(content:String):String = {
+    val decodedContent = new String(Base64.getDecoder.decode(content), "UTF-8")
+    decodedContent
+  }
+
+  def baseEncodePath(path:String):String = {
+    val encodedPath = Base64.getEncoder.encodeToString(path.getBytes("UTF-8"))
+    encodedPath
   }
 }
