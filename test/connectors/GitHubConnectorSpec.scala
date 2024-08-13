@@ -138,7 +138,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockRequest.get _).expects().returning(Future.failed(new RuntimeException("Network Error"))).once()
 
         whenReady(connector.get[GitHubUser](url).value.failed) { ex =>
-          ex shouldBe a [RuntimeException]
+          ex shouldBe a[RuntimeException]
           ex.getMessage shouldEqual "Network Error"
         }
       }
