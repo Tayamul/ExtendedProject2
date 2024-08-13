@@ -1,19 +1,28 @@
 package controllers
 
 import baseSpec.BaseSpecWithApplication
-import models.{APIError, DataModel}
+import cats.data.EitherT
+import connectors.GitHubConnector
+import models.{APIError, DataModel, GitHubUser}
 import org.scalamock.scalatest.MockFactory
 import play.api.http.Status
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsValue, Json, OFormat}
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
-import services.RepositoryService
+import repositories.DataRepoMethods
+import services.{GitHubService, RepositoryService}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory {
+
+  val mockConnector: GitHubConnector = mock[GitHubConnector]
+  val testGitService: GitHubService = new GitHubService(mockConnector)
+
+  val mockDataRepo: DataRepoMethods = mock[DataRepoMethods]
+  val testRepoService = new RepositoryService(mockDataRepo)
 
   val TestController = new ApplicationController(
     component,
@@ -21,6 +30,11 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     gitService
   )(executionContext)
 
+  val TestControllerMockGitService = new ApplicationController(
+    component,
+    repoService,
+    testGitService
+  )(executionContext)
 
   val userTestDataModel: DataModel = DataModel(
     _id = "testUserName",
@@ -49,6 +63,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User"
   )
+
 
   "ApplicationController .index" should {
     "return 200 Ok with body" when {
@@ -218,6 +233,56 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       afterEach()
     }
   }
+
+  "ApplicationController .getGitHubUser" should {
+    "return 200 OK with body" when {
+      "GitHubService .getUserByUserName returns a user object" in {
+
+        val testUrl = "https://api.github.com/users/testUserName"
+
+        val testGitHubUser: GitHubUser = GitHubUser(
+          "testUserName",
+          Some("London"),
+          50,
+          25,
+          "08/08/2024",
+          "www.github.com",
+          Some("testName")
+        )
+
+        (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.rightT(testGitHubUser))
+          .once()
+
+        val getGitHubUserResult = TestControllerMockGitService.getGitHubUser("testUserName")(FakeRequest())
+        status(getGitHubUserResult) shouldBe OK
+      }
+    }
+    "returns 404 Not Found API Error" when {
+      "GitHubService .getUserByUserName returns an error" in {
+
+        val testUrl = "https://api.github.com/users/testUserName"
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+
+        (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getGitHubUserResult = TestControllerMockGitService.getGitHubUser("testUserName")(FakeRequest())
+        status(getGitHubUserResult) shouldBe NOT_FOUND
+      }
+    }
+  }
+
+
+  "ApplicationController .getUserObj"
+  "ApplicationController .getUserRepos"
+  "ApplicationController .getUserRepoByRepoName"
+  "ApplicationController .getUserRepoContent"
+  "ApplicationController .getUserRepoDirContent"
+  "ApplicationController .getUserRepoFileContent"
 
   override def beforeEach(): Unit = await(repository.deleteAll())
 
