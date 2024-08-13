@@ -3,7 +3,7 @@ package controllers
 import baseSpec.BaseSpecWithApplication
 import cats.data.{EitherT, NonEmptyMap}
 import connectors.GitHubConnector
-import models.{APIError, DataModel, GitHubUser, Repository}
+import models.{APIError, DataModel, GitHubUser, RepoContentItem, Repository}
 import org.scalamock.scalatest.MockFactory
 import play.api.http.Status
 import play.api.http.Status._
@@ -253,7 +253,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       "GitHubService .getUserByUserName returns a user object" in {
 
         val testUrl = "https://api.github.com/users/testUserName"
-        
+
         (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
           .expects(testUrl, *, *)
           .returning(EitherT.rightT(testGitHubUser))
@@ -292,7 +292,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
 
-        (mockDataRepo.create(_:DataModel)(_:ExecutionContext))
+        (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
           .expects(*, *)
           .returning(Future.successful(Right(testUserDataModel)))
           .once()
@@ -312,7 +312,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val duplicateUserError = APIError.BadAPIResponse(409, "Username already exists")
-        (mockDataRepo.create(_:DataModel)(_:ExecutionContext))
+        (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
           .expects(*, *)
           .returning(Future(Left(duplicateUserError)))
           .once()
@@ -348,7 +348,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .returning(EitherT.rightT(testGitHubUser))
           .once()
 
-        (mockDataRepo.create(_:DataModel)(_:ExecutionContext))
+        (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
           .expects(*, *)
           .returning(Future(Left(apiError)))
           .once()
@@ -400,10 +400,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
 
         val testUserName = s"${testUserDataModel._id}"
-        val testUrl = s"https://api.github.com/users/$testUserName"
+        val testWrongUrl = s"https://api.github.com/users/$testUserName"
 
         (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))
-          .expects(testUrl, *, *)
+          .expects(testWrongUrl, *, *)
           .returning(EitherT.leftT(apiError))
           .once()
 
@@ -412,8 +412,67 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       }
     }
   }
-  "ApplicationController .getUserRepoByRepoName"
-  "ApplicationController .getUserRepoContent"
+
+  "ApplicationController .getUserRepoContent" should {
+    "return OK response" when {
+      "the user and repo exist" in {
+        val testUserName = s"${testUserDataModel._id}"
+        val testRepoName = "TestRepoName"
+        val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
+        val testRepoContent  = Seq(RepoContentItem("Test File Name", "testFilePath", "file"), RepoContentItem("Test Dir Name", "testDirPath", "dir"))
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.rightT(testRepoContent))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoContent(testUserName, testRepoName)(FakeRequest())
+        status(getUserObjResult) shouldBe OK
+      }
+    }
+    "return 404 Not Found response" when {
+      "Repository doesn't exist" in {
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+        val testBadUserName = s"Invalid Username"
+        val testRepoName = "TestRepoName"
+        val testUrl = s"https://api.github.com/repos/$testBadUserName/$testRepoName/contents"
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoContent(testBadUserName, testRepoName)(FakeRequest())
+        status(getUserObjResult) shouldBe NOT_FOUND
+      }
+      "User doesn't exist" in {
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+        val testUserName = s"${testUserDataModel._id}"
+        val testBadRepoName = "Invalid Repo Name"
+        val testUrl = s"https://api.github.com/repos/$testUserName/$testBadRepoName/contents"
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoContent(testUserName, testBadRepoName)(FakeRequest())
+        status(getUserObjResult) shouldBe NOT_FOUND
+      }
+    }
+    "return 50 Internal service error" when {
+      "GitHub API server error occurs" in {
+        val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
+        val testUserName = s"${testUserDataModel._id}"
+        val testRepoName = "TestRepoName"
+        val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoContent(testUserName, testRepoName)(FakeRequest())
+        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
   "ApplicationController .getUserRepoDirContent"
   "ApplicationController .getUserRepoFileContent"
 
