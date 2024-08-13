@@ -59,13 +59,12 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
   def convertContentToPlainText(content: String): String = {
     try {
-      // Remove newline characters from the base64 encoded string
       val cleanedContent = content.replaceAll("\\n", "")
       val decodedContent = new String(Base64.getDecoder.decode(cleanedContent), "UTF-8")
-      decodedContent
+      val cleanedContent2 = decodedContent.replaceAll("\\n", "")
+      cleanedContent2
     } catch {
       case e: IllegalArgumentException =>
-        // Handle the case where content is not a valid Base64 encoded string
         throw new IllegalArgumentException(s"Failed to decode content: ${e.getMessage}")
     }
   }
