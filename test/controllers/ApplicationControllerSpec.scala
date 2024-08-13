@@ -419,7 +419,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "TestRepoName"
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
-        val testRepoContent  = Seq(RepoContentItem("Test File Name", "testFilePath", "file"), RepoContentItem("Test Dir Name", "testDirPath", "dir"))
+        val testRepoContent = Seq(RepoContentItem("Test File Name", "testFilePath", "file"), RepoContentItem("Test Dir Name", "testDirPath", "dir"))
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
           .expects(testUrl, *, *)
           .returning(EitherT.rightT(testRepoContent))
@@ -473,7 +473,79 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       }
     }
   }
-  "ApplicationController .getUserRepoDirContent"
+
+
+  "ApplicationController .getUserRepoDirContent" should {
+    "return status OK with list of files / directories" when {
+      "the user, repo and directory are all valid" in {false}
+    }
+    "return status 404 Not Found" when {
+      "the user doesn't exist" in {
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+        val testBadUserName = s"Invalid Username"
+        val testRepoName = "TestRepoName"
+        val testPath = "TestPath"
+        val testUrl = s"https://api.github.com/repos/$testBadUserName/$testRepoName/contents/$testPath"
+
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testBadUserName, testRepoName, testPath)(FakeRequest())
+        status(getUserObjResult) shouldBe NOT_FOUND
+      }
+      "the repo doesn't exist" in {
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+        val testUserName = s"${testUserDataModel._id}"
+        val testBadRepoName = "Invalid Repo Name"
+        val testPath = "TestPath"
+        val testUrl = s"https://api.github.com/repos/$testUserName/$testBadRepoName/contents/$testPath"
+
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testBadRepoName, testPath)(FakeRequest())
+        status(getUserObjResult) shouldBe NOT_FOUND
+      }
+      "the repo directory doesn't exist" in {
+        val apiError = APIError.BadAPIResponse(404, "Not Found")
+        val testUserName = s"${testUserDataModel._id}"
+        val testBadRepoName = "Invalid Repo Name"
+        val testBadPath = "Invalid TestPath"
+        val testUrl = s"https://api.github.com/repos/$testUserName/$testBadRepoName/contents/$testBadPath"
+
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testBadRepoName, testBadPath)(FakeRequest())
+        status(getUserObjResult) shouldBe NOT_FOUND
+      }
+    }
+    "return status 500 Internal server error" when {
+      "GitHub API server error occurs" in {
+        val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
+        val testUserName = s"${testUserDataModel._id}"
+        val testBadRepoName = "Invalid Repo Name"
+        val testBadPath = "Invalid TestPath"
+        val testUrl = s"https://api.github.com/repos/$testUserName/$testBadRepoName/contents/$testBadPath"
+
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testBadRepoName, testBadPath)(FakeRequest())
+        status(getUserObjResult) shouldBe NOT_FOUND
+      }
+    }
+  }
+
+
   "ApplicationController .getUserRepoFileContent"
 
   override def beforeEach(): Unit = await(repository.deleteAll())
