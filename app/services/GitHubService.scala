@@ -2,7 +2,7 @@ package services
 
 import cats.data.EitherT
 import connectors.GitHubConnector
-import models.{APIError, DataModel, GitHubUser, RepoContentItem, Repository}
+import models.{APIError, DataModel, GitHubUser, RepoContentItem, RepoFileItem, Repository}
 import play.api.libs.json.OFormat
 import play.shaded.ahc.org.asynchttpclient.Response
 
@@ -45,12 +45,15 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   }
 
 
-  def getUserRepoDirContent(urlOverride: Option[String] = None, username: String, repoName: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]] = {
-    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents")
+  def getUserRepoDirContent(urlOverride: Option[String] = None, username: String, repoName: String, path:String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$path")
     val userRepoContentOrError = gitHubConnector.get[Seq[RepoContentItem]](url)
     userRepoContentOrError
   }
 
-  def getUserRepoFileContent
-
+  def getUserRepoFileContent(urlOverride: Option[String] = None, username: String, repoName: String, path:String)(implicit ec: ExecutionContext): EitherT[Future, APIError, RepoFileItem] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$path")
+    val userRepoContentOrError = gitHubConnector.get[RepoFileItem](url)
+    userRepoContentOrError
+  }
 }
