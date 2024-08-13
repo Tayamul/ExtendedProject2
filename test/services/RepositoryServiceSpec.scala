@@ -97,6 +97,14 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     }
   }
 
+  "RepoService .covertDataType" should {
+
+    "correctly convert a GitHubUser to a DataModel" in {
+      testRepoService.convertDataType(gitHubUserModel) shouldEqual dataModel
+    }
+
+  }
+
 
   "RepoService .createUserObjToStore" should {
 
