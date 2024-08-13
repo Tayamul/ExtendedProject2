@@ -48,6 +48,8 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
   )
 
   val fileContent: RepoFileItem = RepoFileItem("README.md", "file", "base64content", "base64")
+  val encodedPathFileContent: RepoFileItem = RepoFileItem("README.md", "ZmlsZQ==", "base64content", "base64")
+
 
   // Test for getUserByUserName
   "getUserByUserName" should {
@@ -248,7 +250,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .once()
 
         whenReady(testService.getUserRepoDirContent(None, username, repoName, dirPath).value) { result =>
-          result shouldBe Right(repoContent)
+          result shouldBe Right(encodedPathRepoContent)
         }
       }
     }
@@ -294,7 +296,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .once()
 
         whenReady(testService.getUserRepoFileContent(None, username, repoName, filePath).value) { result =>
-          result shouldBe Right(fileContent)
+          result shouldBe Right(encodedPathFileContent)
         }
       }
     }
