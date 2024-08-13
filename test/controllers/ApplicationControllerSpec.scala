@@ -55,7 +55,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       "Items in database" in {
         beforeEach()
 
-        val createUserRequest:FakeRequest[JsValue] = testRequest.buildPost("api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+        val createUserRequest: FakeRequest[JsValue] = testRequest.buildPost("api/user").withBody[JsValue](Json.toJson(userTestDataModel))
         val createdResult = TestController.create()(createUserRequest)
         status(createdResult) shouldBe CREATED
 
@@ -92,8 +92,8 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 409 when duplicate username" in {
       beforeEach()
 
-      val request:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
-      val request2:FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModelDupe))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request2: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModelDupe))
 
       val createdResult: Future[Result] = TestController.create()(request)
       status(createdResult) shouldBe CREATED
@@ -106,7 +106,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
     "return 400 Bad Request" in {
       beforeEach()
-      val badRequestBody:JsValue = Json.parse("""{"username": "abcd", "name": 12345}""")
+      val badRequestBody: JsValue = Json.parse("""{"username": "abcd", "name": 12345}""")
       val badRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(badRequestBody))
       val createdResult: Future[Result] = TestController.create()(badRequest)
 
@@ -168,10 +168,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 404 Internal Server Error" in {
       beforeEach()
 
-      val apiError:APIError = APIError.BadAPIResponse(404, s"No item found with id: nonExistingUserName")
+      val apiError: APIError = APIError.BadAPIResponse(404, s"No item found with id: nonExistingUserName")
       val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
       val createdResult: Future[Result] = TestController.create()(createRequest)
-//      status(createdResult) shouldBe Status.CREATED
+      //      status(createdResult) shouldBe Status.CREATED
 
       val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${userTestDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
       val updateResult: Future[Result] = TestController.update("nonExistingUserName")(updateRequest)
@@ -189,7 +189,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       status(createdResult) shouldBe Status.CREATED
 
 
-      val badRequestBody:JsValue = Json.parse("""{"id": "testUserName", "name": 12345}""")
+      val badRequestBody: JsValue = Json.parse("""{"id": "testUserName", "name": 12345}""")
       val badUpdateRequest: FakeRequest[JsValue] = testRequest.buildPut("/api/user").withBody[JsValue](Json.toJson(badRequestBody))
       val updateResult: Future[Result] = TestController.update("testUserName")(badUpdateRequest)
 
@@ -220,5 +220,6 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
   }
 
   override def beforeEach(): Unit = await(repository.deleteAll())
+
   override def afterEach(): Unit = await(repository.deleteAll())
 }
