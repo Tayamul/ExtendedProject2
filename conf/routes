@@ -16,6 +16,8 @@ GET     /api/user/:username/store-to-db     controllers.ApplicationController.ge
 GET     /api/user/:username/repos     controllers.ApplicationController.getUserRepos(username)
 GET     /api/user/:username/repos/:repoName     controllers.ApplicationController.getUserRepoByRepoName(username: String, repoName: String)
 
+GET     /api/user/:username/repos/:repoName/contents     controllers.ApplicationController.getUserRepoContent(username: String, repoName: String)
+
 
 # Data Repo Crud Endpoints
 POST    /api/user                        controllers.ApplicationController.create()

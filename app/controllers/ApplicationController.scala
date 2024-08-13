@@ -108,4 +108,11 @@ class ApplicationController @Inject()(
     }
   }
 
+  def getUserRepoContent(username: String, repoName: String): Action[AnyContent] = Action.async { result =>
+    gitHubService.getUserRepoContent(None, username, repoName).value.map{
+      case Left(error) => resultError(error)
+      case Right(repoContent) => Ok{Json.toJson(repoContent)}
+    }
+  }
+
 }

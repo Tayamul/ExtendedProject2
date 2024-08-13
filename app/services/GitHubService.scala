@@ -2,7 +2,7 @@ package services
 
 import cats.data.EitherT
 import connectors.GitHubConnector
-import models.{APIError, DataModel, GitHubUser, Repository}
+import models.{APIError, DataModel, GitHubUser, RepoContentItem, Repository}
 import play.api.libs.json.OFormat
 import play.shaded.ahc.org.asynchttpclient.Response
 
@@ -36,5 +36,11 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName")
     val userRepoOrError = gitHubConnector.get[Repository](url)
     userRepoOrError
+  }
+
+  def getUserRepoContent(urlOverride: Option[String] = None, username: String, repoName: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents")
+    val userRepoContentOrError = gitHubConnector.get[Seq[RepoContentItem]](url)
+    userRepoContentOrError
   }
 }
