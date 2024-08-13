@@ -303,15 +303,15 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
     "return 409 Conflict error" when {
       "User already exists in database" in {
-        true
+        val apiError = APIError.BadAPIResponse(409, "Username already exists")
       }
     }
     "return 500 Internal server error" when {
       "internal server error from GitHub API" in {
-        true
+        val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
       }
       "internal server error from MongoDB" in {
-        true
+        val apiError = APIError.BadAPIResponse(500, s"An error occurred when trying to add user with id: ${testUserDataModel._id}")
       }
     }
   }
