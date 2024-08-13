@@ -18,6 +18,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory {
 
+
   val mockConnector: GitHubConnector = mock[GitHubConnector]
   val testGitService: GitHubService = new GitHubService(mockConnector)
 
@@ -29,14 +30,18 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     repoService,
     gitService
   )(executionContext)
-
   val TestControllerMockGitService = new ApplicationController(
     component,
     repoService,
     testGitService
   )(executionContext)
+  val TestControllerMockServices = new ApplicationController(
+    component,
+    testRepoService,
+    testGitService
+  )(executionContext)
 
-  val userTestDataModel: DataModel = DataModel(
+  val testUserDataModel: DataModel = DataModel(
     _id = "testUserName",
     dateCreated = "2020-10-16T09:59:16Z",
     location = "London",
@@ -45,7 +50,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User"
   )
-  val userTestDataModelDupe: DataModel = DataModel(
+  val testUserDataModelDupe: DataModel = DataModel(
     _id = "testUserName",
     dateCreated = "2020-10-16T09:59:16Z",
     location = "London",
@@ -64,13 +69,22 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     name = "Test User"
   )
 
+  val testGitHubUser: GitHubUser = GitHubUser(
+    "testUserName",
+    Some("London"),
+    50,
+    25,
+    "08/08/2024",
+    "www.github.com",
+    Some("testName")
+  )
 
   "ApplicationController .index" should {
     "return 200 Ok with body" when {
       "Items in database" in {
         beforeEach()
 
-        val createUserRequest: FakeRequest[JsValue] = testRequest.buildPost("api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+        val createUserRequest: FakeRequest[JsValue] = testRequest.buildPost("api/user").withBody[JsValue](Json.toJson(testUserDataModel))
         val createdResult = TestController.create()(createUserRequest)
         status(createdResult) shouldBe CREATED
 
@@ -96,19 +110,19 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
   "ApplicationController .create" should {
     "return 201 Created with body" in {
       beforeEach()
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
-      contentAsJson(createdResult).as[DataModel] shouldBe userTestDataModel
+      contentAsJson(createdResult).as[DataModel] shouldBe testUserDataModel
       afterEach()
     }
 
     "return 409 when duplicate username" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
-      val request2: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModelDupe))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
+      val request2: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModelDupe))
 
       val createdResult: Future[Result] = TestController.create()(request)
       status(createdResult) shouldBe CREATED
@@ -134,7 +148,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 200 Ok with body" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
@@ -142,7 +156,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       val readResult: Future[Result] = TestController.read("testUserName")(FakeRequest())
 
       status(readResult) shouldBe Status.OK
-      contentAsJson(readResult).as[DataModel] shouldBe userTestDataModel
+      contentAsJson(readResult).as[DataModel] shouldBe testUserDataModel
 
       afterEach()
     }
@@ -150,7 +164,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 404 Not Found with body" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
       status(createdResult) shouldBe Status.CREATED
 
@@ -167,11 +181,11 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 202 accepted with body" in {
       beforeEach()
 
-      val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(createRequest)
       status(createdResult) shouldBe Status.CREATED
 
-      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${userTestDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${testUserDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
       val updateResult: Future[Result] = TestController.update("testUserName")(updateRequest)
 
       status(updateResult) shouldBe Status.ACCEPTED
@@ -184,11 +198,11 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       beforeEach()
 
       val apiError: APIError = APIError.BadAPIResponse(404, s"No item found with id: nonExistingUserName")
-      val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val createRequest: FakeRequest[JsValue] = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(createRequest)
       //      status(createdResult) shouldBe Status.CREATED
 
-      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${userTestDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
+      val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${testUserDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
       val updateResult: Future[Result] = TestController.update("nonExistingUserName")(updateRequest)
 
       status(updateResult) shouldBe NOT_FOUND
@@ -199,7 +213,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 400 Bad Request" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/update/${userTestDataModel._id}").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request: FakeRequest[JsValue] = testRequest.buildPost("/api/update/${testUserDataModel._id}").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
       status(createdResult) shouldBe Status.CREATED
 
@@ -217,11 +231,11 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
   "ApplicationController .delete" should {
     "return 202 Accepted" in {
       beforeEach()
-      val request = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(userTestDataModel))
+      val request = testRequest.buildPost("/api/user").withBody[JsValue](Json.toJson(testUserDataModel))
       val createdResult: Future[Result] = TestController.create()(request)
       status(createdResult) shouldBe Status.CREATED
 
-      val deleteResult = TestController.delete(s"${userTestDataModel._id}")(FakeRequest())
+      val deleteResult = TestController.delete(s"${testUserDataModel._id}")(FakeRequest())
 
       status(deleteResult) shouldBe ACCEPTED
       afterEach()
@@ -239,17 +253,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       "GitHubService .getUserByUserName returns a user object" in {
 
         val testUrl = "https://api.github.com/users/testUserName"
-
-        val testGitHubUser: GitHubUser = GitHubUser(
-          "testUserName",
-          Some("London"),
-          50,
-          25,
-          "08/08/2024",
-          "www.github.com",
-          Some("testName")
-        )
-
+        
         (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
           .expects(testUrl, *, *)
           .returning(EitherT.rightT(testGitHubUser))
@@ -276,8 +280,42 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
   }
 
+  "ApplicationController .getUserObj" should {
+    "return 200 OK response" when {
+      "successfully gets a user from github and stores in database" in {
+        val testUserName = s"${testUserDataModel._id}"
+        val testUrl = s"https://api.github.com/users/$testUserName"
 
-  "ApplicationController .getUserObj"
+        (mockConnector.get(_: String)(_: OFormat[GitHubUser], _: ExecutionContext))
+          .expects(testUrl, *, *)
+          .returning(EitherT.rightT(testGitHubUser))
+          .once()
+
+
+        (mockDataRepo.create(_:DataModel)(_:ExecutionContext))
+          .expects(*, *)
+          .returning(Future.successful(Right(testUserDataModel)))
+          .once()
+
+        val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
+        status(getUserObjResult) shouldBe OK
+      }
+    }
+    "return 409 Conflict error" when {
+      "User already exists in database" in {
+        true
+      }
+    }
+    "return 500 Internal server error" when {
+      "internal server error from GitHub API" in {
+        true
+      }
+      "internal server error from MongoDB" in {
+        true
+      }
+    }
+  }
+
   "ApplicationController .getUserRepos"
   "ApplicationController .getUserRepoByRepoName"
   "ApplicationController .getUserRepoContent"
