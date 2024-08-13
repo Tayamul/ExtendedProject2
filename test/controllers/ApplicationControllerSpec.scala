@@ -366,9 +366,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       "user exists and no errors encountered" in {
 
         val testUserName = s"${testUserDataModel._id}"
-        val testUrl = s"https://api.github.com/users/$testUserName"
+        val testUrl = s"https://api.github.com/users/$testUserName/repos"
         val testUserRepos = Seq(
-          Repository(name = "Test Name", `private` = false, html_url = "testURL", description = "Test Description")
+          Repository(name = "Test Name", `private` = false, html_url = "testURL", description = Some("Test Description"))
         )
 
         (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))
