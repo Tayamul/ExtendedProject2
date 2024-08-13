@@ -2,7 +2,7 @@ package services
 
 import baseSpec.BaseSpec
 import com.mongodb.client.result.{DeleteResult, UpdateResult}
-import models.{APIError, DataModel}
+import models.{APIError, DataModel, GitHubUser}
 import org.mongodb.scala.bson.{BsonString, BsonValue}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
@@ -24,6 +24,16 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     3, // num following
     "repoURL",
     "test Name"
+  )
+
+  private val gitHubUserModel: GitHubUser = GitHubUser(
+    "username",
+    Some("location"),
+    3, // num followers
+    3, // num following
+    "date created",
+    "repoURL",
+    Some("test Name")
   )
 
 
@@ -84,6 +94,24 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
           }
         }
       }
+    }
+  }
+
+
+  "RepoService .createUserObjToStore" should {
+
+    "return a Right" when {
+      "the DataRepository successfully retrieves a user object from the API" in {
+        (mockDataRepo.create(_: DataModel)(_: ExecutionContext))
+          .expects(*, *)
+          .returning(Future(Right(dataModel)))
+          .once()
+
+        whenReady(testRepoService.createUserObjToStore(gitHubUserModel)) { result =>
+          result shouldBe Right(dataModel)
+        }
+      }
+
     }
   }
 
