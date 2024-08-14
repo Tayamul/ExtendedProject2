@@ -10,15 +10,15 @@ GET     /                           controllers.HomeController.index
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # GitHub API
-GET     /api/user/:username     controllers.ApplicationController.getGitHubUser(username)
-GET     /api/user/:username/store-to-db     controllers.ApplicationController.getUserObj(username)
+GET     /github/users/:username     controllers.ApplicationController.getGitHubUser(username)
+GET     /github/users/:username/store-to-db     controllers.ApplicationController.getUserObj(username)
 
-GET     /api/user/:username/repos     controllers.ApplicationController.getUserRepos(username)
-GET     /api/user/:username/repos/:repoName     controllers.ApplicationController.getUserRepoByRepoName(username: String, repoName: String)
+GET     /github/users/:username/repos     controllers.ApplicationController.getUserRepos(username)
+GET     /github/users/:username/repos/:repoName     controllers.ApplicationController.getUserRepoByRepoName(username: String, repoName: String)
 
-GET     /api/user/:username/repos/:repoName/contents     controllers.ApplicationController.getUserRepoContent(username: String, repoName: String)
-GET    /api/user/:username/repos/:repoName/file/:path     controllers.ApplicationController.getUserRepoFileContent(username: String, repoName: String, path:String)
-GET    /api/user/:username/repos/:repoName/dir/:path     controllers.ApplicationController.getUserRepoDirContent(username: String, repoName: String, path:String)
+GET     /github/users/:username/repos/:repoName/contents     controllers.ApplicationController.getUserRepoContent(username: String, repoName: String)
+GET    /github/users/:username/repos/:repoName/file/:path     controllers.ApplicationController.getUserRepoFileContent(username: String, repoName: String, path:String)
+GET    /github/users/:username/repos/:repoName/dir/:path     controllers.ApplicationController.getUserRepoDirContent(username: String, repoName: String, path:String)
 
 
 
