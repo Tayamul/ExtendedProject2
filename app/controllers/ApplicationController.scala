@@ -107,7 +107,7 @@ class ApplicationController @Inject()(
   def getUserRepos(username: String): Action[AnyContent] = Action.async { implicit request =>
     gitHubService.getUserRepos(None, username).value.map {
       case Left(error) => resultError(error)
-      case Right(repos) => Ok
+      case Right(repos) => Ok(views.repos.)
     }
   }
 
