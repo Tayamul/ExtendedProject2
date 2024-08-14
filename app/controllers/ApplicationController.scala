@@ -20,6 +20,13 @@ class ApplicationController @Inject()(
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController {
 
+
+  val placeHolderForm: Form[String] = Form(
+    single(
+      "username" -> nonEmptyText
+    )
+  )
+
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
@@ -158,11 +165,6 @@ class ApplicationController @Inject()(
 
   def getUsernameSearch: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     accessToken
-    val placeHolderForm: Form[String] = Form(
-      single(
-        "username" -> nonEmptyText
-      )
-    )
 
     placeHolderForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest), // Show form with errors
