@@ -161,9 +161,14 @@ class ApplicationController @Inject()(
 
 
   /** ---- Form Rendering ---- */
+
   // Remember to call accessToken in render methods
   private def accessToken(implicit request: Request[_]) = {
     CSRF.getToken
+  }
+
+  def getUserNameSearch(): Action[AnyContent] = Action {implicit request: Request[AnyContent] =>
+    Ok // render form here Ok(views.html.form.searchUsername(usernameSearchForm))
   }
 
 
