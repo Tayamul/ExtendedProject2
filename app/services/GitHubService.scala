@@ -53,7 +53,8 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
 
   def getUserRepoDirContent(urlOverride: Option[String] = None, username: String, repoName: String, path: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]] = {
-    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$path")
+    val decodedPath = convertContentToPlainText(path)
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$decodedPath")
     val userRepoDirContentOrError = gitHubConnector.get[Seq[RepoContentItem]](url)
 
     userRepoDirContentOrError.map { repoDirContentItems =>
@@ -65,7 +66,8 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   }
 
   def getUserRepoFileContent(urlOverride: Option[String] = None, username: String, repoName: String, path: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, RepoFileItem] = {
-    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$path")
+    val decodedPath = convertContentToPlainText(path)
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$username/$repoName/contents/$decodedPath")
     val userRepoContentOrError = gitHubConnector.get[RepoFileItem](url)
     userRepoContentOrError.map { FileItem =>
       val encodedPath = baseEncodePath(FileItem.path)
