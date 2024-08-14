@@ -2,10 +2,13 @@ package controllers
 
 import cats.data.EitherT
 import models.APIError.BadAPIResponse
-import models.{APIError, DataModel}
+import models.{APIError, DataModel, UsernameSearch}
+import play.api.data.Form
+import play.api.data.Forms.{nonEmptyText, single}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import services.{GitHubService, RepositoryService}
+import views.html.helper.CSRF
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,6 +19,7 @@ class ApplicationController @Inject()(
                                        val repoService: RepositoryService,
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController {
+
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
@@ -143,8 +147,38 @@ class ApplicationController @Inject()(
       case Left(error) => resultError(error)
       case Right(repoContent) =>
         val plainTextContent = gitHubService.convertContentToPlainText(repoContent.content)
-        Ok {Json.toJson(plainTextContent)}
+        Ok {
+          Json.toJson(plainTextContent)
+        }
     }
+  }
+
+
+  /** ---- Form Rendering ---- */
+
+  // Remember to call accessToken in render methods
+  private def accessToken(implicit request: Request[_]) = {
+    CSRF.getToken
+  }
+
+  def getUserNameSearch(): Action[AnyContent] = ???
+
+
+  /** ---- Form Submission Redirects ---- */
+
+
+  def getUsernameSearchResult: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    UsernameSearch.usernameSearchForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest), // Show form with errors
+      usernameSearch => {
+        gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
+          case Left(error) => resultError(error)
+          case Right(user) => Ok {
+            Json.toJson(user)
+          }
+        }
+      }
+    )
   }
 
 }
