@@ -620,6 +620,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "Invalid Repo Name"
         val testBadPath = "Invalid TestFilePath"
+        val encodedBadPath = gitService.baseEncodePath(testBadPath)
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents/$testBadPath"
 
         (mockConnector.get(_: String)(_: OFormat[RepoFileItem], _: ExecutionContext))
@@ -627,7 +628,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .returning(EitherT.leftT(apiError))
           .once()
 
-        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, testBadPath)(FakeRequest())
+        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, encodedBadPath)(FakeRequest())
         status(getUserObjResult) shouldBe NOT_FOUND
       }
     }
@@ -637,6 +638,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "RepoName"
         val testPath = "TestFilePath"
+        val encodedPath = gitService.baseEncodePath(testPath)
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents/$testPath"
 
         (mockConnector.get(_: String)(_: OFormat[RepoFileItem], _: ExecutionContext))
@@ -644,7 +646,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .returning(EitherT.leftT(apiError))
           .once()
 
-        val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testRepoName, testPath)(FakeRequest())
+        val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testRepoName, encodedPath)(FakeRequest())
         status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
       }
     }
