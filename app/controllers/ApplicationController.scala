@@ -104,12 +104,10 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getUserRepos(username: String): Action[AnyContent] = Action.async { request =>
+  def getUserRepos(username: String): Action[AnyContent] = Action.async { implicit request =>
     gitHubService.getUserRepos(None, username).value.map {
       case Left(error) => resultError(error)
-      case Right(repos) => Ok {
-        Json.toJson(repos)
-      }
+      case Right(repos) => Ok(views.html.repo.repos(username, repos))
     }
   }
 
@@ -161,11 +159,10 @@ class ApplicationController @Inject()(
     CSRF.getToken
   }
 
-  def getUsernameSearch(): Action[AnyContent] = Action {implicit request =>
+  def getUsernameSearch(): Action[AnyContent] = Action { implicit request =>
     accessToken
     Ok(views.html.forms.searchUsername(UsernameSearch.usernameSearchForm))
   }
-
 
 
   /** ---- Form Submission Redirects ---- */
@@ -178,9 +175,7 @@ class ApplicationController @Inject()(
       usernameSearch => {
         gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
           case Left(error) => resultError(error)
-          case Right(user) => Ok {
-            Json.toJson(user)
-          }
+          case Right(user) => Ok(views.html.display.githubUser(user))
         }
       }
     )
