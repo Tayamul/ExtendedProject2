@@ -30,4 +30,4 @@ PUT     /api/user/:username              controllers.ApplicationController.updat
 DELETE  /api/user/:username              controllers.ApplicationController.delete(username: String)
 
 POST     /users/search                controllers.ApplicationController.getUsernameSearchResult()
-GET     /users/search                controllers.ApplicationController.getUserNameSearch()
+GET     /users/search                controllers.ApplicationController.getUsernameSearch()

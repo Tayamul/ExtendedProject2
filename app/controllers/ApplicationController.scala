@@ -161,7 +161,7 @@ class ApplicationController @Inject()(
     CSRF.getToken
   }
 
-  def getUserNameSearch(): Action[AnyContent] = Action {implicit request =>
+  def getUsernameSearch(): Action[AnyContent] = Action {implicit request =>
     accessToken
     Ok(views.html.forms.searchUsername(UsernameSearch.usernameSearchForm))
   }
