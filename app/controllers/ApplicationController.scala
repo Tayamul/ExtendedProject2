@@ -104,12 +104,10 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getUserRepos(username: String): Action[AnyContent] = Action.async { request =>
+  def getUserRepos(username: String): Action[AnyContent] = Action.async { implicit request =>
     gitHubService.getUserRepos(None, username).value.map {
       case Left(error) => resultError(error)
-      case Right(repos) => Ok {
-        Json.toJson(repos)
-      }
+      case Right(repos) => Ok(views.html.repos.repos(username = username, repos = repos))
     }
   }
 
@@ -123,22 +121,18 @@ class ApplicationController @Inject()(
   }
 
 
-  def getUserRepoContent(username: String, repoName: String): Action[AnyContent] = Action.async { result =>
+  def getUserRepoContent(username: String, repoName: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok {
-        Json.toJson(repoContent)
-      }
+      case Right(repoContent) => Ok(views.html.repos.repoContent(username, repoName, repoContent))
     }
   }
 
 
-  def getUserRepoDirContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async { result =>
+  def getUserRepoDirContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async {implicit result =>
     gitHubService.getUserRepoDirContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok {
-        Json.toJson(repoContent)
-      }
+      case Right(repoContent) => Ok(views.html.repos.dirContent(username, repoName, repoContent))
     }
   }
 
@@ -161,11 +155,10 @@ class ApplicationController @Inject()(
     CSRF.getToken
   }
 
-  def getUsernameSearch(): Action[AnyContent] = Action {implicit request =>
+  def getUsernameSearch(): Action[AnyContent] = Action { implicit request =>
     accessToken
     Ok(views.html.forms.searchUsername(UsernameSearch.usernameSearchForm))
   }
-
 
 
   /** ---- Form Submission Redirects ---- */
@@ -178,9 +171,7 @@ class ApplicationController @Inject()(
       usernameSearch => {
         gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
           case Left(error) => resultError(error)
-          case Right(user) => Ok {
-            Json.toJson(user)
-          }
+          case Right(user) => Ok(views.html.display.githubUser(user))
         }
       }
     )

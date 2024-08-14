@@ -1,8 +1,8 @@
-@import models.RepoContentItem
+@import models.Repository
 
-@(username: String, repos: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repos: Seq[Repository])(implicit request: RequestHeader, messages: Messages)
 
-@main(repoName){
+@main(username){
 
 <div>
     @for(repo <- repos) {

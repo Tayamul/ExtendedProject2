@@ -21,6 +21,8 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
   val repoName: String = "testRepoName"
   val filePath: String = "README.md"
   val dirPath: String = "src/main"
+  val encodedFilePath = "UkVBRE1FLm1k"
+  val encodedDirPath = "c3JjL21haW4="
 
   // Define sample data
   val gitHubUser: GitHubUser = GitHubUser(
@@ -249,7 +251,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .returning(EitherT.rightT(repoContent))
           .once()
 
-        whenReady(testService.getUserRepoDirContent(None, username, repoName, dirPath).value) { result =>
+        whenReady(testService.getUserRepoDirContent(None, username, repoName, encodedDirPath).value) { result =>
           result shouldBe Right(encodedPathRepoContent)
         }
       }
@@ -264,7 +266,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .returning(EitherT.leftT(apiError))
           .once()
 
-        whenReady(testService.getUserRepoDirContent(None, username, repoName, dirPath).value) { result =>
+        whenReady(testService.getUserRepoDirContent(None, username, repoName, encodedDirPath).value) { result =>
           result shouldBe Left(apiError)
         }
       }
@@ -277,7 +279,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .returning(EitherT.leftT(apiError))
           .once()
 
-        whenReady(testService.getUserRepoDirContent(None, username, repoName, dirPath).value) { result =>
+        whenReady(testService.getUserRepoDirContent(None, username, repoName, encodedDirPath).value) { result =>
           result shouldBe Left(apiError)
         }
       }
@@ -295,7 +297,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .returning(EitherT.rightT(fileContent))
           .once()
 
-        whenReady(testService.getUserRepoFileContent(None, username, repoName, filePath).value) { result =>
+        whenReady(testService.getUserRepoFileContent(None, username, repoName, encodedFilePath).value) { result =>
           result shouldBe Right(encodedPathFileContent)
         }
       }
@@ -310,7 +312,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .returning(EitherT.leftT(apiError))
           .once()
 
-        whenReady(testService.getUserRepoFileContent(None, username, repoName, filePath).value) { result =>
+        whenReady(testService.getUserRepoFileContent(None, username, repoName, encodedFilePath).value) { result =>
           result shouldBe Left(apiError)
         }
       }
@@ -323,7 +325,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
           .returning(EitherT.leftT(apiError))
           .once()
 
-        whenReady(testService.getUserRepoFileContent(None, username, repoName, filePath).value) { result =>
+        whenReady(testService.getUserRepoFileContent(None, username, repoName, encodedFilePath).value) { result =>
           result shouldBe Left(apiError)
         }
       }
