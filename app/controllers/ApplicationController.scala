@@ -18,7 +18,8 @@ class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
                                        val repoService: RepositoryService,
                                        val gitHubService: GitHubService
-                                     )(implicit val ec: ExecutionContext) extends BaseController {
+                                     )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport {
+
 
 
   // convert api errors to Status result
@@ -161,15 +162,20 @@ class ApplicationController @Inject()(
     CSRF.getToken
   }
 
-  def getUserNameSearch(): Action[AnyContent] = ???
+  def getUsernameSearch(): Action[AnyContent] = Action {implicit request =>
+    accessToken
+    Ok(views.html.forms.searchUsername(UsernameSearch.usernameSearchForm))
+  }
+
 
 
   /** ---- Form Submission Redirects ---- */
 
 
-  def getUsernameSearchResult: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def getUsernameSearchResult(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     UsernameSearch.usernameSearchForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest), // Show form with errors
+      formWithErrors => Future.successful(BadRequest(views.html.forms.searchUsername(formWithErrors))), // Show form with errors
+
       usernameSearch => {
         gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
           case Left(error) => resultError(error)

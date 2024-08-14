@@ -6,7 +6,7 @@
 
 <div>
     @for(repo <- repos) {
-    <a href="@routes..ApplicationController.getUserRepoContent(username, repo.name)"
+    <a href="@routes.ApplicationController.getUserRepoContent(username, repo.name)"
     >@repo.name</a>
     }
 </div>
