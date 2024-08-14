@@ -1,8 +1,8 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-
-import java.time.LocalDate
+import play.api.data._
+import play.api.data.Forms._
 
 case class GitHubUser(
                      login: String,
@@ -15,6 +15,18 @@ case class GitHubUser(
                      )
 object GitHubUser {
   implicit val formats: OFormat[GitHubUser] = Json.format[GitHubUser]
+
+  val userForm: Form[GitHubUser] = Form(
+    mapping(
+      "login" -> text,
+      "location" -> optional(text),
+      "followers" -> number,
+      "following" -> number,
+      "created_at" -> text,
+      "repos_url" -> text,
+      "name" -> optional(text)
+    )(GitHubUser.apply)(GitHubUser.unapply)
+  )
 }
 
 

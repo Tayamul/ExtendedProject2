@@ -13,14 +13,14 @@ import views.html.helper.CSRF
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+import models.GitHubUser.userForm
+
 @Singleton
 class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
                                        val repoService: RepositoryService,
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport {
-
-
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
@@ -154,7 +154,6 @@ class ApplicationController @Inject()(
     }
   }
 
-
   /** ---- Form Rendering ---- */
 
   // Remember to call accessToken in render methods
@@ -187,4 +186,26 @@ class ApplicationController @Inject()(
     )
   }
 
+
+  def displayGitHubUser(username: String): Action[AnyContent] = Action.async { implicit request =>
+    gitHubService.getUserByUserName(username = username).value.map {
+      case Left(error) => resultError(error)
+      case Right(user) => Ok(views.html.display.githubUser(user))
+    }
+  }
+
+  def addUserToTheDatabase(): Action[AnyContent] = Action.async { implicit request =>
+    accessToken
+    userForm.bindFromRequest().fold(
+      formWithErrors => {
+        Future.successful(BadRequest("Form data is invalid!"))
+      },
+      formData => {
+        repoService.createUserObjToStore(formData).map {
+          case Right(createdDataModel) => Redirect(routes.ApplicationController.displayGitHubUser(createdDataModel._id)).flashing("success" -> "User data saved successfully!")
+          case Left(error) => resultError(error)
+        }
+      }
+    )
+  }
 }

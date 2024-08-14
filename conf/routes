@@ -29,5 +29,8 @@ GET     /api/user/:username                controllers.ApplicationController.rea
 PUT     /api/user/:username              controllers.ApplicationController.update(username: String)
 DELETE  /api/user/:username              controllers.ApplicationController.delete(username: String)
 
+# HTML
+GET     /users/search/:username       controllers.ApplicationController.displayGitHubUser(username: String)
+POST    /users/save-user-data       controllers.ApplicationController.addUserToTheDatabase()
 POST     /users/search                controllers.ApplicationController.getUsernameSearchResult()
 GET     /users/search                controllers.ApplicationController.getUsernameSearch()

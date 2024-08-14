@@ -1,0 +1,23 @@
+@import models.GitHubUser.userForm
+@import helper._
+
+@(user: GitHubUser)(implicit request: RequestHeader, messages: Messages)
+
+@main("Display a GitHub user") {
+<h1>GitHub User</h1>
+<p>Name: @user.name.getOrElse("N/A")</p>
+<p>List of user's repositories:<a href="@routes.ApplicationController.getUserRepos(user.login)"> Link to repos</a></p>
+<p>Followers: @user.followers</p>
+<p>Following: @user.following</p>
+    @helper.form(action = routes.ApplicationController.addUserToTheDatabase()) {
+        @helper.CSRF.formField
+        <input type="hidden" name="login" value=@user.login />
+        <input type="hidden" name="location" value=@user.location.getOrElse("") />
+        <input type="hidden" name="followers" value=@user.followers />
+        <input type="hidden" name="following" value=@user.following />
+        <input type="hidden" name="created_at" value=@user.created_at />
+        <input type="hidden" name="repos_url" value=@user.repos_url/>
+        <input type="hidden" name="name" value=@user.name.getOrElse("")/>
+        <button type="submit">Save User Data</button>
+    }
+}
