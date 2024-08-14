@@ -19,7 +19,7 @@ case class DataModel(
 object DataModel {
   implicit val formats: OFormat[DataModel] = Json.format[DataModel]
 
-  val userForm: Form[DataModel] = Form(
+  val dataForm: Form[DataModel] = Form(
     mapping(
       "_id" -> text,
       "dateCreated" -> text,
