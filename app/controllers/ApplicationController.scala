@@ -141,9 +141,9 @@ class ApplicationController @Inject()(
   def getUserRepoFileContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async { result =>
     gitHubService.getUserRepoFileContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok {
-        Json.toJson(repoContent)
-      }
+      case Right(repoContent) =>
+        val plainTextContent = gitHubService.convertContentToPlainText(repoContent.content)
+        Ok {Json.toJson(plainTextContent)}
     }
   }
 
