@@ -153,19 +153,24 @@ class ApplicationController @Inject()(
       case Left(error) => resultError(error)
       case Right(repoContent) =>
         val plainTextContent = gitHubService.convertContentToPlainText(repoContent.content)
-        Ok {Json.toJson(plainTextContent)}
+        Ok {
+          Json.toJson(plainTextContent)
+        }
     }
   }
 
-  /** ---- Form Redirects ---- */
 
+  /** ---- Form Rendering ---- */
+  // Remember to call accessToken in render methods
   private def accessToken(implicit request: Request[_]) = {
     CSRF.getToken
   }
 
-  def getUsernameSearch: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    accessToken
 
+  /** ---- Form Submission Redirects ---- */
+
+
+  def getUsernameSearchResult: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     placeHolderForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest), // Show form with errors
       username => {
