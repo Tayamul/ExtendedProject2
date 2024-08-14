@@ -32,3 +32,4 @@ DELETE  /api/user/:username              controllers.ApplicationController.delet
 
 # HTML
 GET     /users/search/:username       controllers.ApplicationController.displayGitHubUser(username: String)
+POST    /users/save-user-data       controllers.ApplicationController.addUserToTheDatabase()
