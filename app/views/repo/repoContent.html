@@ -1,0 +1,19 @@
+@import models.Repository
+
+@(username: String, repoName: String, contents: Seq[Repository])(implicit request: RequestHeader, messages: Messages)
+
+@main(repoName){
+
+<div>
+    <h2>repoName</h2>
+    @for(item <- contents if item.`type` == "dir") {
+    <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, item.path)"
+    >@item.name</a>
+    }
+    @for(item <- contents if item.`type` == "file") {
+    <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, item.path)"
+    >@item.name</a>
+    }
+</div>
+
+}

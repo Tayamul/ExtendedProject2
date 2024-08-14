@@ -1,0 +1,16 @@
+@import helper._
+@import models.UsernameSearch
+@(usernameForm: Form[UsernameSearch])(implicit request:RequestHeader, messages:Messages)
+
+
+
+@main("Search Username Form") {
+<div>
+    @helper.form(action =  routes.ApplicationController.getUsernameSearchResult()) {
+    @helper.CSRF.formField
+    @helper.inputText(usernameForm("username"), Symbol("placeholder")  -> "Enter Username:")
+    <input type="submit" class="btn btn-primary" value="Submit">
+    }
+</div>
+
+}
