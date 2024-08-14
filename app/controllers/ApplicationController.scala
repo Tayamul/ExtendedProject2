@@ -21,6 +21,7 @@ class ApplicationController @Inject()(
                                      )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport {
 
 
+
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
@@ -167,12 +168,14 @@ class ApplicationController @Inject()(
   }
 
 
+
   /** ---- Form Submission Redirects ---- */
 
 
   def getUsernameSearchResult(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     UsernameSearch.usernameSearchForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.html.forms.searchUsername(formWithErrors))), // Show form with errors
+
       usernameSearch => {
         gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
           case Left(error) => resultError(error)
