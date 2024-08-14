@@ -172,7 +172,7 @@ class ApplicationController @Inject()(
 
   def getUsernameSearchResult(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     UsernameSearch.usernameSearchForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest), // Show form with errors
+      formWithErrors => Future.successful(BadRequest(views.html.forms.searchUsername(formWithErrors))), // Show form with errors
       usernameSearch => {
         gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
           case Left(error) => resultError(error)
