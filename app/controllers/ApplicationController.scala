@@ -21,12 +21,6 @@ class ApplicationController @Inject()(
                                      )(implicit val ec: ExecutionContext) extends BaseController {
 
 
-  val placeHolderForm: Form[String] = Form(
-    single(
-      "username" -> nonEmptyText
-    )
-  )
-
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
