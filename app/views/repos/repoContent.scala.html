@@ -6,11 +6,11 @@
 
 <div>
     <h2>repoName</h2>
-    @for(dir <- contents if item.`type` == "dir") {
+    @for(dir <- contents if dir.`type` == "dir") {
     <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
     >@dir.name</a>
     }
-    @for(file <- contents if item.`type` == "file") {
+    @for(file <- contents if file.`type` == "file") {
     <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path)"
     >@file.name</a>
     }
