@@ -153,7 +153,6 @@ class ApplicationController @Inject()(
     }
   }
 
-
   /** ---- Form Rendering ---- */
 
   // Remember to call accessToken in render methods
@@ -179,6 +178,15 @@ class ApplicationController @Inject()(
         }
       }
     )
+  }
+
+
+  def displayGitHubUser(username: String): Action[AnyContent] = Action.async { request =>
+    gitHubService.getUserByUserName(username = username).value.map {
+      case Left(error) => resultError(error)
+      case Right(user) => Ok(views.html.display.githubUser(user))
+    }
+
   }
 
 }
