@@ -3,9 +3,12 @@ package controllers
 import cats.data.EitherT
 import models.APIError.BadAPIResponse
 import models.{APIError, DataModel}
+import play.api.data.Form
+import play.api.data.Forms.{nonEmptyText, single}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import services.{GitHubService, RepositoryService}
+import views.html.helper.CSRF
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -145,6 +148,28 @@ class ApplicationController @Inject()(
         val plainTextContent = gitHubService.convertContentToPlainText(repoContent.content)
         Ok {Json.toJson(plainTextContent)}
     }
+  }
+
+  /** ---- Form Redirects ---- */
+
+  private def accessToken(implicit request: Request[_]) = {
+    CSRF.getToken
+  }
+
+  def getUsernameSearch: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    accessToken
+    val placeHolderForm: Form[String] = Form(
+      single(
+        "username" -> nonEmptyText
+      )
+    )
+
+    placeHolderForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest), // Show form with errors
+      username => {
+        Future.successful(Redirect(routes.ApplicationController.getGitHubUser(username = username)))
+      }
+    )
   }
 
 }
