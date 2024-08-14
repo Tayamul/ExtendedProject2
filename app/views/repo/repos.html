@@ -1,0 +1,14 @@
+@import models.RepoContentItem
+
+@(username: String, repos: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+
+@main(repoName){
+
+<div>
+    @for(repo <- repos) {
+    <a href="@routes..ApplicationController.getUserRepoContent(username, repo.name)"
+    >@repo.name</a>
+    }
+</div>
+
+}
