@@ -1,6 +1,9 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
+import play.api.data._
+import play.api.data.Forms._
+
 
 // _id relates to username
 case class DataModel(
@@ -15,4 +18,17 @@ case class DataModel(
 
 object DataModel {
   implicit val formats: OFormat[DataModel] = Json.format[DataModel]
+
+  val userForm: Form[DataModel] = Form(
+    mapping(
+      "_id" -> text,
+      "dateCreated" -> text,
+      "location" -> text,
+      "numFollowers" -> number,
+      "numFollowing" -> number,
+      "repoUrl" -> text,
+      "name" -> text
+    )(DataModel.apply)(DataModel.unapply)
+  )
+
 }
