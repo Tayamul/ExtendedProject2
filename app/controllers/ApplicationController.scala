@@ -2,7 +2,7 @@ package controllers
 
 import cats.data.EitherT
 import models.APIError.BadAPIResponse
-import models.{APIError, DataModel}
+import models.{APIError, DataModel, UsernameSearch}
 import play.api.data.Form
 import play.api.data.Forms.{nonEmptyText, single}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
@@ -176,7 +176,7 @@ class ApplicationController @Inject()(
 
 
   def getUsernameSearchResult: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    placeHolderForm.bindFromRequest().fold(
+    UsernameSearch.usernameSearchForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest), // Show form with errors
       username => {
         Future.successful(Redirect(routes.ApplicationController.getGitHubUser(username = username)))
