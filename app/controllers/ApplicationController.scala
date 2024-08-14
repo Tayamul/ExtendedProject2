@@ -167,9 +167,7 @@ class ApplicationController @Inject()(
     CSRF.getToken
   }
 
-  def getUserNameSearch(): Action[AnyContent] = Action {implicit request: Request[AnyContent] =>
-    Ok // render form here Ok(views.html.form.searchUsername(usernameSearchForm))
-  }
+  def getUserNameSearch(): Action[AnyContent] = ???
 
 
   /** ---- Form Submission Redirects ---- */
@@ -178,8 +176,13 @@ class ApplicationController @Inject()(
   def getUsernameSearchResult: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     UsernameSearch.usernameSearchForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest), // Show form with errors
-      username => {
-        Future.successful(Redirect(routes.ApplicationController.getGitHubUser(username = username)))
+      usernameSearch => {
+        gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
+          case Left(error) => resultError(error)
+          case Right(user) => Ok {
+            Json.toJson(user)
+          }
+        }
       }
     )
   }
