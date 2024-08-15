@@ -1,0 +1,19 @@
+@import helper._
+@import models.github.put.CreateFile
+@(createFileForm: Form[CreateFile])(implicit request:RequestHeader, messages:Messages)
+
+@main("Add File") {
+<div>
+    @helper.form(action =  routes.ApplicationController.CreateNewFile(owner, repoName, dir.path)) {
+    @helper.CSRF.formField
+    @helper.inputText(form("message"), '_label -> "Commit Message", 'placeholder -> "Enter commit message")
+    @helper.inputText(form("content"), '_label -> "Content", 'placeholder -> "Enter file content")
+    @helper.inputText(form("branch"), '_label -> "Branch", 'placeholder -> "Enter branch (optional)", 'required -> false)
+    @helper.inputText(form("committer.name"), '_label -> "Committer Name", 'placeholder -> "Enter committer name")
+    @helper.inputText(form("committer.email"), '_label -> "Committer Email", 'placeholder -> "Enter committer email")
+    @helper.inputText(form("author.name"), '_label -> "Author Name", 'placeholder -> "Enter author name (optional)", 'required -> false)
+    @helper.inputText(form("author.email"), '_label -> "Author Email", 'placeholder -> "Enter author email (optional)", 'required -> false)
+    <input type="submit" class="btn btn-primary" value="Submit">
+    }
+</div>
+}
