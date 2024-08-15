@@ -1,12 +1,16 @@
 package models.github.put
 
 import models.github.RepoContentItem
+import play.api.libs.json.{Json, OFormat}
 
 case class PutResponse(
                         content: RepoContentItem,
-                        commit: PutResponseCommit,
+                        commit: UpdateFile
                       )
 
+object PutResponse{
+  implicit val formats: OFormat[PutResponse] = Json.format[PutResponse]
+}
 
 /**
  * {
