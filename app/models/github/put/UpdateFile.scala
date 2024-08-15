@@ -25,7 +25,7 @@ object UpdateFile {
   // TODO make the branches a select option from possible
   //  add more custom constraints
 
-  val usernameSearchForm: Form[UpdateFile] = Form {
+  val updateForm: Form[UpdateFile] = Form {
     mapping(
       "messages" -> nonEmptyText,
       "content" -> nonEmptyText,

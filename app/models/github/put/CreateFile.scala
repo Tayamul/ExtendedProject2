@@ -22,11 +22,11 @@ object CreateFile {
 
 
   // TODO make the branches a select option from possible branches
-  val usernameSearchForm: Form[CreateFile] = Form {
+  val createForm: Form[CreateFile] = Form {
     mapping(
       "messages" -> nonEmptyText,
       "content" -> nonEmptyText,
-      "branch" -> optional(nonEmptyText),
+      "branch" -> optional(text),
       "committer" -> optional(committerMapping),
       "author" -> optional(committerMapping)
     )(CreateFile.apply)(CreateFile.unapply)

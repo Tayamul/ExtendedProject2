@@ -202,6 +202,24 @@ class ApplicationController @Inject()(
 
 
   /** ---- Put requests GitHub service ---- */
+  def getNewFileInput(owner: String, repoName: String): Action[AnyContent] = Action{ implicit request =>
+    accessToken
+    Ok{views.html.forms.createFile(owner, repoName, CreateFile.createForm)}
+
+  }
+  def createNewFile(owner:String, repoName:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    CreateFile.createForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, formWithErrors))),
+
+      usernameSearch => {
+        val encodedPath = "testPath.txt"
+        gitHubService.createFileRequest(None, owner, repoName, encodedPath, usernameSearch).value.map {
+          case Left(error) => resultError(error)
+          case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
+        }
+      }
+    )
+  }
 
   def createFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[CreateFile] match {
@@ -223,6 +241,7 @@ class ApplicationController @Inject()(
         }
     }
   }
+
 
 
 }

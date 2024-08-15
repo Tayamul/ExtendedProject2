@@ -1,19 +1,19 @@
 @import helper._
 @import models.github.put.CreateFile
-@(createFileForm: Form[CreateFile])(implicit request:RequestHeader, messages:Messages)
+@(owner:String, repoName:String, createFileForm: Form[CreateFile])(implicit request:RequestHeader, messages:Messages)
 
 @main("Add File") {
 <div>
-    @helper.form(action =  routes.ApplicationController.CreateNewFile(owner, repoName, dir.path)) {
+    @helper.form(action =  routes.ApplicationController.createNewFile(owner, repoName)) {
     @helper.CSRF.formField
-    @helper.inputText(form("message"), '_label -> "Commit Message", 'placeholder -> "Enter commit message")
-    @helper.inputText(form("content"), '_label -> "Content", 'placeholder -> "Enter file content")
-    @helper.inputText(form("branch"), '_label -> "Branch", 'placeholder -> "Enter branch (optional)", 'required -> false)
-    @helper.inputText(form("committer.name"), '_label -> "Committer Name", 'placeholder -> "Enter committer name")
-    @helper.inputText(form("committer.email"), '_label -> "Committer Email", 'placeholder -> "Enter committer email")
-    @helper.inputText(form("author.name"), '_label -> "Author Name", 'placeholder -> "Enter author name (optional)", 'required -> false)
-    @helper.inputText(form("author.email"), '_label -> "Author Email", 'placeholder -> "Enter author email (optional)", 'required -> false)
-    <input type="submit" class="btn btn-primary" value="Submit">
+    @helper.inputText(createFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")
+    @helper.inputText(createFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")
+    @helper.inputText(createFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch (optional)")
+    @helper.inputText(createFileForm("committer.name"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")
+    @helper.inputText(createFileForm("committer.email"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")
+    @helper.inputText(createFileForm("author.name"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")
+    @helper.inputText(createFileForm("author.email"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")
+    <input type="submit" value="Submit">
     }
 </div>
 }
