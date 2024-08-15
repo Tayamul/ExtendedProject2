@@ -45,12 +45,12 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
   )
 
   val repoContent: Seq[RepoContentItem] = Seq(
-    RepoContentItem("README.md", "https://github.com/user/repo1/README.md", "file"),
-    RepoContentItem("src", "https://github.com/user/repo1/src", "dir")
+    RepoContentItem("README.md", "https://github.com/user/repo1/README.md", "testSha","file"),
+    RepoContentItem("src", "https://github.com/user/repo1/src", "testSha","dir")
   )
   val encodedPathRepoContent: Seq[RepoContentItem] = Seq(
-    RepoContentItem("README.md", "aHR0cHM6Ly9naXRodWIuY29tL3VzZXIvcmVwbzEvUkVBRE1FLm1k", "file"),
-    RepoContentItem("src", "aHR0cHM6Ly9naXRodWIuY29tL3VzZXIvcmVwbzEvc3Jj", "dir")
+    RepoContentItem("README.md", "aHR0cHM6Ly9naXRodWIuY29tL3VzZXIvcmVwbzEvUkVBRE1FLm1k", "testSha","file"),
+    RepoContentItem("src", "aHR0cHM6Ly9naXRodWIuY29tL3VzZXIvcmVwbzEvc3Jj", "testSha","dir")
   )
 
   val fileContent: RepoFileItem = RepoFileItem("README.md", "file", "base64content", "base64")

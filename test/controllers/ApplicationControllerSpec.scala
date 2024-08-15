@@ -423,7 +423,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "TestRepoName"
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
-        val testRepoContent = Seq(RepoContentItem("Test File Name", "testFilePath", "file"), RepoContentItem("Test Dir Name", "testDirPath", "dir"))
+        val testRepoContent = Seq(RepoContentItem("Test File Name", "testFilePath", "testSha", "file"), RepoContentItem("Test Dir Name", "testDirPath","testSha", "dir"))
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
           .expects(testUrl, *, *)
           .returning(EitherT.rightT(testRepoContent))
@@ -486,7 +486,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testRepoName = "RepoName"
         val testPath = "test/path"
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents/$testPath"
-        val testDirContent = Seq(RepoContentItem("Test File Name", "testFilePath", "file"), RepoContentItem("Test Dir Name", "testDirPath", "dir"))
+        val testDirContent = Seq(RepoContentItem("Test File Name", "testFilePath", "testSha","file"), RepoContentItem("Test Dir Name", "testDirPath","testSha", "dir"))
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
           .expects(testUrl, *, *)
           .returning(EitherT.rightT(testDirContent))

@@ -5,6 +5,7 @@ import play.api.libs.json.{Json, Reads, Writes}
 case class RepoContentItem(
                   name: String,
                   path: String,
+                  sha: String,
                   `type`: String
                   )
 
