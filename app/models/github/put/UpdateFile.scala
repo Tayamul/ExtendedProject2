@@ -1,4 +1,4 @@
-package models.github.create
+package models.github.put
 
 import play.api.libs.json.{Json, OFormat}
 

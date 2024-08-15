@@ -93,4 +93,10 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     val encodedPath = Base64.getEncoder.encodeToString(path.getBytes("UTF-8"))
     encodedPath
   }
+
+
+  /** ---- Put methods for creating / updating ---- */
+
+  def createNewFile(urlOverride: Option[String] = None, username: String, repoName: String, path: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]]
+
 }
