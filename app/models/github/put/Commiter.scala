@@ -9,5 +9,5 @@ case class Commiter(
                    )
 
 object Commiter {
-  implicit val formats: OFormat[RepoFileItem] = Json.format[RepoFileItem]
+  implicit val formats: OFormat[Commiter] = Json.format[Commiter]
 }
