@@ -129,7 +129,7 @@ class ApplicationController @Inject()(
   }
 
 
-  def getUserRepoDirContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async {implicit result =>
+  def getUserRepoDirContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoDirContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
       case Right(repoContent) => Ok(views.html.repos.dirContent(username, repoName, repoContent))

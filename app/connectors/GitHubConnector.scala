@@ -10,10 +10,16 @@ import play.api.libs.ws.{WSClient, WSResponse}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GitHubConnector @Inject()(ws: WSClient) {
+class GitHubConnector @Inject()(ws: WSClient, configuration: play.api.Configuration) {
+
+  private val personalAccessToken = configuration.underlying.getString("play.http.secret.key")
 
   def get[Response](url: String)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
-    val request = ws.url(url)
+
+    val request = ws.url(url).addHttpHeaders(
+      "Accept" -> "application/vnd.github+json",
+      "Authorization" -> s"Bearer $personalAccessToken")
+
     val response = request.get()
 
     EitherT {
