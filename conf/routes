@@ -37,8 +37,11 @@ GET     /users/search                controllers.ApplicationController.getUserna
 
 
 # PUT REQUEST GITHUB API
+# CURL REQUEST ENDPOINTS
 POST /github/:owner/repos/:repoName/file/create/:path    controllers.ApplicationController.createFile(owner: String, repoName: String, path:String)
 POST /github/:owner/repos/:repoName/file/update/:path    controllers.ApplicationController.updateFile(owner: String, repoName: String, path:String)
+
+# FrontEnd Endpoint
 
 GET /github/:owner/:repoName/file/create/form            controllers.ApplicationController.getNewFileInput(owner: String, repoName: String)
 POST /github/:owner/:repoName/file/create/form          controllers.ApplicationController.createNewFile(owner:String, repoName:String)
