@@ -4,7 +4,7 @@ import cats.data.EitherT
 import models.error._
 import models.forms._
 import models.github.GitHubUser
-import models.github.put.CreateFile
+import models.github.put.{CreateFile, UpdateFile}
 import models.mongo._
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
@@ -208,6 +208,16 @@ class ApplicationController @Inject()(
       case JsError(errors) => Future(BadRequest)
       case JsSuccess(file, _) =>
         gitHubService.createFileRequest(None, owner, repoName, path, file).value.map {
+          case Left(error) => resultError(error)
+          case Right(value) => Ok(Json.toJson(value))
+        }
+    }
+  }
+  def updateFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[UpdateFile] match {
+      case JsError(errors) => Future(BadRequest)
+      case JsSuccess(file, _) =>
+        gitHubService.updateFileRequest(None, owner, repoName, path, file).value.map {
           case Left(error) => resultError(error)
           case Right(value) => Ok(Json.toJson(value))
         }

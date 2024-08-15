@@ -38,3 +38,4 @@ GET     /users/search                controllers.ApplicationController.getUserna
 
 # PUT REQUEST GITHUB API
 POST /github/createFile/:owner/:repoName/:path    controllers.ApplicationController.createFile(owner: String, repoName: String, path:String)
+POST /github/updateFile/:owner/:repoName/:path    controllers.ApplicationController.updateFile(owner: String, repoName: String, path:String)
