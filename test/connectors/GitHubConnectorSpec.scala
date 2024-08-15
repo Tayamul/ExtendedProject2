@@ -78,11 +78,13 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{Json, OFormat}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.Configuration
 
 class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
 
   val mockWsClient: WSClient = mock[WSClient]
   val mockRequest: WSRequest = mock[WSRequest]
+
   val connector: GitHubConnector = new GitHubConnector(mockWsClient)
   implicit val ec: ExecutionContext = ExecutionContext.global
 
@@ -108,6 +110,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockResponse.json _).expects().returning(Json.toJson(testUser)).once()
 
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
+        (mockRequest.addHttpHeaders _).expects(*).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.successful(mockResponse)).once()
 
         whenReady(connector.get[GitHubUser](url).value) { result =>
@@ -125,6 +128,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
         (mockResponse.statusText _).expects().returning("Not Found").once()
 
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
+        (mockRequest.addHttpHeaders _).expects(*).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.successful(mockResponse)).once()
 
         whenReady(connector.get[GitHubUser](url).value) { result =>
@@ -135,6 +139,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
 
       "the API request fails with an exception" in {
         (mockWsClient.url(_: String)).expects(url).returning(mockRequest).once()
+        (mockRequest.addHttpHeaders _).expects(*).returning(mockRequest).once()
         (mockRequest.get _).expects().returning(Future.failed(new RuntimeException("Network Error"))).once()
 
         whenReady(connector.get[GitHubUser](url).value.failed) { ex =>

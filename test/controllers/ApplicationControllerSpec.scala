@@ -13,6 +13,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
 import repositories.DataRepoMethods
 import services.{GitHubService, RepositoryService}
+import play.api.Configuration
 
 import scala.concurrent.{ExecutionContext, Future}
 

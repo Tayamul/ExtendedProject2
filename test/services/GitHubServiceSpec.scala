@@ -8,13 +8,14 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.libs.json.OFormat
-
+import play.api.Configuration
 import scala.concurrent.{ExecutionContext, Future}
 
 class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with GuiceOneServerPerSuite {
 
   val mockConnector: GitHubConnector = mock[GitHubConnector]
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+
   val testService: GitHubService = new GitHubService(mockConnector)
 
   val username: String = "testUserName"

@@ -18,6 +18,7 @@ import services.{GitHubService, RepositoryService}
 import shared.TestRequest
 
 import scala.concurrent.ExecutionContext
+import play.api.Configuration
 
 trait BaseSpec extends AnyWordSpec with Matchers
 
@@ -26,6 +27,7 @@ trait BaseSpecWithApplication extends BaseSpec with GuiceOneServerPerSuite with 
   implicit val mat: Materializer = app.materializer
   implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val ws: WSClient = app.injector.instanceOf[WSClient]
+  implicit val config: Configuration = app.injector.instanceOf[Configuration]
 
   lazy val component: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
   lazy val repository: DataRepository = injector.instanceOf[DataRepository]

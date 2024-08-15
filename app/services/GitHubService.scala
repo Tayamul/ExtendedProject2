@@ -4,6 +4,7 @@ import java.util.Base64
 import cats.data.EitherT
 import connectors.GitHubConnector
 import models.{APIError, DataModel, GitHubUser, RepoContentItem, RepoFileItem, Repository}
+import play.api.Configuration
 import play.api.libs.json.OFormat
 import play.shaded.ahc.org.asynchttpclient.Response
 
