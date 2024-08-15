@@ -2,7 +2,7 @@ package models.github.put
 
 import play.api.libs.json.{Json, OFormat}
 
-case class File(
+case class CreateFile(
                        message: String,
                        content: String,
                        branch: Option[String] = None,
@@ -10,6 +10,6 @@ case class File(
                        author: Option[Commiter] = None
                      )
 
-object File {
-  implicit val formats: OFormat[File] = Json.format[File]
+object CreateFile {
+  implicit val formats: OFormat[CreateFile] = Json.format[CreateFile]
 }

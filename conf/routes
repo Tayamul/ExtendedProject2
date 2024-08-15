@@ -34,3 +34,7 @@ GET     /users/search/:username       controllers.ApplicationController.displayG
 POST    /users/save-user-data       controllers.ApplicationController.addUserToTheDatabase()
 POST     /users/search                controllers.ApplicationController.getUsernameSearchResult()
 GET     /users/search                controllers.ApplicationController.getUsernameSearch()
+
+
+# PUT REQUEST GITHUB API
+POST /github/createFile/:owner/:repoName/:path    controllers.ApplicationController.createFile(owner: String, repoName: String, path:String)

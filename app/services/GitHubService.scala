@@ -7,6 +7,7 @@ import models.error._
 import models.forms._
 import models.mongo._
 import models.github._
+import models.github.put._
 
 
 import javax.inject._
@@ -97,6 +98,26 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
   /** ---- Put methods for creating / updating ---- */
 
-  def createNewFile(urlOverride: Option[String] = None, username: String, repoName: String, path: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, Seq[RepoContentItem]]
+  def createFileRequest(urlOverride: Option[String] = None, owner: String, repoName: String, path: String, file: CreateFile)(implicit ec: ExecutionContext): EitherT[Future, APIError, PutResponse] = {
+    val decodedPath = convertContentToPlainText(path)
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/contents/$decodedPath")
+    val fileWithEncodedContent = file.copy(content = baseEncodePath(file.content))
+    val putFileResponseOrError = gitHubConnector.create[PutResponse](url, fileWithEncodedContent)
+    putFileResponseOrError.map {fileResponse =>
+      val encodedPath = baseEncodePath(fileResponse.content.path)
+      fileResponse.copy(content = fileResponse.content.copy(path = encodedPath))
+    }
+  }
 
+
+  def updateFileRequest(urlOverride: Option[String] = None, owner: String, repoName: String, path: String, file: UpdateFile)(implicit ec: ExecutionContext): EitherT[Future, APIError, PutResponse] = {
+    val decodedPath = convertContentToPlainText(path)
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/contents/$decodedPath")
+    val fileWithEncodedContent = file.copy(content = baseEncodePath(file.content))
+    val putFileResponseOrError = gitHubConnector.update[PutResponse](url, fileWithEncodedContent)
+    putFileResponseOrError.map {fileResponse =>
+      val encodedPath = baseEncodePath(fileResponse.content.path)
+      fileResponse.copy(content = fileResponse.content.copy(path = encodedPath))
+    }
+  }
 }
