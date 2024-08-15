@@ -6,11 +6,12 @@ import com.google.inject._
 import models.{APIError, GitHubUser}
 import play.api.libs.json.{JsError, JsSuccess, OFormat, Reads}
 import play.api.libs.ws.{WSClient, WSResponse}
+import play.api.Configuration
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GitHubConnector @Inject()(ws: WSClient, configuration: play.api.Configuration) {
+class GitHubConnector @Inject()(ws: WSClient, val configuration: Configuration) {
 
   private val personalAccessToken = configuration.underlying.getString("play.http.secret.key")
 
