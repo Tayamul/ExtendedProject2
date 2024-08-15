@@ -37,7 +37,7 @@ class GitHubConnector @Inject()(ws: WSClient) {
     }
   }
 
-  def create[Response](url: String, file:CreateFile)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
+  def create[Response](url: String, file: CreateFile)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
 
     val request = ws.url(url).addHttpHeaders(
       "Accept" -> "application/vnd.github+json",
@@ -57,7 +57,8 @@ class GitHubConnector @Inject()(ws: WSClient) {
       }
     }
   }
-  def update[Response](url: String, file:UpdateFile)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
+
+  def update[Response](url: String, file: UpdateFile)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
 
     val request = ws.url(url).addHttpHeaders(
       "Accept" -> "application/vnd.github+json",

@@ -15,7 +15,6 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-
 @Singleton
 class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
@@ -204,7 +203,7 @@ class ApplicationController @Inject()(
 
   /** ---- Put requests GitHub service ---- */
 
-  def createFile(owner: String, repoName: String, path:String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def createFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[CreateFile] match {
       case JsError(errors) => Future(BadRequest)
       case JsSuccess(file, _) =>
