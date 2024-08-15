@@ -1,5 +1,4 @@
-package models
-
+package models.github
 
 import com.google.inject._
 import play.api.Configuration

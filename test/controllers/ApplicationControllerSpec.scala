@@ -3,7 +3,10 @@ package controllers
 import baseSpec.BaseSpecWithApplication
 import cats.data.{EitherT, NonEmptyMap}
 import connectors.GitHubConnector
-import models.{APIError, DataModel, GitHubUser, RepoContentItem, RepoFileItem, Repository}
+import models.error._
+import models.forms._
+import models.mongo._
+import models.github._
 import org.scalamock.scalatest.MockFactory
 import play.api.http.Status
 import play.api.http.Status._

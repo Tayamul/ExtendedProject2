@@ -3,10 +3,11 @@ package services
 import java.util.Base64
 import cats.data.EitherT
 import connectors.GitHubConnector
-import models.{APIError, DataModel, GitHubUser, RepoContentItem, RepoFileItem, Repository}
-import play.api.Configuration
-import play.api.libs.json.OFormat
-import play.shaded.ahc.org.asynchttpclient.Response
+import models.error._
+import models.forms._
+import models.mongo._
+import models.github._
+
 
 import javax.inject._
 import scala.concurrent.impl.Promise

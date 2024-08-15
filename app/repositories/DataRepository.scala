@@ -1,12 +1,14 @@
 package repositories
 
 import com.google.inject._
-import models.{APIError, DataModel}
+import models.error._
+import models.mongo.DataModel
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

@@ -1,4 +1,4 @@
-package models
+package models.github
 
 import play.api.libs.json.{Json, Reads, Writes}
 

@@ -1,7 +1,8 @@
 package repositories
 
 import com.google.inject.ImplementedBy
-import models.{APIError, DataModel}
+import models.error._
+import models.mongo._
 import org.mongodb.scala.result
 
 import scala.concurrent.{ExecutionContext, Future}

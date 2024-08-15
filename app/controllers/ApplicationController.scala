@@ -1,10 +1,10 @@
 package controllers
 
 import cats.data.EitherT
-import models.APIError.BadAPIResponse
-import models.{APIError, DataModel, UsernameSearch}
-import play.api.data.Form
-import play.api.data.Forms.{nonEmptyText, single}
+import models.error._
+import models.forms._
+import models.github.GitHubUser
+import models.mongo._
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import services.{GitHubService, RepositoryService}
@@ -13,8 +13,6 @@ import views.html.helper.CSRF
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-import models.GitHubUser.userForm
-import play.api.Configuration
 
 
 @Singleton
@@ -27,7 +25,7 @@ class ApplicationController @Inject()(
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
-      case BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
+      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
       case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
     }
   }
@@ -189,7 +187,7 @@ class ApplicationController @Inject()(
 
   def addUserToTheDatabase(): Action[AnyContent] = Action.async { implicit request =>
     accessToken
-    userForm.bindFromRequest().fold(
+    GitHubUser.userForm.bindFromRequest().fold(
       formWithErrors => {
         Future.successful(BadRequest("Form data is invalid!"))
       },

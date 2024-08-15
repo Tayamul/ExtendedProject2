@@ -2,7 +2,10 @@ package services
 
 import baseSpec.BaseSpec
 import com.mongodb.client.result.{DeleteResult, UpdateResult}
-import models.{APIError, DataModel, GitHubUser}
+import models.error._
+import models.forms._
+import models.mongo._
+import models.github._
 import org.mongodb.scala.bson.{BsonString, BsonValue}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures

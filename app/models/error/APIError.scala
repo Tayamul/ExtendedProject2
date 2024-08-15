@@ -1,4 +1,4 @@
-package models
+package models.error
 
 import play.api.http.Status
 

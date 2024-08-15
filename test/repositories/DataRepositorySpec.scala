@@ -1,7 +1,11 @@
 package repositories
 
 import baseSpec.BaseSpec
-import models.{APIError, DataModel}
+import models.github._
+import models.error._
+import models.mongo._
+
+
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

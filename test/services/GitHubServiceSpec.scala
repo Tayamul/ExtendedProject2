@@ -3,7 +3,10 @@ package services
 import baseSpec.BaseSpec
 import cats.data.EitherT
 import connectors.GitHubConnector
-import models.{APIError, GitHubUser, RepoContentItem, RepoFileItem, Repository}
+import models.error._
+import models.forms._
+import models.mongo._
+import models.github._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
