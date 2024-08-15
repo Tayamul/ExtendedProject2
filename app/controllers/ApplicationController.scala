@@ -14,6 +14,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 import models.GitHubUser.userForm
+import play.api.Configuration
+
 
 @Singleton
 class ApplicationController @Inject()(
