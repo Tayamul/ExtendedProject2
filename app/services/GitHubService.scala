@@ -103,7 +103,7 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     else None
   }
 
-  def convertFileFormToFile(validFileForm: CreateFileForm): Either[APIError, CreateFile]  = {
+  def convertCreateFileFormToCreateFile(validFileForm: CreateFileForm): Either[APIError, CreateFile]  = {
     try{
       Right(
         CreateFile(
@@ -115,7 +115,22 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
       )
       )
     } catch {
-      case _: Throwable => Left(APIError.BadAPIResponse(500, "Could create file with given inputs"))
+      case _: Throwable => Left(APIError.BadAPIResponse(500, s"Could not create file ${validFileForm.name} with given inputs"))
+    }
+  }
+  def convertUpdateFileFormToUpdateFile(validFileForm: UpdateFileForm, fileSha: String, decodedPath: String): Either[APIError, UpdateFile]  = {
+    try{
+      Right(
+        UpdateFile(
+          message = validFileForm.message,
+          content = validFileForm.content,
+          sha = fileSha,
+          committer = getCommitter(validFileForm.committerName, validFileForm.committerEmail),
+          author = getCommitter(validFileForm.authorName, validFileForm.authorEmail)
+        )
+      )
+    } catch {
+      case _: Throwable => Left(APIError.BadAPIResponse(500, s"Could not update file $decodedPath with given inputs"))
     }
   }
 
