@@ -1,0 +1,14 @@
+
+@import models.github.put.CreateFile
+
+@(path:String, createFile: CreateFile)(implicit request:RequestHeader, messages:Messages)
+
+
+@main("Display a create file") {
+<h1>Created File: @path</h1>
+<p>message: @createFile.message</p>
+<p>content: @createFile.content</p>
+<p>branch: @createFile.branch.getOrElse("")</p>
+<p>committer: @createFile.committer.getOrElse("")</p>
+<p>author: @createFile.author.getOrElse("")</p>
+}

@@ -1,0 +1,20 @@
+@import helper._
+@import models.forms.CreateFileForm
+@(owner:String, repoName:String, createFileForm: Form[CreateFileForm])(implicit request:RequestHeader, messages:Messages)
+
+@main("Add File") {
+<div>
+    @helper.form(action =  routes.ApplicationController.createNewFile(owner, repoName)) {
+    @helper.CSRF.formField
+    @helper.inputText(createFileForm("name"), Symbol("_label") -> "File Name", Symbol("placeholder") -> "example.txt")
+    @helper.inputText(createFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")
+    @helper.inputText(createFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")
+    @helper.inputText(createFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")
+    @helper.inputText(createFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")
+    @helper.inputText(createFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")
+    @helper.inputText(createFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")
+    @helper.inputText(createFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")
+    <input type="submit" class="btn btn-primary" value="Submit">
+    }
+</div>
+}

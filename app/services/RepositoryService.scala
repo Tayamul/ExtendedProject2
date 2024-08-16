@@ -1,8 +1,10 @@
 package services
 
 import com.mongodb.client.result.UpdateResult
-import models.APIError.BadAPIResponse
-import models.{APIError, DataModel, GitHubUser}
+import models.error._
+import models.forms._
+import models.mongo._
+import models.github._
 import org.mongodb.scala.result
 import org.mongodb.scala.result.DeleteResult
 import repositories.DataRepoMethods

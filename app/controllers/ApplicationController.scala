@@ -1,20 +1,21 @@
 package controllers
 
 import cats.data.EitherT
-import models.APIError.BadAPIResponse
-import models.{APIError, DataModel, UsernameSearch}
-import play.api.data.Form
-import play.api.data.Forms.{nonEmptyText, single}
+import models.error._
+import models.forms._
+import models.github.GitHubUser
+import models.github.put.{CreateFile, UpdateFile}
+import models.mongo._
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import services.{GitHubService, RepositoryService}
 import views.html.helper.CSRF
+import play.api.Logger
+import play.api.Logging
+
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
-import models.GitHubUser.userForm
-import play.api.Configuration
 
 
 @Singleton
@@ -22,16 +23,15 @@ class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
                                        val repoService: RepositoryService,
                                        val gitHubService: GitHubService
-                                     )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport {
+                                     )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport with Logging {
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
-      case BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
+      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
       case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
     }
   }
-
 
   /** ---- REPO SERVICE CRUD OPERATIONS ---- */
 
@@ -189,7 +189,7 @@ class ApplicationController @Inject()(
 
   def addUserToTheDatabase(): Action[AnyContent] = Action.async { implicit request =>
     accessToken
-    userForm.bindFromRequest().fold(
+    GitHubUser.userForm.bindFromRequest().fold(
       formWithErrors => {
         Future.successful(BadRequest("Form data is invalid!"))
       },
@@ -201,4 +201,54 @@ class ApplicationController @Inject()(
       }
     )
   }
+
+
+  /** ---- Put requests GitHub service ---- */
+  def getNewFileInput(owner: String, repoName: String): Action[AnyContent] = Action{ implicit request =>
+    accessToken
+    Ok{views.html.forms.createFile(owner, repoName, CreateFileForm.form)}
+  }
+
+  def createNewFile(owner:String, repoName:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    CreateFileForm.form.bindFromRequest().fold(
+      formWithErrors =>{
+        Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, formWithErrors)))
+      },
+      createFileForm => {
+        gitHubService.convertFileFormToFile(createFileForm) match {
+          case Left(error) => Future(resultError(error))
+          case Right(file) =>
+            val encodedPath = gitHubService.baseEncodePath(createFileForm.name)
+            gitHubService.createFileRequest(None, owner, repoName, encodedPath, file).value.map {
+              case Left(error) => resultError(error)
+              case Right(value) => Ok(views.html.display.createFileDisplay(createFileForm.name, file))
+            }
+        }
+      }
+    )
+  }
+
+  def createFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[CreateFile] match {
+      case JsError(errors) => Future(BadRequest)
+      case JsSuccess(file, _) =>
+        gitHubService.createFileRequest(None, owner, repoName, path, file).value.map {
+          case Left(error) => resultError(error)
+          case Right(value) => Ok(Json.toJson(value))
+        }
+    }
+  }
+  def updateFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[UpdateFile] match {
+      case JsError(errors) => Future(BadRequest)
+      case JsSuccess(file, _) =>
+        gitHubService.updateFileRequest(None, owner, repoName, path, file).value.map {
+          case Left(error) => resultError(error)
+          case Right(value) => Ok(Json.toJson(value))
+        }
+    }
+  }
+
+
+
 }

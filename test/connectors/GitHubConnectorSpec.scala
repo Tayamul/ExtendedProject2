@@ -72,7 +72,10 @@ package connectors
 
 import baseSpec.BaseSpec
 import cats.data.EitherT
-import models.{APIError, GitHubUser}
+import models.error._
+import models.forms._
+import models.mongo._
+import models.github._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{Json, OFormat}
