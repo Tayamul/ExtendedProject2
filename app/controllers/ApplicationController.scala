@@ -256,4 +256,22 @@ class ApplicationController @Inject()(
       Ok{views.html.forms.deleteFile(owner, repoName, decodedPath, sha, DeleteFileForm.form)}
     }
 
+
+  def deleteFile(owner:String, repoName:String, filePath:String, fileSha:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    accessToken
+    val encodedPath = gitHubService.baseEncodePath(filePath)
+    DeleteFileForm.form.bindFromRequest().fold(
+      formWithErrors => {
+        Future.successful(BadRequest(views.html.forms.deleteFile(owner, repoName, filePath, fileSha, formWithErrors)))
+      },
+      deleteFileForm => {
+        val deleteFile = DeleteFile(deleteFileForm.message, fileSha, None, None, None)
+        gitHubService.deleteFileRequest(None, owner, repoName, encodedPath, deleteFile).value.map {
+          case Left(error) => resultError(error)
+          case Right(value) => Ok{Json.toJson(value)}
+        }
+      }
+    )
+  }
+
 }
