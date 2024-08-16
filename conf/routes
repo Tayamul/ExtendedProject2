@@ -46,5 +46,5 @@ POST /github/:owner/repos/:repoName/file/update/:path    controllers.Application
 GET /github/:owner/:repoName/file/create/form            controllers.ApplicationController.getNewFileInput(owner: String, repoName: String)
 POST /github/:owner/:repoName/file/create/form          controllers.ApplicationController.createNewFile(owner:String, repoName:String)
 
-GET /github/:owner/:repoName/:filePath/edit/form           controllers.ApplicationController.getEditFileInput(owner:String, repoName:String, filePath:String)
-POST /github/:owner/:repoName/:filePath/edit/form          controllers.ApplicationController.editFile(owner:String, repoName:String, filePath:String)
+GET /github/:owner/:repoName/:filePath/:fileSha/edit/form           controllers.ApplicationController.getEditFileInput(owner:String, repoName:String, filePath:String, fileSha:String)
+POST /github/:owner/:repoName/:filePath/:fileSha/edit/form          controllers.ApplicationController.editFile(owner:String, repoName:String, filePath:String, fileSha:String)

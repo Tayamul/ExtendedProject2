@@ -1,11 +1,11 @@
 @import helper._
 @import models.forms.UpdateFileForm
-@(owner:String, repoName:String, filePath:String, updateFileForm: Form[UpdateFileForm])(implicit request:RequestHeader, messages:Messages)
+@(owner:String, repoName:String, filePath:String, fileSha:String, updateFileForm: Form[UpdateFileForm])(implicit request:RequestHeader, messages:Messages)
 
 @main("Edit File") {
 <div>
     <h2>Edit File: @filePath</h2>
-    @helper.form(action =  routes.ApplicationController.editFile(owner, repoName, filePath)) {
+    @helper.form(action =  routes.ApplicationController.editFile(owner, repoName, filePath, fileSha)) {
     @helper.CSRF.formField
     @helper.inputText(updateFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")
     @helper.inputText(updateFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")
@@ -14,7 +14,7 @@
     @helper.inputText(updateFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")
     @helper.inputText(updateFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")
     @helper.inputText(updateFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")
-    <input type="submit" class="btn btn-primary" value="Submit">
+    <input type="submit" class="btn btn-primary" value="Update">
     }
 </div>
 }

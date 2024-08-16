@@ -8,7 +8,6 @@ import play.api.libs.json.{Json, OFormat}
 case class UpdateFileForm(
                            message: String,
                            content: String,
-                           sha: String,
                            committerName: Option[String] = None,
                            committerEmail: Option[String] = None,
                            authorName: Option[String] = None,
@@ -22,7 +21,6 @@ object UpdateFileForm{
     mapping(
       "message" -> nonEmptyText,
       "content" -> nonEmptyText,
-      "sha" -> nonEmptyText,
       "committerName" -> optional(text),
       "committerEmail" -> optional(text),
       "authorName" -> optional(text),
