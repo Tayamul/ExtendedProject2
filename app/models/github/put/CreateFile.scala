@@ -14,22 +14,4 @@ case class CreateFile(
 
 object CreateFile {
   implicit val formats: OFormat[CreateFile] = Json.format[CreateFile]
-
-  private val committerMapping = mapping(
-    "name" -> nonEmptyText,
-    "email" -> nonEmptyText
-  )(Commiter.apply)(Commiter.unapply)
-
-
-  // TODO make the branches a select option from possible branches
-  val createForm: Form[CreateFile] = Form {
-    mapping(
-      "messages" -> nonEmptyText,
-      "content" -> nonEmptyText,
-      "branch" -> optional(text),
-      "committer" -> optional(committerMapping),
-      "author" -> optional(committerMapping)
-    )(CreateFile.apply)(CreateFile.unapply)
-  }
-
 }
