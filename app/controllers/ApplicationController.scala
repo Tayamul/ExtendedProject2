@@ -257,7 +257,7 @@ class ApplicationController @Inject()(
           case Right(file) =>
             gitHubService.updateFileRequest(None, owner, repoName, encodedPath, file).value.map {
               case Left(error) => resultError(error)
-              case Right(value) => Ok(Redirect(routes.ApplicationController.getUserRepoContent()))
+              case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
             }
         }
       }
