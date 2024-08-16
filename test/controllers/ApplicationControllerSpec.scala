@@ -8,19 +8,23 @@ import models.forms._
 import models.mongo._
 import models.github._
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json, OFormat, Reads}
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, ControllerHelpers, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{await, contentAsJson, contentAsString, defaultAwaitTimeout, status, stubControllerComponents}
 import repositories.DataRepoMethods
 import services.{GitHubService, RepositoryService}
 import play.api.Configuration
+import play.api.test.CSRFTokenHelper.CSRFRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory {
+
+  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
 
   val mockConnector: GitHubConnector = mock[GitHubConnector]
@@ -28,6 +32,8 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
   val mockDataRepo: DataRepoMethods = mock[DataRepoMethods]
   val testRepoService = new RepositoryService(mockDataRepo)
+
+  val controllerComponents: ControllerComponents = stubControllerComponents()
 
   val TestController = new ApplicationController(
     component,
@@ -82,6 +88,8 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "www.github.com",
     Some("testName")
   )
+
+
 
   "ApplicationController .index" should {
     "return 200 Ok with body" when {
@@ -655,6 +663,65 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       }
     }
   }
+
+  "ApplicationController .getUsernameSearch" should {
+
+    "return OK and render the searchUsername view" in {
+
+      val result = TestController.getUsernameSearch()(FakeRequest().withCSRFToken)
+
+      status(result) mustBe OK
+      contentAsString(result) must include("Search Username Form")
+    }
+  }
+
+//  "ApplicationController .getUsernameSearchResult" should {
+//
+//    "return BadRequest and re-render the form when the form data is invalid" in {
+//
+//    }
+//      //val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> "")
+//
+//      val result: Future[Result] = TestController.getUsernameSearchResult()(FakeRequest().withCSRFToken)
+//
+//      status(result) mustBe BAD_REQUEST
+//      contentAsString(result) must include("Search Username Form")
+//    }
+//
+//    "return OK and render the user view when the form data is valid and GitHubService succeeds" in {
+//      // Mock GitHubService to return a successful result
+//      (mockGitHubService.getUserByUserName _)
+//        .expects(validUsernameSearch.username)
+//        .returning(EitherT.rightT[Future, APIError](testGitHubUser))
+//
+//      // Create a fake request with valid form data
+//      val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> validUsernameSearch.username)
+//
+//      // Invoke the controller action
+//      val result: Future[Result] = TestController.getUsernameSearchResult()(fakeRequest)
+//
+//      // Check the result status and content
+//      status(result) mustBe OK
+//      contentAsString(result) must include("githubUser")  // Adjust based on your actual view content
+//    }
+//
+//    "return an error response when GitHubService fails" in {
+//      // Mock GitHubService to return an error
+//      (mockGitHubService.getUserByUserName _)
+//        .expects(validUsernameSearch.username)
+//        .returning(EitherT.leftT[Future, GitHubUser](errorResponse))
+//
+//      // Create a fake request with valid form data
+//      val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> validUsernameSearch.username)
+//
+//      // Invoke the controller action
+//      val result: Future[Result] = TestController.getUsernameSearchResult()(fakeRequest)
+//
+//      // Check the result status and content
+//      status(result) mustBe errorResponse.httpResponseStatus
+//      contentAsJson(result) mustBe Json.toJson(errorResponse.reason)
+//    }
+//  }
 
   override def beforeEach(): Unit = await(repository.deleteAll())
 
