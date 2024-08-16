@@ -6,7 +6,7 @@ import play.api.libs.json.{Json, OFormat}
 case class DeleteFile (
                       message: String,
                       sha: String,
-                      branch: String,
+                      branch: Option[String] = None,
                       committer: Option[Commiter] = None,
                       author: Option[Commiter] = None
                       )
