@@ -238,6 +238,13 @@ class ApplicationController @Inject()(
         }
     }
   }
+
+  def getEditFileInput(owner: String, repoName: String, encodedPath: String): Action[AnyContent] = Action{ implicit request =>
+    accessToken
+    val decodedPath = gitHubService.convertContentToPlainText(encodedPath)
+    Ok{views.html.forms.editFile(owner, repoName, decodedPath, UpdateFileForm.form)}
+  }
+
   def updateFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[UpdateFile] match {
       case JsError(errors) => Future(BadRequest)
