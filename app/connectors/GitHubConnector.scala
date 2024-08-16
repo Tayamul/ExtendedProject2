@@ -9,6 +9,7 @@ import play.api.libs.ws.{WSClient, WSResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 import com.typesafe.config.ConfigFactory
+import models.github.delete.DeleteFile
 import models.github.put.{CreateFile, UpdateFile}
 
 @Singleton
@@ -69,6 +70,26 @@ class GitHubConnector @Inject()(ws: WSClient) {
     EitherT {
       response.map { result =>
         if (result.status == 200 || result.status == 201) {
+          Right(result.json.as[Response])
+        } else {
+          Left(APIError.BadAPIResponse(result.status, result.statusText))
+        }
+      }.recover { case _: WSResponse =>
+        Left(APIError.BadAPIResponse(500, "Could not connect to API."))
+      }
+    }
+  }
+
+  def delete[Response](url: String, file: DeleteFile)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
+    val request = ws.url(url).addHttpHeaders(
+      "Accept" -> "application/vnd.github+json",
+      "Authorization" -> s"Bearer $personalAccessToken")
+
+    val response = request.withMethod("DELETE").withBody(Json.toJson(file)).execute()
+
+    EitherT {
+      response.map { result =>
+        if (result.status == 200) {
           Right(result.json.as[Response])
         } else {
           Left(APIError.BadAPIResponse(result.status, result.statusText))
