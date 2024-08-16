@@ -4,6 +4,7 @@ import cats.data.EitherT
 import models.error._
 import models.forms._
 import models.github.GitHubUser
+import models.github.delete.DeleteFile
 import models.github.put.{CreateFile, UpdateFile}
 import models.mongo._
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
@@ -12,7 +13,6 @@ import services.{GitHubService, RepositoryService}
 import views.html.helper.CSRF
 import play.api.Logger
 import play.api.Logging
-
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -249,6 +249,11 @@ class ApplicationController @Inject()(
     }
   }
 
-
+/** ---- Delete request GitHub service ---- */
+    def getDeleteFileForm(owner: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action { implicit request =>
+        accessToken
+      val decodedPath = gitHubService.convertContentToPlainText(path)
+      Ok{views.html.forms.deleteFile(owner, repoName, decodedPath, sha, DeleteFileForm.form)}
+    }
 
 }
