@@ -46,4 +46,7 @@ POST /github/:owner/:repoName/:filePath/:fileSha/delete/form          controller
 # FrontEnd Endpoint
 
 GET /github/:owner/:repoName/file/create/form            controllers.ApplicationController.getNewFileInput(owner: String, repoName: String)
-POST /github/:owner/:repoName/file/create/form/response          controllers.ApplicationController.createNewFile(owner:String, repoName:String)
+POST /github/:owner/:repoName/file/create/form          controllers.ApplicationController.createNewFile(owner:String, repoName:String)
+
+GET /github/:owner/:repoName/:filePath/:fileSha/edit/form           controllers.ApplicationController.getEditFileInput(owner:String, repoName:String, filePath:String, fileSha:String)
+POST /github/:owner/:repoName/:filePath/:fileSha/edit/form          controllers.ApplicationController.editFile(owner:String, repoName:String, filePath:String, fileSha:String)

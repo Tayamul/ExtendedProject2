@@ -215,7 +215,7 @@ class ApplicationController @Inject()(
         Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, formWithErrors)))
       },
       createFileForm => {
-        gitHubService.convertFileFormToFile(createFileForm) match {
+        gitHubService.convertCreateFileFormToCreateFile(createFileForm) match {
           case Left(error) => Future(resultError(error))
           case Right(file) =>
             val encodedPath = gitHubService.baseEncodePath(createFileForm.name)
@@ -238,6 +238,32 @@ class ApplicationController @Inject()(
         }
     }
   }
+
+  def getEditFileInput(owner: String, repoName: String, encodedPath: String, fileSha:String): Action[AnyContent] = Action{ implicit request =>
+    accessToken
+    val decodedPath = gitHubService.convertContentToPlainText(encodedPath)
+    Ok{views.html.forms.editFile(owner, repoName, decodedPath, fileSha, UpdateFileForm.form)}
+  }
+
+  def editFile(owner: String, repoName: String, decodedPath: String, fileSha:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    val encodedPath = gitHubService.baseEncodePath(decodedPath)
+    UpdateFileForm.form.bindFromRequest().fold(
+      formWithErrors =>{
+        Future.successful(BadRequest(views.html.forms.editFile(owner, repoName, decodedPath, fileSha, formWithErrors)))
+      },
+      updateFileForm => {
+        gitHubService.convertUpdateFileFormToUpdateFile(updateFileForm, fileSha, decodedPath) match {
+          case Left(error) => Future(resultError(error))
+          case Right(file) =>
+            gitHubService.updateFileRequest(None, owner, repoName, encodedPath, file).value.map {
+              case Left(error) => resultError(error)
+              case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
+            }
+        }
+      }
+    )
+  }
+
   def updateFile(owner: String, repoName: String, path: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[UpdateFile] match {
       case JsError(errors) => Future(BadRequest)

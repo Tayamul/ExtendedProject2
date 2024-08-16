@@ -15,24 +15,4 @@ case class UpdateFile (
 
 object UpdateFile {
   implicit val formats: OFormat[UpdateFile] = Json.format[UpdateFile]
-
-  private val committerMapping = mapping(
-    "name" -> nonEmptyText,
-    "email" -> nonEmptyText
-  )(Commiter.apply)(Commiter.unapply)
-
-
-  // TODO make the branches a select option from possible
-  //  add more custom constraints
-
-  val updateForm: Form[UpdateFile] = Form {
-    mapping(
-      "messages" -> nonEmptyText,
-      "content" -> nonEmptyText,
-      "sha" -> nonEmptyText,
-      "branch" -> optional(nonEmptyText),
-      "committer" -> optional(committerMapping),
-      "author" -> optional(committerMapping)
-    )(UpdateFile.apply)(UpdateFile.unapply)
-  }
 }
