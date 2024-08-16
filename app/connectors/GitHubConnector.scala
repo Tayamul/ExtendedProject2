@@ -47,7 +47,7 @@ class GitHubConnector @Inject()(ws: WSClient) {
 
     EitherT {
       response.map { result =>
-        if (result.status == 200 || result.status == 201) {
+        if (result.status == 201) {
           Right(result.json.as[Response])
         } else {
           Left(APIError.BadAPIResponse(result.status, result.statusText))

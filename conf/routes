@@ -44,4 +44,4 @@ POST /github/:owner/repos/:repoName/file/update/:path    controllers.Application
 # FrontEnd Endpoint
 
 GET /github/:owner/:repoName/file/create/form            controllers.ApplicationController.getNewFileInput(owner: String, repoName: String)
-POST /github/:owner/:repoName/file/create/form          controllers.ApplicationController.createNewFile(owner:String, repoName:String)
+POST /github/:owner/:repoName/file/create/form/response          controllers.ApplicationController.createNewFile(owner:String, repoName:String)

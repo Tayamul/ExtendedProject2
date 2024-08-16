@@ -10,6 +10,9 @@ import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import services.{GitHubService, RepositoryService}
 import views.html.helper.CSRF
+import play.api.Logger
+import play.api.Logging
+
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,7 +23,7 @@ class ApplicationController @Inject()(
                                        val controllerComponents: ControllerComponents,
                                        val repoService: RepositoryService,
                                        val gitHubService: GitHubService
-                                     )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport {
+                                     )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport with Logging {
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
@@ -29,7 +32,6 @@ class ApplicationController @Inject()(
       case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
     }
   }
-
 
   /** ---- REPO SERVICE CRUD OPERATIONS ---- */
 
@@ -204,18 +206,23 @@ class ApplicationController @Inject()(
   /** ---- Put requests GitHub service ---- */
   def getNewFileInput(owner: String, repoName: String): Action[AnyContent] = Action{ implicit request =>
     accessToken
-    Ok{views.html.forms.createFile(owner, repoName, CreateFile.createForm)}
-
+    Ok{views.html.forms.createFile(owner, repoName, CreateFileForm.form)}
   }
-  def createNewFile(owner:String, repoName:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    CreateFile.createForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, formWithErrors))),
 
-      usernameSearch => {
-        val encodedPath = "testPath.txt"
-        gitHubService.createFileRequest(None, owner, repoName, encodedPath, usernameSearch).value.map {
-          case Left(error) => resultError(error)
-          case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
+  def createNewFile(owner:String, repoName:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    CreateFileForm.form.bindFromRequest().fold(
+      formWithErrors =>{
+        Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, formWithErrors)))
+      },
+      createFileForm => {
+        gitHubService.convertFileFormToFile(createFileForm) match {
+          case Left(error) => Future(resultError(error))
+          case Right(file) =>
+            val encodedPath = gitHubService.baseEncodePath(createFileForm.name)
+            gitHubService.createFileRequest(None, owner, repoName, encodedPath, file).value.map {
+              case Left(error) => resultError(error)
+              case Right(value) => Ok(views.html.display.createFileDisplay(createFileForm.name, file))
+            }
         }
       }
     )

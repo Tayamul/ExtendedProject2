@@ -4,8 +4,7 @@ import models.github.RepoContentItem
 import play.api.libs.json.{Json, OFormat}
 
 case class PutResponse(
-                        content: RepoContentItem,
-                        commit: UpdateFile
+                        content: RepoContentItem
                       )
 
 object PutResponse{

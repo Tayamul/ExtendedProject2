@@ -98,6 +98,27 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
   /** ---- Put methods for creating / updating ---- */
 
+  def getCommitter(name:Option[String], email:Option[String]):Option[Commiter] = {
+    if (name.isDefined && email.isDefined) Some(Commiter(name.get, email.get))
+    else None
+  }
+
+  def convertFileFormToFile(validFileForm: CreateFileForm): Either[APIError, CreateFile]  = {
+    try{
+      Right(
+        CreateFile(
+        message = validFileForm.message,
+        content = validFileForm.content,
+        branch = validFileForm.branch,
+        committer = getCommitter(validFileForm.committerName, validFileForm.committerEmail),
+        author = getCommitter(validFileForm.authorName, validFileForm.authorEmail)
+      )
+      )
+    } catch {
+      case _: Throwable => Left(APIError.BadAPIResponse(500, "Could create file with given inputs"))
+    }
+  }
+
   def createFileRequest(urlOverride: Option[String] = None, owner: String, repoName: String, path: String, file: CreateFile)(implicit ec: ExecutionContext): EitherT[Future, APIError, PutResponse] = {
     val decodedPath = convertContentToPlainText(path)
     val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/contents/$decodedPath")
