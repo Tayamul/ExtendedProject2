@@ -1,0 +1,19 @@
+@import helper._
+@import models.forms.DeleteFileForm
+@(owner:String, repoName:String, filePath:String, fileSha:String, deleteFileForm: Form[DeleteFileForm])(implicit request:RequestHeader, messages:Messages)
+
+@main("Delete File") {
+<div>
+    <h2>Delete File: @filePath</h2>
+    @helper.form(action =  routes.ApplicationController.deleteFile(owner, repoName, filePath, fileSha)) {
+    @helper.CSRF.formField
+    @helper.inputText(deleteFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")
+    @helper.inputText(deleteFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")
+    @helper.inputText(deleteFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")
+    @helper.inputText(deleteFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")
+    @helper.inputText(deleteFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")
+    @helper.inputText(deleteFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")
+    <input type="submit" class="btn btn-primary" value="Delete">
+    }
+</div>
+}

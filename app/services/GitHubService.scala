@@ -7,8 +7,8 @@ import models.error._
 import models.forms._
 import models.mongo._
 import models.github._
+import models.github.delete.{DeleteFile, DeleteResponse}
 import models.github.put._
-
 
 import javax.inject._
 import scala.concurrent.impl.Promise
@@ -155,5 +155,12 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
       val encodedPath = baseEncodePath(fileResponse.content.path)
       fileResponse.copy(content = fileResponse.content.copy(path = encodedPath))
     }
+  }
+
+  def deleteFileRequest(urlOverride: Option[String] = None, owner: String, repoName: String, path: String, file: DeleteFile)(implicit ec: ExecutionContext): EitherT[Future, APIError, DeleteResponse] = {
+    val decodedPath = convertContentToPlainText(path)
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/contents/$decodedPath")
+    val deleteFileResponseOrError = gitHubConnector.delete[DeleteResponse](url, file)
+    deleteFileResponseOrError
   }
 }
