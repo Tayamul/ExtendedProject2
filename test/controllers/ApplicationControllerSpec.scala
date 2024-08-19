@@ -673,8 +673,8 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
       val result = TestController.getUsernameSearch()(FakeRequest().withCSRFToken)
 
-      status(result) mustBe OK
-      contentAsString(result) must include("Search Username Form")
+      status(result) shouldBe  OK
+      contentAsString(result) should include("Search Username Form")
     }
   }
 
@@ -682,13 +682,14 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
     "return BadRequest and re-render the form when the form data is invalid" in {
 
-    }
-      //val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> "")
-
       val result: Future[Result] = TestController.getUsernameSearchResult()(FakeRequest().withCSRFToken)
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Search Username Form")
+
+      status(result) shouldBe BAD_REQUEST
+      contentAsString(result) should include("Search Username Form")
+
+    }
+
     }
 
 //    "return OK and render the user view when the form data is valid and GitHubService succeeds" in {
