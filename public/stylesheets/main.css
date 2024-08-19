@@ -57,18 +57,6 @@ body {
     margin: 0 auto;
 }
 
-.heading {
-    font-size: 32px;
-    margin-bottom: 10px;
-}
-
-.description {
-    font-size: 24px;
-    color: var(--secondary-text);
-    margin-bottom: 20px;
-    max-width: 300px;
-}
-
 .button {
     background-color: var(--button-bg);
     border: 1px solid var(--border-color);
@@ -85,20 +73,6 @@ body {
     background-color: var(--border-color);
 }
 
-.extra-content {
-    background-color: var(--primary-bg);
-    color: var(--primary-text);
-    border-radius: 50%;
-    width: 300px;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    margin: 0 auto;
-}
-
-
 /* -------- INDEX PAGE --------- */
 
 .index-container {
@@ -113,6 +87,31 @@ flex-direction: row;
 justify-content: space-between;
 margin: 160px auto;
 padding: 50px;
+}
+
+.heading {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 24px;
+    color: var(--secondary-text);
+    margin-bottom: 20px;
+    max-width: 300px;
+}
+
+.extra-content {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    border-radius: 50%;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    margin: 0 auto;
 }
 
 /* -------- NAVBAR --------- */
