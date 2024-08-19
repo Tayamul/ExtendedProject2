@@ -99,6 +99,22 @@ body {
 }
 
 
+/* -------- INDEX PAGE --------- */
+
+.index-container {
+background-color: var(--secondary-bg);
+border-radius: 8px;
+padding: 20px;
+width: 80%;
+max-width: 800px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+margin: 160px auto;
+padding: 50px;
+}
+
 /* -------- NAVBAR --------- */
 
 .navbar {
