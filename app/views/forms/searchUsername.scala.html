@@ -1,16 +1,24 @@
 @import helper._
 @import models.forms.UsernameSearch
-@(usernameForm: Form[UsernameSearch])(implicit request:RequestHeader, messages:Messages)
-
-
+@(usernameForm: Form[UsernameSearch])(implicit request: RequestHeader, messages: Messages)
 
 @main("Search Username Form") {
-<div>
-    @helper.form(action =  routes.ApplicationController.getUsernameSearchResult()) {
+<div class="search-container">
+    <h2 class="search-heading">Any user in mind?</h2>
+
+    @helper.form(action = routes.ApplicationController.getUsernameSearchResult()) {
     @helper.CSRF.formField
-    @helper.inputText(usernameForm("username"), Symbol("placeholder")  -> "Enter Username:")
-    <input type="submit" class="btn btn-primary" value="Submit">
+
+    <div class="input-container">
+        @helper.inputText(
+        usernameForm("username"),
+        Symbol("placeholder") -> "Username",
+        Symbol("class") -> "input-text",
+        Symbol("_showConstraints") -> false
+        )
+    </div>
+
+    <input type="submit" class="submit-button" value="Submit">
     }
 </div>
-
 }
