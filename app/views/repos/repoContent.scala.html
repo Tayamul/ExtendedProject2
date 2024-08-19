@@ -5,7 +5,7 @@
 @main(repoName){
 
 <div>
-    <h2>repoName</h2>
+    <h2>@repoName</h2>
     @for(dir <- contents if dir.`type` == "dir") {
     <div>
     <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"

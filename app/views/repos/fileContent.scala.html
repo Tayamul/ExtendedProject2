@@ -1,29 +1,28 @@
 @import models.github.RepoFileItem
 
-@(username: String, repoName: String, dirPath: String, file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, dirPath:String, dirEncodedPath:String, file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
 
-@main("file content") {
+@main(file.name) {
 
-  <div>
+<div>
 
-      <div>
+    <div>
 
-          <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
-          >repoName</a>
+        <h2>
+            <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
+        >@repoName /</a>
 
-      </div>
+            <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dirEncodedPath)"
+            >@dirPath /</a>
 
-      <div>
-          <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dirPath)"
-          >dirPath</a>
-
-      </div>
+            @file.name
+        </h2>
 
 
-      <h2> @file.name </h2>
+    </div>
 
-      <p> @file.content </p>
-  </div>
+    <p> @file.content </p>
+</div>
 
 
 }
