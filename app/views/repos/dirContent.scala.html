@@ -1,22 +1,29 @@
 @import models.github.RepoContentItem
 
-@(username: String, repoName: String, dirPath: String, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, dirPath: String, encodedDirPath:String, dirName:String, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
 
 @main(repoName){
 
 <div>
+    <h1>
+        <a href="@routes.ApplicationController.displayGitHubUser(username)"
+        >@username</a>
+    </h1>
+
     <h2><a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
     >@repoName /</a>
 
-        <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dirPath)"
-        >@dirPath /</a>
+        <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, encodedDirPath)"
+        >@dirPath</a>
+
+        @dirName
     </h2>
     @for(dir <- contents if dir.`type` == "dir") {
     <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
     >@dir.name</a>
     }
     @for(file <- contents if file.`type` == "file") {
-    <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path)"
+    <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path, file.sha)"
     >@file.name</a>
     }
     <div>

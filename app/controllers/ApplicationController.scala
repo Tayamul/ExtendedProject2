@@ -136,19 +136,25 @@ class ApplicationController @Inject()(
       case Left(error) => resultError(error)
       case Right(repoContent) =>
         val decodedPath = gitHubService.convertContentToPlainText(path)
-        Ok(views.html.repos.dirContent(username, repoName, decodedPath, repoContent))
+        val splitPath = decodedPath.split("/")
+        val prevPath = splitPath.dropRight(1).mkString("/")
+        val displayPath = if(prevPath.isEmpty)"" else prevPath.replace("/", " / ")+" /"
+        val prevPathEncoded = gitHubService.baseEncodePath(prevPath)
+        val dirName = splitPath.last
+        Ok(views.html.repos.dirContent(username, repoName, displayPath, prevPathEncoded,dirName, repoContent))
     }
   }
 
 
-  def getUserRepoFileContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async { implicit result =>
+  def getUserRepoFileContent(username: String, repoName: String, path: String, sha:String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoFileContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
       case Right(repoContent) =>
         val decodedPath = gitHubService.convertContentToPlainText(path)
         val splitPath = decodedPath.split("/").dropRight(1).mkString("/")
+        val displayPath = if(splitPath.isEmpty)"" else splitPath.replace("/", " / ")+" /"
         val splitEncoded = gitHubService.baseEncodePath(splitPath)
-        Ok(views.html.repos.fileContent(username, repoName, splitPath, splitEncoded, repoContent))
+        Ok(views.html.repos.fileContent(username, repoName, displayPath, splitEncoded, sha, repoContent))
     }
   }
 

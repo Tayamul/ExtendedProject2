@@ -5,6 +5,10 @@
 @main(username){
 
 <div>
+    <h1>
+        <a href="@routes.ApplicationController.displayGitHubUser(username)"
+        >@username</a>
+    </h1>
     @for(repo <- repos) {
     <a href="@routes.ApplicationController.getUserRepoContent(username, repo.name)"
     >@repo.name</a>
