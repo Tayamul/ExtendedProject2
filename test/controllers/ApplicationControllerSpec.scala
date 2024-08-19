@@ -675,34 +675,30 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     }
   }
 
-//  "ApplicationController .getUsernameSearchResult" should {
-//
-//    "return BadRequest and re-render the form when the form data is invalid" in {
-//
-//    }
-//      //val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> "")
-//
-//      val result: Future[Result] = TestController.getUsernameSearchResult()(FakeRequest().withCSRFToken)
-//
-//      status(result) mustBe BAD_REQUEST
-//      contentAsString(result) must include("Search Username Form")
-//    }
-//
+  "ApplicationController .getUsernameSearchResult" should {
+
+    "return BadRequest and re-render the form when the form data is invalid" in {
+
+    }
+      //val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> "")
+
+      val result: Future[Result] = TestController.getUsernameSearchResult()(FakeRequest().withCSRFToken)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) must include("Search Username Form")
+    }
+
 //    "return OK and render the user view when the form data is valid and GitHubService succeeds" in {
-//      // Mock GitHubService to return a successful result
 //      (mockGitHubService.getUserByUserName _)
 //        .expects(validUsernameSearch.username)
 //        .returning(EitherT.rightT[Future, APIError](testGitHubUser))
 //
-//      // Create a fake request with valid form data
 //      val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> validUsernameSearch.username)
 //
-//      // Invoke the controller action
 //      val result: Future[Result] = TestController.getUsernameSearchResult()(fakeRequest)
 //
-//      // Check the result status and content
 //      status(result) mustBe OK
-//      contentAsString(result) must include("githubUser")  // Adjust based on your actual view content
+//      contentAsString(result) must include("Search Username Form")
 //    }
 //
 //    "return an error response when GitHubService fails" in {
