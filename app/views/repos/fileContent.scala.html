@@ -1,26 +1,36 @@
 @import models.github.RepoFileItem
 
-@(username: String, repoName: String, dirPath:String, dirEncodedPath:String, file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, dirPath:String, dirEncodedPath:String, sha:String,  file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
 
 @main(file.name) {
 
 <div>
+    <h1>
+        <a href="@routes.ApplicationController.displayGitHubUser(username)"
+        >@username</a>
+    </h1>
 
     <div>
 
         <h2>
             <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
-        >@repoName /</a>
+            >@repoName/</a>
 
             <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dirEncodedPath)"
-            >@dirPath /</a>
+            >@dirPath</a>
 
             @file.name
         </h2>
 
 
     </div>
-
+    <div>
+        <a href="@routes.ApplicationController.getDeleteFileForm(username, repoName, file.path, sha)"
+        >DELETE</a>
+        <a href="@routes.ApplicationController.getEditFileInput(username, repoName, file.path, sha)"
+        >EDIT</a>
+    </div>
+    <h3>File Content:</h3>
     <p> @file.content </p>
 </div>
 
