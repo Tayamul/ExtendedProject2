@@ -1,0 +1,30 @@
+@import models.github.RepoFileItem
+
+@(username: String, repoName: String, dirPath: String, file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
+
+@main("file content") {
+
+  <div>
+
+      <div>
+
+          <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
+          >repoName</a>
+
+      </div>
+
+      <div>
+          <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dirPath)"
+          >dirPath</a>
+
+      </div>
+
+
+      <h2> @file.name </h2>
+
+      <p> @file.content </p>
+  </div>
+
+
+}
+
