@@ -582,6 +582,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "Invalid Repo Name"
         val testPath = "test/path"
+        val testSha = "test-sha"
         val encodedPath = gitService.baseEncodePath(testPath)
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents/$testPath"
         val testFileContent = RepoFileItem(name = "Test File", path = "testFilePath", content = "testContentEncoded", encoding = "base64")
@@ -590,7 +591,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .returning(EitherT.rightT(testFileContent))
           .once()
 
-        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, encodedPath)(FakeRequest())
+        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, encodedPath, testSha)(FakeRequest())
         status(getUserObjResult) shouldBe OK
       }
     }
@@ -600,6 +601,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testBadUserName = s"Invalid Username"
         val testRepoName = "TestRepoName"
         val testPath = "TestFilePath"
+        val testSha = "test-sha"
         val encodedPath = gitService.baseEncodePath(testPath)
         val testUrl = s"https://api.github.com/repos/$testBadUserName/$testRepoName/contents/$testPath"
 
@@ -608,7 +610,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .returning(EitherT.leftT(apiError))
           .once()
 
-        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testBadUserName, testRepoName, encodedPath)(FakeRequest())
+        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testBadUserName, testRepoName, encodedPath, testSha)(FakeRequest())
         status(getUserObjResult) shouldBe NOT_FOUND
       }
       "the repo doesn't exist" in {
@@ -632,6 +634,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "Invalid Repo Name"
         val testBadPath = "Invalid TestFilePath"
+        val testSha = "test-sha"
         val encodedBadPath = gitService.baseEncodePath(testBadPath)
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents/$testBadPath"
 
@@ -640,7 +643,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .returning(EitherT.leftT(apiError))
           .once()
 
-        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, encodedBadPath)(FakeRequest())
+        val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, encodedBadPath, testSha)(FakeRequest())
         status(getUserObjResult) shouldBe NOT_FOUND
       }
     }

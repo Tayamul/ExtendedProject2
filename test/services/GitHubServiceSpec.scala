@@ -53,7 +53,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
     RepoContentItem("src", "aHR0cHM6Ly9naXRodWIuY29tL3VzZXIvcmVwbzEvc3Jj", "testSha","dir")
   )
 
-  val fileContent: RepoFileItem = RepoFileItem("README.md", "file", "base64content", "base64")
+  val fileContent: RepoFileItem = RepoFileItem("README.md", "file", "YmFzZTY0Y29udGVudA==", "base64")
   val encodedPathFileContent: RepoFileItem = RepoFileItem("README.md", "ZmlsZQ==", "base64content", "base64")
 
 
