@@ -1,6 +1,6 @@
 @import models.github.RepoContentItem
 
-@(username: String, repoName: String, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, dirPath: String, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
 
 @main(repoName){
 
@@ -14,6 +14,10 @@
     <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path)"
     >@file.name</a>
     }
+    <div>
+        <a href="@routes.ApplicationController.getNewFileInput(username, repoName, dirPath)"
+        >Add New File</a>
+    </div>
 </div>
 
 }

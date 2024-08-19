@@ -134,7 +134,9 @@ class ApplicationController @Inject()(
   def getUserRepoDirContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoDirContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok(views.html.repos.dirContent(username, repoName, repoContent))
+      case Right(repoContent) =>
+        val decodedPath = gitHubService.convertContentToPlainText(path)
+        Ok(views.html.repos.dirContent(username, repoName, decodedPath, repoContent))
     }
   }
 
@@ -204,21 +206,35 @@ class ApplicationController @Inject()(
 
 
   /** ---- Put requests GitHub service ---- */
-  def getNewFileInput(owner: String, repoName: String): Action[AnyContent] = Action{ implicit request =>
+  def getNewFileInput(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action{ implicit request =>
     accessToken
-    Ok{views.html.forms.createFile(owner, repoName, CreateFileForm.form)}
+    Ok{views.html.forms.createFile(owner, repoName, dirPath, CreateFileForm.form)}
   }
 
-  def createNewFile(owner:String, repoName:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def getNewFilePath(dirPath: String, fileName: String) = {
+    if (dirPath.trim.isEmpty) {
+      fileName
+    }
+    else {
+      s"$dirPath/$fileName"
+    }
+  }
+
+  def getEncodedFilePath(dirPath: String, fileName: String):  String = {
+    val filePath = getNewFilePath(dirPath, fileName)
+    gitHubService.baseEncodePath(filePath)
+  }
+
+  def createNewFile(owner:String, repoName:String, dirPath: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     CreateFileForm.form.bindFromRequest().fold(
       formWithErrors =>{
-        Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, formWithErrors)))
+        Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, dirPath, formWithErrors)))
       },
       createFileForm => {
         gitHubService.convertCreateFileFormToCreateFile(createFileForm) match {
           case Left(error) => Future(resultError(error))
           case Right(file) =>
-            val encodedPath = gitHubService.baseEncodePath(createFileForm.name)
+            val encodedPath = getEncodedFilePath(dirPath, createFileForm.name)
             gitHubService.createFileRequest(None, owner, repoName, encodedPath, file).value.map {
               case Left(error) => resultError(error)
               case Right(value) => Ok(views.html.display.createFileDisplay(createFileForm.name, file))
