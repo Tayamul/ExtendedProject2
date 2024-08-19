@@ -28,6 +28,8 @@
     --repo-text: #4493F8;
     --add-file-btn: #238636;
 
+    --error-color: #ff4d4d;
+
     /* Transition */
     --transition: all 400ms ease;
 
@@ -156,6 +158,69 @@ cursor: pointer;
 color: var(--repo-text);
 }
 
+/* ----------- SEARCH A USER PAGE ----------- */
+.search-container {
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 700px;
+    margin: 50px auto;
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-heading {
+    color: var(--primary-text);
+    font-size: 32px;
+}
+
+.input-container {
+    margin-bottom: 10px;
+    margin-top: -15px;
+}
+
+.input-container label {
+    color: transparent;
+}
+
+.input-text {
+    background-color: var(--button-bg);
+    color: var(--primary-text);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.input-text::placeholder {
+    color: var(--secondary-text);
+}
+
+.submit-button {
+    background-color: var(--add-file-btn);
+    color: var(--primary-text);
+    font-size: 18px;
+    font-weight: 900;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.submit-button:hover {
+    background-color: var(--border-color);
+}
+
+dd.error {
+    color: var(--error-color);
+    font-size: 14px;
+    margin-top: 5px;
+    text-align: left;
+}
+
 /* ----------- Responsive Design ----------- */
 
 /* For tablets (screen width 768px and below) */
@@ -197,6 +262,21 @@ color: var(--repo-text);
     .nav-item {
         margin: 5px 0;
     }
+
+    .search-container {
+        padding: 15px;
+        margin: 0 15px;
+    }
+
+    .input-text {
+        padding: 10px;
+    }
+
+    .submit-button {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
 }
 
 /* For mobile devices (screen width 480px and below) */
