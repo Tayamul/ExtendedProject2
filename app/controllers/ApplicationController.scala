@@ -145,9 +145,10 @@ class ApplicationController @Inject()(
     gitHubService.getUserRepoFileContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
       case Right(repoContent) =>
-        Ok {
-          views.html.repos.fileContent(username, repoName, path, repoContent)
-        }
+        val decodedPath = gitHubService.convertContentToPlainText(path)
+        val splitPath = decodedPath.split("/").dropRight(1).mkString("/")
+        val splitEncoded = gitHubService.baseEncodePath(splitPath)
+        Ok(views.html.repos.fileContent(username, repoName, splitPath, splitEncoded, repoContent))
     }
   }
 
@@ -205,9 +206,11 @@ class ApplicationController @Inject()(
 
 
   /** ---- Put requests GitHub service ---- */
-  def getNewFileInput(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action{ implicit request =>
+  def getNewFileInput(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action { implicit request =>
     accessToken
-    Ok{views.html.forms.createFile(owner, repoName, dirPath, CreateFileForm.form)}
+    Ok {
+      views.html.forms.createFile(owner, repoName, dirPath, CreateFileForm.form)
+    }
   }
 
   def getNewFilePath(dirPath: String, fileName: String) = {
@@ -219,14 +222,14 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getEncodedFilePath(dirPath: String, fileName: String):  String = {
+  def getEncodedFilePath(dirPath: String, fileName: String): String = {
     val filePath = getNewFilePath(dirPath, fileName)
     gitHubService.baseEncodePath(filePath)
   }
 
-  def createNewFile(owner:String, repoName:String, dirPath: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def createNewFile(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     CreateFileForm.form.bindFromRequest().fold(
-      formWithErrors =>{
+      formWithErrors => {
         Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, dirPath, formWithErrors)))
       },
       createFileForm => {
@@ -254,16 +257,18 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getEditFileInput(owner: String, repoName: String, encodedPath: String, fileSha:String): Action[AnyContent] = Action{ implicit request =>
+  def getEditFileInput(owner: String, repoName: String, encodedPath: String, fileSha: String): Action[AnyContent] = Action { implicit request =>
     accessToken
     val decodedPath = gitHubService.convertContentToPlainText(encodedPath)
-    Ok{views.html.forms.editFile(owner, repoName, decodedPath, fileSha, UpdateFileForm.form)}
+    Ok {
+      views.html.forms.editFile(owner, repoName, decodedPath, fileSha, UpdateFileForm.form)
+    }
   }
 
-  def editFile(owner: String, repoName: String, decodedPath: String, fileSha:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def editFile(owner: String, repoName: String, decodedPath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     val encodedPath = gitHubService.baseEncodePath(decodedPath)
     UpdateFileForm.form.bindFromRequest().fold(
-      formWithErrors =>{
+      formWithErrors => {
         Future.successful(BadRequest(views.html.forms.editFile(owner, repoName, decodedPath, fileSha, formWithErrors)))
       },
       updateFileForm => {
@@ -290,15 +295,17 @@ class ApplicationController @Inject()(
     }
   }
 
-/** ---- Delete request GitHub service ---- */
-    def getDeleteFileForm(owner: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action { implicit request =>
-        accessToken
-      val decodedPath = gitHubService.convertContentToPlainText(path)
-      Ok{views.html.forms.deleteFile(owner, repoName, decodedPath, sha, DeleteFileForm.form)}
+  /** ---- Delete request GitHub service ---- */
+  def getDeleteFileForm(owner: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action { implicit request =>
+    accessToken
+    val decodedPath = gitHubService.convertContentToPlainText(path)
+    Ok {
+      views.html.forms.deleteFile(owner, repoName, decodedPath, sha, DeleteFileForm.form)
     }
+  }
 
 
-  def deleteFile(owner:String, repoName:String, filePath:String, fileSha:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def deleteFile(owner: String, repoName: String, filePath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     accessToken
     val encodedPath = gitHubService.baseEncodePath(filePath)
     DeleteFileForm.form.bindFromRequest().fold(
@@ -309,7 +316,9 @@ class ApplicationController @Inject()(
         val deleteFile = DeleteFile(deleteFileForm.message, fileSha, None, None, None)
         gitHubService.deleteFileRequest(None, owner, repoName, encodedPath, deleteFile).value.map {
           case Left(error) => resultError(error)
-          case Right(value) => Ok{Json.toJson(value)}
+          case Right(value) => Ok {
+            Json.toJson(value)
+          }
         }
       }
     )
