@@ -15,7 +15,7 @@ import scala.concurrent.impl.Promise
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
+class  GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
   def getUserByUserName(urlOverride: Option[String] = None, username: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, GitHubUser] = {
     val url = urlOverride.getOrElse(s"https://api.github.com/users/$username")
@@ -74,7 +74,8 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     val userRepoContentOrError = gitHubConnector.get[RepoFileItem](url)
     userRepoContentOrError.map { FileItem =>
       val encodedPath = baseEncodePath(FileItem.path)
-      FileItem.copy(path = encodedPath)
+      val decodedContent = convertContentToPlainText(FileItem.content)
+      FileItem.copy(path = encodedPath, content = decodedContent)
     }
   }
 

@@ -5,7 +5,11 @@
 @main(repoName){
 
 <div>
-    <h2>repoName</h2>
+    <h1>
+        <a href="@routes.ApplicationController.displayGitHubUser(username)"
+        >@username</a>
+    </h1>
+    <h2>@repoName</h2>
     @for(dir <- contents if dir.`type` == "dir") {
     <div>
     <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
@@ -15,16 +19,9 @@
     @for(file <- contents if file.`type` == "file") {
     <div>
         <div>
-            <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path)"
+            <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path, file.sha)"
             >@file.name</a>
         </div>
-        <div>
-            <a href="@routes.ApplicationController.getDeleteFileForm(username, repoName, file.path, file.sha)"
-            >DELETE @file.name</a>
-            <a href="@routes.ApplicationController.getEditFileInput(username, repoName, file.path, file.sha)"
-            >EDIT @file.name</a>
-        </div>
-
     </div>
     }
 
