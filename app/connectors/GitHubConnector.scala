@@ -12,6 +12,8 @@ import com.typesafe.config.ConfigFactory
 import models.github.delete.DeleteFile
 import models.github.put.{CreateFile, UpdateFile}
 
+import javax.swing.text.html.HTML
+
 @Singleton
 class GitHubConnector @Inject()(ws: WSClient) {
 

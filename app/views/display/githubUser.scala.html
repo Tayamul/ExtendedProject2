@@ -3,8 +3,6 @@
 
 @(user: GitHubUser)(implicit request: RequestHeader, messages: Messages)
 
-@main("Display a GitHub user") {
-
 <div class="user-container">
 
     <img src="@user.avatar_url" alt="avatar of the user" id="user-avatar">
@@ -55,5 +53,3 @@
             <button type="submit" class="save-button">Add to Saved Users</button>
         }
 </div>
-
-}

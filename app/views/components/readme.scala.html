@@ -1,0 +1,9 @@
+@(readmeHtml: String)
+
+<div class="readme-container">
+    @if(readmeHtml.nonEmpty) {
+    @Html(readmeHtml)
+    } else {
+    <p class="readme-text">README.md</p>
+    }
+</div>

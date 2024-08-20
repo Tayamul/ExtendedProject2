@@ -150,8 +150,8 @@ class ApplicationController @Inject()(
 
   def getUserRepoReadMe(username: String, repoName: String): Action[AnyContent] = Action.async { result =>
     gitHubService.getRepoReadMe(None, username, repoName).value.map {
-      case Left(error) => resultError(error)
-      case Right(readme) => Ok(readme).as(HTML)
+      case Left(error) => Ok{views.html.components.readme("")}
+      case Right(readme) => Ok{views.html.components.readme(readme)}
     }
   }
 
@@ -183,9 +183,14 @@ class ApplicationController @Inject()(
       formWithErrors => Future.successful(BadRequest(views.html.forms.searchUsername(formWithErrors))), // Show form with errors
 
       usernameSearch => {
+
         gitHubService.getUserByUserName(username = usernameSearch.username).value.map {
           case Left(error) => resultError(error)
-          case Right(user) => Ok(views.html.display.githubUser(user))
+          case Right(user) =>
+            gitHubService.getRepoReadMe(None, usernameSearch.username, usernameSearch.username).value.map {
+              case Left(error) =>Ok {views.html.display.userProfile("", user)}
+              case Right(readme) => Ok{views.html.display.userProfile(readme, user)}
+            }
         }
       }
     )

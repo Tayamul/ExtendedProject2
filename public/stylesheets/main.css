@@ -295,7 +295,21 @@ user-blog a:hover {
     background-color: #218838;
 }
 
+/* ----------- README COMPONENT ----------- */
+.readme-container {
+    background-color: var(--secondary-bg);
+    width: 40rem;
+    min-height: 30rem;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    color: var(--primary-text);
+}
 
+.readme-text {
+    color: var(--secondary-text);
+    font-size: 1.2rem;
+}
 
 /* ----------- Responsive Design ----------- */
 
