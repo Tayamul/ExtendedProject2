@@ -35,11 +35,14 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
     DataModel(
       _id = user.login,
       dateCreated = user.created_at,
-      location = user.location.getOrElse(""),
+      location = user.location.getOrElse("Not set."),
       numFollowers = user.followers,
       numFollowing = user.following,
       repoUrl = user.repos_url,
-      name = user.name.getOrElse("")
+      name = user.name.getOrElse("Not set."),
+      avatarUrl = user.avatar_url,
+      blog = user.blog.getOrElse("Not set."),
+      bio = user.bio.getOrElse("Not set.")
     )
   }
 
