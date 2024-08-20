@@ -11,11 +11,12 @@ import models.github.delete.{DeleteFile, DeleteResponse}
 import models.github.put._
 
 import javax.inject._
+import scala.annotation.tailrec
 import scala.concurrent.impl.Promise
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class  GitHubService @Inject()(gitHubConnector: GitHubConnector) {
+class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
   def getUserByUserName(urlOverride: Option[String] = None, username: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, GitHubUser] = {
     val url = urlOverride.getOrElse(s"https://api.github.com/users/$username")
@@ -97,30 +98,49 @@ class  GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   }
 
 
+  /** ---- Utility methods ---- */
+  def getPathSequence(path:String):List[(String, String)]={
+    // Returns the (dir Name, path to that dir, encoded path to that dir)
+    @tailrec
+    def getPathSegments(path:Seq[String], prevPath:String, acc:List[(String, String)]):List[(String, String)] = {
+      if (path.length <= 1) acc
+      else {
+        val pathSegment = path.head
+        val pathToSegment = if(prevPath.nonEmpty)s"$prevPath/$pathSegment" else s"$pathSegment"
+        val encodedPathSegment = baseEncodePath(pathToSegment)
+        getPathSegments(path.tail, pathToSegment, acc:+(path.head, encodedPathSegment))
+      }
+    }
+    val decodedPath = convertContentToPlainText(path)
+    val splitPath = decodedPath.split("/")
+    getPathSegments(splitPath, "", List())
+  }
+
   /** ---- Put methods for creating / updating ---- */
 
-  def getCommitter(name:Option[String], email:Option[String]):Option[Commiter] = {
+  def getCommitter(name: Option[String], email: Option[String]): Option[Commiter] = {
     if (name.isDefined && email.isDefined) Some(Commiter(name.get, email.get))
     else None
   }
 
-  def convertCreateFileFormToCreateFile(validFileForm: CreateFileForm): Either[APIError, CreateFile]  = {
-    try{
+  def convertCreateFileFormToCreateFile(validFileForm: CreateFileForm): Either[APIError, CreateFile] = {
+    try {
       Right(
         CreateFile(
-        message = validFileForm.message,
-        content = validFileForm.content,
-        branch = validFileForm.branch,
-        committer = getCommitter(validFileForm.committerName, validFileForm.committerEmail),
-        author = getCommitter(validFileForm.authorName, validFileForm.authorEmail)
-      )
+          message = validFileForm.message,
+          content = validFileForm.content,
+          branch = validFileForm.branch,
+          committer = getCommitter(validFileForm.committerName, validFileForm.committerEmail),
+          author = getCommitter(validFileForm.authorName, validFileForm.authorEmail)
+        )
       )
     } catch {
       case _: Throwable => Left(APIError.BadAPIResponse(500, s"Could not create file ${validFileForm.name} with given inputs"))
     }
   }
-  def convertUpdateFileFormToUpdateFile(validFileForm: UpdateFileForm, fileSha: String, decodedPath: String): Either[APIError, UpdateFile]  = {
-    try{
+
+  def convertUpdateFileFormToUpdateFile(validFileForm: UpdateFileForm, fileSha: String, decodedPath: String): Either[APIError, UpdateFile] = {
+    try {
       Right(
         UpdateFile(
           message = validFileForm.message,
@@ -140,7 +160,7 @@ class  GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/contents/$decodedPath")
     val fileWithEncodedContent = file.copy(content = baseEncodePath(file.content))
     val putFileResponseOrError = gitHubConnector.create[PutResponse](url, fileWithEncodedContent)
-    putFileResponseOrError.map {fileResponse =>
+    putFileResponseOrError.map { fileResponse =>
       val encodedPath = baseEncodePath(fileResponse.content.path)
       fileResponse.copy(content = fileResponse.content.copy(path = encodedPath))
     }
@@ -152,7 +172,7 @@ class  GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/contents/$decodedPath")
     val fileWithEncodedContent = file.copy(content = baseEncodePath(file.content))
     val putFileResponseOrError = gitHubConnector.update[PutResponse](url, fileWithEncodedContent)
-    putFileResponseOrError.map {fileResponse =>
+    putFileResponseOrError.map { fileResponse =>
       val encodedPath = baseEncodePath(fileResponse.content.path)
       fileResponse.copy(content = fileResponse.content.copy(path = encodedPath))
     }
