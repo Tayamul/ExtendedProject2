@@ -148,6 +148,21 @@ class ApplicationController @Inject()(
     }
   }
 
+  def getUserRepoReadMe(username: String, repoName: String): Action[AnyContent] = Action.async { result =>
+    gitHubService.getRepoReadMe(None, username, repoName).value.map {
+      case Left(error) => resultError(error)
+      case Right(readme) => Ok(readme).as(HTML)
+    }
+  }
+
+  def getUserReadMe(username:String):Action[AnyContent] = Action.async{result =>
+    gitHubService.getRepoReadMe(None, username, username).value.map {
+      case Left(error) => resultError(error)
+      case Right(readme) => Ok(readme).as(HTML)
+    }
+  }
+
+
   /** ---- Form Rendering ---- */
 
   // Remember to call accessToken in render methods
