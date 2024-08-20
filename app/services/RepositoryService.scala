@@ -40,6 +40,7 @@ class RepositoryService @Inject()(repository: DataRepoMethods)(implicit ec: Exec
       numFollowing = user.following,
       repoUrl = user.repos_url,
       name = user.name.getOrElse("Not set."),
+      email = user.email.getOrElse("Not set."),
       avatarUrl = user.avatar_url,
       blog = user.blog.getOrElse("Not set."),
       bio = user.bio.getOrElse("Not set.")

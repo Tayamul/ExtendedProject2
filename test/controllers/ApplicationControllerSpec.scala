@@ -59,6 +59,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowing = 2,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User",
+    email = "test@email",
     avatarUrl = "testUrl",
     blog = "testBlog",
     bio = "testBio"
@@ -71,9 +72,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowing = 2,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Test User",
-    avatarUrl = "duplicateUrl",
-    blog = "duplicateBlog",
-    bio = "duplicateBio"
+    email = "test@email",
+    avatarUrl = "testUrl",
+    blog = "testBlog",
+    bio = "testBio"
   )
   val updateUserDataModel: DataModel = DataModel(
     _id = "testUserName",
@@ -83,6 +85,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowing = 10,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
     name = "Update User",
+    email = "update@email",
     avatarUrl = "updateUrl",
     blog = "updateBlog",
     bio = "updateBio"
@@ -96,6 +99,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "08/08/2024",
     "www.github.com",
     Some("testName"),
+    Some("test@email"),
     "testUrl",
     Some("Blog"),
     Some("Bio")
