@@ -338,4 +338,17 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
       }
     }
   }
+
+  "getPathSequence" should {
+    "break a path up into a sequence of tuples (dir, encoded path for that dir)" in {
+      val testPath = "testDir1/testDir2/testDir3/file.txt"
+      val encodedTestPath = "dGVzdERpcjEvdGVzdERpcjIvdGVzdERpcjMvZmlsZS50eHQ="
+      val pathSeqResult = testService.getPathSequence(encodedTestPath)
+      pathSeqResult shouldBe List(
+        ("testDir1","dGVzdERpcjE="),
+        ("testDir2", "dGVzdERpcjEvdGVzdERpcjI="),
+        ("testDir3", "dGVzdERpcjEvdGVzdERpcjIvdGVzdERpcjM=")
+      )
+    }
+  }
 }
