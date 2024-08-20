@@ -1,6 +1,6 @@
 @import models.github.RepoFileItem
 
-@(username: String, repoName: String, dirPath:String, dirEncodedPath:String, sha:String,  file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, pathSeq:List[(String, String)], sha:String,  file: RepoFileItem)(implicit request: RequestHeader, messages: Messages)
 
 @main(file.name) {
 
@@ -16,8 +16,10 @@
             <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
             >@repoName/</a>
 
-            <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dirEncodedPath)"
-            >@dirPath</a>
+            @for(pathSegment <- pathSeq){
+            <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, pathSegment._2)"
+            > @pathSegment._1 /</a>
+            }
 
             @file.name
         </h2>

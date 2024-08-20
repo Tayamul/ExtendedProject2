@@ -142,12 +142,9 @@ class ApplicationController @Inject()(
   def getUserRepoFileContent(username: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoFileContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) =>
-        val decodedPath = gitHubService.convertContentToPlainText(path)
-        val splitPath = decodedPath.split("/").dropRight(1).mkString("/")
-        val displayPath = if (splitPath.isEmpty) "" else splitPath.replace("/", " / ") + " /"
-        val splitEncoded = gitHubService.baseEncodePath(splitPath)
-        Ok(views.html.repos.fileContent(username, repoName, displayPath, splitEncoded, sha, repoContent))
+      case Right(repoFileItem) =>
+        val pathSeq = gitHubService.getPathSequence(path)
+        Ok(views.html.repos.fileContent(username, repoName, pathSeq, sha, repoFileItem))
     }
   }
 
