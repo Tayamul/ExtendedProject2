@@ -58,7 +58,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowers = 1,
     numFollowing = 2,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
-    name = "Test User"
+    name = "Test User",
+    avatarUrl = "testUrl",
+    blog = "testBlog",
+    bio = "testBio"
   )
   val testUserDataModelDupe: DataModel = DataModel(
     _id = "testUserName",
@@ -67,7 +70,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowers = 1,
     numFollowing = 2,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
-    name = "Test User"
+    name = "Test User",
+    avatarUrl = "duplicateUrl",
+    blog = "duplicateBlog",
+    bio = "duplicateBio"
   )
   val updateUserDataModel: DataModel = DataModel(
     _id = "testUserName",
@@ -76,7 +82,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowers = 1,
     numFollowing = 10,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
-    name = "Test User"
+    name = "Update User",
+    avatarUrl = "updateUrl",
+    blog = "updateBlog",
+    bio = "updateBio"
   )
 
   val testGitHubUser: GitHubUser = GitHubUser(
@@ -86,7 +95,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     25,
     "08/08/2024",
     "www.github.com",
-    Some("testName")
+    Some("testName"),
+    "testUrl",
+    Some("Blog"),
+    Some("Bio")
   )
 
 
@@ -380,7 +392,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testUrl = s"https://api.github.com/users/$testUserName/repos"
         val testUserRepos = Seq(
-          Repository(name = "Test Name", `private` = false, html_url = "testURL", description = Some("Test Description"))
+          Repository("repo1", `private` = false, "https://github.com/user/repo1", Some("A test repo"), Some("language1"), "visibility1", "defaultBranch1", 1, "gitUrl1", "cloneUrl1", "sshUrl1")
         )
 
         (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))

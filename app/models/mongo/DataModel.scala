@@ -13,7 +13,10 @@ case class DataModel(
                      numFollowers: Int,
                      numFollowing: Int,
                      repoUrl: String,
-                      name: String
+                      name: String,
+                      avatarUrl: String,
+                      blog: String,
+                      bio: String
                     )
 
 object DataModel {
@@ -27,7 +30,10 @@ object DataModel {
       "numFollowers" -> number,
       "numFollowing" -> number,
       "repoUrl" -> text,
-      "name" -> text
+      "name" -> text,
+      "avatarUrl" -> text,
+      "blog" -> text,
+      "bio" -> text
     )(DataModel.apply)(DataModel.unapply)
   )
 
