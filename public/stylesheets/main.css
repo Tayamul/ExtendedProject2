@@ -221,6 +221,82 @@ dd.error {
     text-align: left;
 }
 
+/* ----------- USER AVATAR ----------- */
+.user-container {
+    padding: 20px;
+    width: 350px;
+    margin-top: 40px;
+    margin-left: 300px;
+    text-align: left;
+    color: var(--primary-text);
+}
+
+#user-avatar {
+    width: 256px;
+    height: 256px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 2px solid var(--border-color);
+}
+
+.user-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.user-bio {
+    font-size: 14px;
+    color: var(--secondary-text);
+    margin-bottom: 10px;
+}
+
+.user-icons-container {
+    display: flex;
+    gap: 5px;
+}
+
+.user-follow-stats {
+    font-size: 12px;
+    color: var(--secondary-text);
+    margin-bottom: 10px;
+}
+
+.user-location {
+    font-size: 12px;
+    color: var(--secondary-text);
+}
+
+.user-blog {
+    font-size: 12px;
+    color: var(--secondary-text);
+    margin-bottom: 15px;
+}
+
+.user-blog a {
+    font-size: 12px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+user-blog a:hover {
+    text-decoration: underline;
+}
+
+.save-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #218838;
+}
+
+
+
 /* ----------- Responsive Design ----------- */
 
 /* For tablets (screen width 768px and below) */
