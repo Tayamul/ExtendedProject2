@@ -4,23 +4,36 @@
 @(user: GitHubUser)(implicit request: RequestHeader, messages: Messages)
 
 @main("Display a GitHub user") {
-<h1>GitHub User</h1>
-<p>Name: @user.name.getOrElse("N/A")</p>
-<p>List of user's repositories:<a href="@routes.ApplicationController.getUserRepos(user.login)"> Link to repos</a></p>
-<p>Followers: @user.followers</p>
-<p>Following: @user.following</p>
-    @helper.form(action = routes.ApplicationController.addUserToTheDatabase()) {
-        @helper.CSRF.formField
-        <input type="hidden" name="login" value=@user.login />
-        <input type="hidden" name="location" value=@user.location.getOrElse("") />
-        <input type="hidden" name="followers" value=@user.followers />
-        <input type="hidden" name="following" value=@user.following />
-        <input type="hidden" name="created_at" value=@user.created_at />
-        <input type="hidden" name="repos_url" value=@user.repos_url/>
-        <input type="hidden" name="name" value=@user.name.getOrElse("")/>
-        <input type="hidden" name="avatar_url" value=@user.avatar_url/>
-        <input type="hidden" name="blog" value=@user.blog.getOrElse("")/>
-        <input type="hidden" name="bio" value=@user.bio.getOrElse("")/>
-        <button type="submit">Save User Data</button>
+<div class="user-container">
+
+    <img src="https://avatars.githubusercontent.com/u/25503510?v=4" alt="avatar of the user" id="user-avatar" >
+
+    <h3 class="user-name">@user.login</h3>
+
+    <p class="user-bio">@user.bio.getOrElse("Bio not available.")</p>
+
+    <p class="user-follow-stats">@user.followers followers | @user.following following</p>
+
+    @if(user.blog.isDefined) {
+        <p class="user-bio"><a href="@user.blog" target="_blank">@user.blog.getOrElse("Blog not available.")</a></p>
+    } else {
+        <p class="user-bio">@user.blog.getOrElse("Blog not available.")</p>
     }
+
+    <p>List of user's repositories:<a href="@routes.ApplicationController.getUserRepos(user.login)"> Link to repos</a></p>
+        @helper.form(action = routes.ApplicationController.addUserToTheDatabase()) {
+            @helper.CSRF.formField
+            <input type="hidden" name="login" value=@user.login />
+            <input type="hidden" name="location" value=@user.location.getOrElse("") />
+            <input type="hidden" name="followers" value=@user.followers />
+            <input type="hidden" name="following" value=@user.following />
+            <input type="hidden" name="created_at" value=@user.created_at />
+            <input type="hidden" name="repos_url" value=@user.repos_url/>
+            <input type="hidden" name="name" value=@user.name.getOrElse("")/>
+            <input type="hidden" name="avatar_url" value=@user.avatar_url/>
+            <input type="hidden" name="blog" value=@user.blog.getOrElse("")/>
+            <input type="hidden" name="bio" value=@user.bio.getOrElse("")/>
+            <button type="submit" class="save-button">Save User Data</button>
+        }
+</div>
 }
