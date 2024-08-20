@@ -122,7 +122,6 @@ class ApplicationController @Inject()(
     }
   }
 
-
   def getUserRepoContent(username: String, repoName: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
@@ -130,31 +129,22 @@ class ApplicationController @Inject()(
     }
   }
 
-
   def getUserRepoDirContent(username: String, repoName: String, path: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoDirContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
       case Right(repoContent) =>
-        val decodedPath = gitHubService.convertContentToPlainText(path)
-        val splitPath = decodedPath.split("/")
-        val prevPath = splitPath.dropRight(1).mkString("/")
-        val displayPath = if(prevPath.isEmpty)"" else prevPath.replace("/", " / ")+" /"
-        val prevPathEncoded = gitHubService.baseEncodePath(prevPath)
-        val dirName = splitPath.last
-        Ok(views.html.repos.dirContent(username, repoName, displayPath, prevPathEncoded,dirName, repoContent))
+        val pathSeq = gitHubService.getPathSequence(path)
+        val dirName = gitHubService.getCurrentPathLocation(path)
+        Ok(views.html.repos.dirContent(username, repoName, pathSeq, dirName, repoContent))
     }
   }
 
-
-  def getUserRepoFileContent(username: String, repoName: String, path: String, sha:String): Action[AnyContent] = Action.async { implicit result =>
+  def getUserRepoFileContent(username: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action.async { implicit result =>
     gitHubService.getUserRepoFileContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) =>
-        val decodedPath = gitHubService.convertContentToPlainText(path)
-        val splitPath = decodedPath.split("/").dropRight(1).mkString("/")
-        val displayPath = if(splitPath.isEmpty)"" else splitPath.replace("/", " / ")+" /"
-        val splitEncoded = gitHubService.baseEncodePath(splitPath)
-        Ok(views.html.repos.fileContent(username, repoName, displayPath, splitEncoded, sha, repoContent))
+      case Right(repoFileItem) =>
+        val pathSeq = gitHubService.getPathSequence(path)
+        Ok(views.html.repos.fileContent(username, repoName, pathSeq, sha, repoFileItem))
     }
   }
 
@@ -173,7 +163,6 @@ class ApplicationController @Inject()(
 
   /** ---- Form Submission Redirects ---- */
 
-
   def getUsernameSearchResult(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     UsernameSearch.usernameSearchForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.html.forms.searchUsername(formWithErrors))), // Show form with errors
@@ -186,7 +175,6 @@ class ApplicationController @Inject()(
       }
     )
   }
-
 
   def displayGitHubUser(username: String): Action[AnyContent] = Action.async { implicit request =>
     gitHubService.getUserByUserName(username = username).value.map {
@@ -301,7 +289,9 @@ class ApplicationController @Inject()(
     }
   }
 
+
   /** ---- Delete request GitHub service ---- */
+
   def getDeleteFileForm(owner: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action { implicit request =>
     accessToken
     val decodedPath = gitHubService.convertContentToPlainText(path)
@@ -309,7 +299,6 @@ class ApplicationController @Inject()(
       views.html.forms.deleteFile(owner, repoName, decodedPath, sha, DeleteFileForm.form)
     }
   }
-
 
   def deleteFile(owner: String, repoName: String, filePath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     accessToken

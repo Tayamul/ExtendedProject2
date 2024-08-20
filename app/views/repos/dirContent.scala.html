@@ -1,6 +1,6 @@
 @import models.github.RepoContentItem
 
-@(username: String, repoName: String, dirPath: String, encodedDirPath:String, dirName:String, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, pathSeq:List[(String,String)], currentLocation:(String,String), contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
 
 @main(repoName){
 
@@ -10,13 +10,16 @@
         >@username</a>
     </h1>
 
-    <h2><a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
-    >@repoName /</a>
+    <h2>
+        <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
+        >@repoName /</a>
 
-        <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, encodedDirPath)"
-        >@dirPath</a>
+        @for(pathSegment <- pathSeq){
+        <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, pathSegment._2)"
+        > @pathSegment._1 /</a>
+        }
 
-        @dirName
+        @currentLocation._1
     </h2>
     @for(dir <- contents if dir.`type` == "dir") {
     <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
@@ -27,7 +30,7 @@
     >@file.name</a>
     }
     <div>
-        <a href="@routes.ApplicationController.getNewFileInput(username, repoName, dirPath)"
+        <a href="@routes.ApplicationController.getNewFileInput(username, repoName, currentLocation._2)"
         >Add New File</a>
     </div>
 </div>
