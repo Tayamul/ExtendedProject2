@@ -32,6 +32,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowing = 75,
         repoUrl = "https://github.com/test_user",
         name = "Test User",
+        email = "test@email",
         avatarUrl = "testUrl",
         blog = "testBlog",
         bio = "testBio"
@@ -44,10 +45,11 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
       numFollowers = 150,
       numFollowing = 75,
       repoUrl = "https://github.com/duplicate_user",
-      name = "Duplicate User",
-      avatarUrl = "duplicateUrl",
-      blog = "duplicateBlog",
-      bio = "duplicateBio"
+      name = "Test User",
+      email = "test@email",
+      avatarUrl = "testUrl",
+      blog = "testBlog",
+      bio = "testBio"
     )
 
     val dataModel2 = DataModel(
@@ -58,6 +60,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
       numFollowing = 100,
       repoUrl = "https://github.com/test_user2",
       name = "Test User 2",
+      email = "test@email2",
       avatarUrl = "testUrl 2",
       blog = "testBlog 2",
       bio = "testBio 2"
@@ -100,6 +103,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowing = 75,
         repoUrl = "https://github.com/test_user",
         name = "Test User",
+        email = "test@email",
         avatarUrl = "testUrl",
         blog = "testBlog",
         bio = "testBio"
@@ -121,6 +125,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowing = 75,
         repoUrl = "https://github.com/test_user",
         name = "Test User",
+        email = "test@email",
         avatarUrl = "testUrl",
         blog = "testBlog",
         bio = "testBio"
@@ -149,6 +154,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowing = 75,
         repoUrl = "https://github.com/non_existent_user",
         name = "Non Existent User",
+        email = "test@email",
         avatarUrl = "testUrl",
         blog = "testBlog",
         bio = "testBio"

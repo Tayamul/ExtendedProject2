@@ -37,6 +37,7 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
     "08/08/2024",
     "www.github.com",
     Some("testName"),
+    Some("test@email"),
     "testUrl",
     Some("Blog"),
     Some("Bio")
