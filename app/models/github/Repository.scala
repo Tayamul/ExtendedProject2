@@ -7,6 +7,13 @@ case class Repository(
                     `private`: Boolean,
                     html_url: String,
                     description: Option[String],
+                    language: Option[String],
+                    visibility: String,
+                    default_branch: String,
+                    forks: Int,
+                    git_url: String,
+                    clone_url: String,
+                    ssh_url: String,
                     )
 
 object Repository{
