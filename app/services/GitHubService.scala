@@ -116,6 +116,12 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
     getPathSegments(splitPath, "", List())
   }
 
+  def getCurrentPathLocation(path:String):(String, String) = {
+    val decodedPath = convertContentToPlainText(path)
+    val splitPath = decodedPath.split("/")
+    (splitPath.last, baseEncodePath(path))
+
+  }
   /** ---- Put methods for creating / updating ---- */
 
   def getCommitter(name: Option[String], email: Option[String]): Option[Commiter] = {

@@ -133,13 +133,9 @@ class ApplicationController @Inject()(
     gitHubService.getUserRepoDirContent(None, username, repoName, path).value.map {
       case Left(error) => resultError(error)
       case Right(repoContent) =>
-        val decodedPath = gitHubService.convertContentToPlainText(path)
-        val splitPath = decodedPath.split("/")
-        val prevPath = splitPath.dropRight(1).mkString("/")
-        val displayPath = if (prevPath.isEmpty) "" else prevPath.replace("/", " / ") + " /"
-        val prevPathEncoded = gitHubService.baseEncodePath(prevPath)
-        val dirName = splitPath.last
-        Ok(views.html.repos.dirContent(username, repoName, displayPath, prevPathEncoded, dirName, repoContent))
+        val pathSeq = gitHubService.getPathSequence(path)
+        val dirName = gitHubService.getCurrentPathLocation(path)
+        Ok(views.html.repos.dirContent(username, repoName, pathSeq, dirName, repoContent))
     }
   }
 
