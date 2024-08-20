@@ -12,6 +12,7 @@ case class GitHubUser(
                      created_at: String,
                      repos_url: String,
                      name: Option[String],
+                     email:Option[String],
                      avatar_url: String,
                      blog: Option[String],
                      bio: Option[String]
@@ -28,6 +29,7 @@ object GitHubUser {
       "created_at" -> text,
       "repos_url" -> text,
       "name" -> optional(text),
+      "email" -> optional(text),
       "avatar_url" -> text,
       "blog" -> optional(text),
       "bio" -> optional(text)

@@ -8,12 +8,13 @@ import play.api.data.Forms._
 // _id relates to username
 case class DataModel(
                       _id: String,
-                     dateCreated: String,
-                     location: String,
-                     numFollowers: Int,
-                     numFollowing: Int,
-                     repoUrl: String,
+                      dateCreated: String,
+                      location: String,
+                      numFollowers: Int,
+                      numFollowing: Int,
+                      repoUrl: String,
                       name: String,
+                      email: String,
                       avatarUrl: String,
                       blog: String,
                       bio: String
@@ -31,6 +32,7 @@ object DataModel {
       "numFollowing" -> number,
       "repoUrl" -> text,
       "name" -> text,
+      "email" -> text,
       "avatarUrl" -> text,
       "blog" -> text,
       "bio" -> text
