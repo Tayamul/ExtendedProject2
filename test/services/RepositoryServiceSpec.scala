@@ -27,6 +27,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     3, // num following
     "repoURL",
     "test Name",
+    "test@email",
     "testUrl",
     "testBlog",
     "testBio"
@@ -40,6 +41,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     "date created",
     "repoURL",
     Some("test Name"),
+    Some("test@email"),
     "testUrl",
     Some("testBlog"),
     Some("testBio"),
@@ -122,6 +124,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         3, // num following
         "repoURL",
         "Not set.",
+        "Not set.",
         "testUrl",
         "Not set.",
         "Not set."
@@ -134,6 +137,7 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         3, // num following
         "date created",
         "repoURL",
+        None,
         None,
         "testUrl",
         None,

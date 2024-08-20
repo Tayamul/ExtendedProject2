@@ -99,6 +99,7 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
     "08/08/2024",
     "www.github.com",
     Some("testName"),
+    Some("example@email"),
     "testUrl",
     Some("Blog"),
     Some("Bio")
