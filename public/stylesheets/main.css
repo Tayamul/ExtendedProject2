@@ -229,6 +229,7 @@ dd.error {
     margin-left: 300px;
     text-align: left;
     color: var(--primary-text);
+    float: left;
 }
 
 #user-avatar {
@@ -294,6 +295,9 @@ user-blog a:hover {
 .save-button:hover {
     background-color: #218838;
 }
+/* ----------- USER PROFILE PAGE ----------- */
+.user-profile-container{
+}
 
 /* ----------- README COMPONENT ----------- */
 .readme-container {
@@ -304,6 +308,7 @@ user-blog a:hover {
     border-radius: 15px;
     padding: 20px;
     color: var(--primary-text);
+    float: left;
 }
 
 .readme-text {

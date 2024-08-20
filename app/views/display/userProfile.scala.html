@@ -1,8 +1,10 @@
 @import models.github.GitHubUser
 
-@(readmeHtml: String, user: GitHubUser)
+@(readmeHtml: String, user: GitHubUser)(implicit request: RequestHeader, messages: Messages)
 
 @main("User Profile") {
+<div class="user-profile-container">
+    @views.html.display.githubUser(user)
     @views.html.components.readme(readmeHtml)
-    @views.html.display.gitHubUser(user)
+</div>
 }
