@@ -224,19 +224,19 @@ dd.error {
 /* ----------- USER AVATAR ----------- */
 .user-container {
     padding: 20px;
-    border-radius: 10px;
     width: 350px;
-    margin: 0 auto;
+    margin-top: 40px;
+    margin-left: 300px;
     text-align: left;
-    color: #fff;
+    color: var(--primary-text);
 }
 
 #user-avatar {
-    width: 500px;
-    height: 500px;
+    width: 256px;
+    height: 256px;
     border-radius: 50%;
     margin-bottom: 20px;
-    border: 5px solid var(--border-color);
+    border: 2px solid var(--border-color);
 }
 
 .user-name {
@@ -247,26 +247,41 @@ dd.error {
 .user-bio {
     font-size: 14px;
     color: var(--secondary-text);
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+}
+
+.user-icons-container {
+    display: flex;
+    gap: 5px;
 }
 
 .user-follow-stats {
     font-size: 12px;
     color: var(--secondary-text);
+    margin-bottom: 10px;
 }
 
-/* External Links */
-.user-follow-stats a {
-    font-size: 14px;
+.user-location {
+    font-size: 12px;
+    color: var(--secondary-text);
+}
+
+.user-blog {
+    font-size: 12px;
+    color: var(--secondary-text);
+    margin-bottom: 15px;
+}
+
+.user-blog a {
+    font-size: 12px;
     color: #007bff;
     text-decoration: none;
 }
 
-user-follow-stats a:hover {
+user-blog a:hover {
     text-decoration: underline;
 }
 
-/* Save Button */
 .save-button {
     background-color: #28a745;
     color: white;
@@ -279,8 +294,6 @@ user-follow-stats a:hover {
 .save-button:hover {
     background-color: #218838;
 }
-
-
 
 
 
