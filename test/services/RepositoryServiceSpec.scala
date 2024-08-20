@@ -26,7 +26,10 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     3, // num followers
     3, // num following
     "repoURL",
-    "test Name"
+    "test Name",
+    "testUrl",
+    "testBlog",
+    "testBio"
   )
 
   private val gitHubUserModel: GitHubUser = GitHubUser(
@@ -36,7 +39,10 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
     3, // num following
     "date created",
     "repoURL",
-    Some("test Name")
+    Some("test Name"),
+    "testUrl",
+    Some("testBlog"),
+    Some("testBio"),
   )
 
 
@@ -111,11 +117,14 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
       val dataModelMissingOptionalFields: DataModel = DataModel(
         "username",
         "date created",
-        "",
+        "Not set.",
         3, // num followers
         3, // num following
         "repoURL",
-        ""
+        "Not set.",
+        "testUrl",
+        "Not set.",
+        "Not set."
       )
 
       val gitHubUserModelMissingOptionalFields: GitHubUser = GitHubUser(
@@ -125,6 +134,9 @@ class RepositoryServiceSpec extends BaseSpec with MockFactory with ScalaFutures 
         3, // num following
         "date created",
         "repoURL",
+        None,
+        "testUrl",
+        None,
         None
       )
 

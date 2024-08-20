@@ -98,7 +98,10 @@ class GitHubConnectorSpec extends BaseSpec with ScalaFutures with MockFactory {
     25,
     "08/08/2024",
     "www.github.com",
-    Some("testName")
+    Some("testName"),
+    "testUrl",
+    Some("Blog"),
+    Some("Bio")
   )
 
   implicit val githubUserFormat: OFormat[GitHubUser] = Json.format[GitHubUser]

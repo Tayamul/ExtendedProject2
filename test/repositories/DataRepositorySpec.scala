@@ -21,15 +21,9 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
   val repository: DataRepository = inject[DataRepository]
 
-  override def beforeEach(): Unit = {
-    await(repository.deleteAll())
-    super.beforeEach()
-  }
-
   "DataRepository" should {
 
     // Create tests
-    "successfully create and retrieve a DataModel" in {
       val dataModel = DataModel(
         _id = "test_user",
         dateCreated = LocalDate.now().toString,
@@ -37,8 +31,39 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowers = 150,
         numFollowing = 75,
         repoUrl = "https://github.com/test_user",
-        name = "Test User"
+        name = "Test User",
+        avatarUrl = "testUrl",
+        blog = "testBlog",
+        bio = "testBio"
       )
+
+    val dataModel1 = DataModel(
+      _id = "duplicate_user",
+      dateCreated = LocalDate.now().toString,
+      location = "London",
+      numFollowers = 150,
+      numFollowing = 75,
+      repoUrl = "https://github.com/duplicate_user",
+      name = "Duplicate User",
+      avatarUrl = "duplicateUrl",
+      blog = "duplicateBlog",
+      bio = "duplicateBio"
+    )
+
+    val dataModel2 = DataModel(
+      _id = "test_user2",
+      dateCreated = LocalDate.now().toString,
+      location = "Paris",
+      numFollowers = 200,
+      numFollowing = 100,
+      repoUrl = "https://github.com/test_user2",
+      name = "Test User 2",
+      avatarUrl = "testUrl 2",
+      blog = "testBlog 2",
+      bio = "testBio 2"
+    )
+
+    "successfully create and retrieve a DataModel" in {
 
       val createResult = await(repository.create(dataModel))
       createResult mustBe Right(dataModel)
@@ -48,15 +73,7 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
     }
 
     "return an error when creating a DataModel with a duplicate username" in {
-      val dataModel1 = DataModel(
-        _id = "duplicate_user",
-        dateCreated = LocalDate.now().toString,
-        location = "London",
-        numFollowers = 150,
-        numFollowing = 75,
-        repoUrl = "https://github.com/duplicate_user",
-        name = "Duplicate User"
-      )
+
       await(repository.create(dataModel1)) mustBe Right(dataModel1)
 
       val dataModel2 = dataModel1.copy(location = "Paris")
@@ -82,7 +99,10 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowers = 150,
         numFollowing = 75,
         repoUrl = "https://github.com/test_user",
-        name = "Test User"
+        name = "Test User",
+        avatarUrl = "testUrl",
+        blog = "testBlog",
+        bio = "testBio"
       )
 
       await(repository.create(dataModel))
@@ -100,7 +120,10 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowers = 150,
         numFollowing = 75,
         repoUrl = "https://github.com/test_user",
-        name = "Test User"
+        name = "Test User",
+        avatarUrl = "testUrl",
+        blog = "testBlog",
+        bio = "testBio"
       )
 
       await(repository.create(dataModel))
@@ -125,7 +148,10 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
         numFollowers = 150,
         numFollowing = 75,
         repoUrl = "https://github.com/non_existent_user",
-        name = "Non Existent User"
+        name = "Non Existent User",
+        avatarUrl = "testUrl",
+        blog = "testBlog",
+        bio = "testBio"
       )
 
       val updateResult = await(repository.update("non_existent_user", dataModel))
@@ -142,15 +168,6 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
     // Delete tests
     "delete a DataModel by username" in {
-      val dataModel = DataModel(
-        _id = "test_user",
-        dateCreated = LocalDate.now().toString,
-        location = "London",
-        numFollowers = 150,
-        numFollowing = 75,
-        repoUrl = "https://github.com/test_user",
-        name = "Test User"
-      )
 
       await(repository.create(dataModel))
 
@@ -183,24 +200,6 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
     }
 
     "return a sequence of DataModels when index is called and there are records" in {
-      val dataModel1 = DataModel(
-        _id = "test_user1",
-        dateCreated = LocalDate.now().toString,
-        location = "London",
-        numFollowers = 150,
-        numFollowing = 75,
-        repoUrl = "https://github.com/test_user1",
-        name = "Test User 1"
-      )
-      val dataModel2 = DataModel(
-        _id = "test_user2",
-        dateCreated = LocalDate.now().toString,
-        location = "Paris",
-        numFollowers = 200,
-        numFollowing = 100,
-        repoUrl = "https://github.com/test_user2",
-        name = "Test User 2"
-      )
 
       await(repository.create(dataModel1))
       await(repository.create(dataModel2))
@@ -209,4 +208,9 @@ class DataRepositorySpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
       indexResult mustBe Right(Seq(dataModel1, dataModel2))
     }
   }
+
+  override def beforeEach(): Unit = await(repository.deleteAll())
+
+  override def afterEach(): Unit = await(repository.deleteAll())
+
 }

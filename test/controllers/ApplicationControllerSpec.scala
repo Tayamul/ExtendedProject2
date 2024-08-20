@@ -58,7 +58,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowers = 1,
     numFollowing = 2,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
-    name = "Test User"
+    name = "Test User",
+    avatarUrl = "testUrl",
+    blog = "testBlog",
+    bio = "testBio"
   )
   val testUserDataModelDupe: DataModel = DataModel(
     _id = "testUserName",
@@ -67,7 +70,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowers = 1,
     numFollowing = 2,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
-    name = "Test User"
+    name = "Test User",
+    avatarUrl = "duplicateUrl",
+    blog = "duplicateBlog",
+    bio = "duplicateBio"
   )
   val updateUserDataModel: DataModel = DataModel(
     _id = "testUserName",
@@ -76,7 +82,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     numFollowers = 1,
     numFollowing = 10,
     repoUrl = "https://api.github.com/users/tbg2003/repos",
-    name = "Test User"
+    name = "Update User",
+    avatarUrl = "updateUrl",
+    blog = "updateBlog",
+    bio = "updateBio"
   )
 
   val testGitHubUser: GitHubUser = GitHubUser(
@@ -86,7 +95,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     25,
     "08/08/2024",
     "www.github.com",
-    Some("testName")
+    Some("testName"),
+    "testUrl",
+    Some("Blog"),
+    Some("Bio")
   )
 
 

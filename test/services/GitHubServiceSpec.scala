@@ -36,7 +36,10 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
     25,
     "08/08/2024",
     "www.github.com",
-    Some("testName")
+    Some("testName"),
+    "testUrl",
+    Some("Blog"),
+    Some("Bio")
   )
 
   val repos: Seq[Repository] = Seq(
