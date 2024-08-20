@@ -392,7 +392,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testUrl = s"https://api.github.com/users/$testUserName/repos"
         val testUserRepos = Seq(
-          Repository(name = "Test Name", `private` = false, html_url = "testURL", description = Some("Test Description"))
+          Repository("repo1", `private` = false, "https://github.com/user/repo1", Some("A test repo"), Some("language1"), "visibility1", "defaultBranch1", 1, "gitUrl1", "cloneUrl1", "sshUrl1")
         )
 
         (mockConnector.get(_: String)(_: Reads[Seq[Repository]], _: ExecutionContext))

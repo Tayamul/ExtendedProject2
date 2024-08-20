@@ -43,8 +43,8 @@ class GitHubServiceSpec extends BaseSpec with ScalaFutures with MockFactory with
   )
 
   val repos: Seq[Repository] = Seq(
-    Repository("repo1", `private` = false, "https://github.com/user/repo1", Some("A test repo")),
-    Repository("repo2", `private` = true, "https://github.com/user/repo2", Some("Another test repo"))
+    Repository("repo1", `private` = false, "https://github.com/user/repo1", Some("A test repo"), Some("language1"), "visibility1", "defaultBranch1", 1, "gitUrl1", "cloneUrl1", "sshUrl1"),
+    Repository("repo2", `private` = true, "https://github.com/user/repo2", Some("Another test repo"), Some("language2"), "visibility2", "defaultBranch2", 2, "gitUrl2", "cloneUrl2", "sshUrl2")
   )
 
   val repoContent: Seq[RepoContentItem] = Seq(
