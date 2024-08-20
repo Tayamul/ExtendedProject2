@@ -685,58 +685,23 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
       val result = TestController.getUsernameSearch()(FakeRequest().withCSRFToken)
 
-      status(result) mustBe OK
-      contentAsString(result) must include("Search Username Form")
+      status(result) shouldBe  OK
+      contentAsString(result) should include("Search Username Form")
     }
   }
 
-//  "ApplicationController .getUsernameSearchResult" should {
-//
-//    "return BadRequest and re-render the form when the form data is invalid" in {
-//
-//    }
-//      //val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> "")
-//
-//      val result: Future[Result] = TestController.getUsernameSearchResult()(FakeRequest().withCSRFToken)
-//
-//      status(result) mustBe BAD_REQUEST
-//      contentAsString(result) must include("Search Username Form")
-//    }
-//
-//    "return OK and render the user view when the form data is valid and GitHubService succeeds" in {
-//      // Mock GitHubService to return a successful result
-//      (mockGitHubService.getUserByUserName _)
-//        .expects(validUsernameSearch.username)
-//        .returning(EitherT.rightT[Future, APIError](testGitHubUser))
-//
-//      // Create a fake request with valid form data
-//      val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> validUsernameSearch.username)
-//
-//      // Invoke the controller action
-//      val result: Future[Result] = TestController.getUsernameSearchResult()(fakeRequest)
-//
-//      // Check the result status and content
-//      status(result) mustBe OK
-//      contentAsString(result) must include("githubUser")  // Adjust based on your actual view content
-//    }
-//
-//    "return an error response when GitHubService fails" in {
-//      // Mock GitHubService to return an error
-//      (mockGitHubService.getUserByUserName _)
-//        .expects(validUsernameSearch.username)
-//        .returning(EitherT.leftT[Future, GitHubUser](errorResponse))
-//
-//      // Create a fake request with valid form data
-//      val fakeRequest = FakeRequest().withCSRFToken.withFormUrlEncodedBody("username" -> validUsernameSearch.username)
-//
-//      // Invoke the controller action
-//      val result: Future[Result] = TestController.getUsernameSearchResult()(fakeRequest)
-//
-//      // Check the result status and content
-//      status(result) mustBe errorResponse.httpResponseStatus
-//      contentAsJson(result) mustBe Json.toJson(errorResponse.reason)
-//    }
-//  }
+  "ApplicationController .getUsernameSearchResult" should {
+
+    "return BadRequest and re-render the form when the form data is invalid" in {
+
+      val result: Future[Result] = TestController.getUsernameSearchResult()(FakeRequest().withCSRFToken)
+
+
+      status(result) shouldBe BAD_REQUEST
+      contentAsString(result) should include("Search Username Form")
+
+    }
+  }
 
   override def beforeEach(): Unit = await(repository.deleteAll())
 
