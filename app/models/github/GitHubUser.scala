@@ -11,7 +11,10 @@ case class GitHubUser(
                      following: Int,
                      created_at: String,
                      repos_url: String,
-                     name: Option[String]
+                     name: Option[String],
+                     avatar_url: String,
+                     blog: Option[String],
+                     bio: Option[String]
                      )
 object GitHubUser {
   implicit val formats: OFormat[GitHubUser] = Json.format[GitHubUser]
@@ -24,7 +27,10 @@ object GitHubUser {
       "following" -> number,
       "created_at" -> text,
       "repos_url" -> text,
-      "name" -> optional(text)
+      "name" -> optional(text),
+      "avatar_url" -> text,
+      "blog" -> optional(text),
+      "bio" -> optional(text)
     )(GitHubUser.apply)(GitHubUser.unapply)
   )
 }
