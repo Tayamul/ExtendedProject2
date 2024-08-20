@@ -17,6 +17,26 @@ class GitHubConnector @Inject()(ws: WSClient) {
 
   private val personalAccessToken = ConfigFactory.load().getString("play.http.secret.key")
 
+  def getHTML(url: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, String] = {
+
+    val request = ws.url(url).addHttpHeaders(
+      "Accept" -> "application/vnd.github.html+json",
+      "Authorization" -> s"Bearer $personalAccessToken")
+
+    val response = request.get()
+
+    EitherT {
+      response.map { response =>
+        response.status match {
+          case 200 =>
+            Right(response.body)
+          case _ =>
+            Left(APIError.BadAPIResponse(500,"Could not fetch README"))
+        }
+      }
+    }
+  }
+
   def get[Response](url: String)(implicit rds: Reads[Response], ec: ExecutionContext): EitherT[Future, APIError, Response] = {
 
     val request = ws.url(url).addHttpHeaders(

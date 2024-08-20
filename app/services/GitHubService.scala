@@ -68,6 +68,11 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
       }
     }
   }
+  def getRepoReadMe(urlOverride: Option[String] = None, owner: String, repoName: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, String] = {
+    val url = urlOverride.getOrElse(s"https://api.github.com/repos/$owner/$repoName/readme")
+    val userRepoReadMeOrError = gitHubConnector.getHTML(url)
+    userRepoReadMeOrError
+  }
 
   def getUserRepoFileContent(urlOverride: Option[String] = None, username: String, repoName: String, path: String)(implicit ec: ExecutionContext): EitherT[Future, APIError, RepoFileItem] = {
     val decodedPath = convertContentToPlainText(path)

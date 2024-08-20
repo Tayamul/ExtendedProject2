@@ -50,3 +50,5 @@ POST /github/:owner/:repoName/file/create/form          controllers.ApplicationC
 
 GET /github/:owner/:repoName/:filePath/:fileSha/edit/form           controllers.ApplicationController.getEditFileInput(owner:String, repoName:String, filePath:String, fileSha:String)
 POST /github/:owner/:repoName/:filePath/:fileSha/edit/form          controllers.ApplicationController.editFile(owner:String, repoName:String, filePath:String, fileSha:String)
+
+GET /github/:owner/:repoName/readme                                 controllers.ApplicationController.getUserRepoReadMe(owner: String, repoName: String)
