@@ -119,43 +119,42 @@ padding: 50px;
 /* -------- NAVBAR --------- */
 
 .navbar {
-background-color: var(--primary-bg);
-padding: 20px 30px;
-border-bottom: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .navbar-container {
-display: flex;
-justify-content: space-between;
-align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar-brand {
-color: var(--primary-text);
-text-decoration: none;
-font-size: 24px;
+    color: var(--primary-text);
+    text-decoration: none;
+    font-size: 24px;
 }
 
 .navbar-nav {
-list-style: none;
-margin: 0;
-padding: 0;
-display: flex;
-}
-
-.nav-item {
-margin-left: 20px;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
 }
 
 .nav-link {
-color: var(--primary-text);
-text-decoration: none;
-font-size: 16px;
-cursor: pointer;
+    color: var(--primary-text);
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: var(--transition);
 }
 
 .nav-link:hover {
-color: var(--repo-text);
+    color: var(--secondary-text);
 }
 
 /* ----------- SEARCH A USER PAGE ----------- */
