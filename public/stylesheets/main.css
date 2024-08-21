@@ -401,6 +401,14 @@ user-blog a:hover {
     background-color: #218838;
 }
 
+/* Repo Content page */
+
+.repository-container {
+    padding: 20px;
+    background-color: red;
+}
+
+
 
 /* ----------- Responsive Design ----------- */
 
@@ -507,4 +515,6 @@ user-blog a:hover {
         font-size: 14px;
     }
 }
+
+
 

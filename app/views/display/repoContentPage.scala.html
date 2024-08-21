@@ -2,16 +2,23 @@
 @import models.github.RepoContentItem
 @import helper._
 
-@(repo: Repository, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, repo: Option[Repository], contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+
+@main("Repository Page"){
 
 <div class="repository-container">
 
+    @if(repo.isDefined) {
+
+
+
     <div class="repo-header">
-        <h1 class="repo-name"><a href="@repo.html_url">@repo.name</a></h1>
-        <p class="repo-visibility">@repo.visibility.capitalize</p>
+        <h1 class="repo-name"><a href="@repo.get.html_url">@repo.get.name</a></h1>
+        <p class="repo-visibility">@repo.get.visibility.capitalize</p>
     </div>
 
-    <p class="repo-description">@repo.description.getOrElse("No description available.")</p>
+    <p class="repo-description">@repo.get.description.getOrElse("No description available.")</p>
+    }
 
     <div class="repo-action-buttons">
         <button class="btn">Watch</button>
@@ -23,7 +30,7 @@
         <div class="clone-url-section">
             <p class="clone-title">Clone with HTTPS</p>
             <div class="input-group">
-                <input type="text" value="@repo.clone_url" readonly />
+                <input type="text" value="@repo.get.clone_url" readonly />
                 <button class="btn">Copy</button>
             </div>
         </div>
@@ -31,7 +38,7 @@
         <div class="clone-url-section">
             <p class="clone-title">Clone with SSH</p>
             <div class="input-group">
-                <input type="text" value="@repo.ssh_url" readonly />
+                <input type="text" value="@repo.get.ssh_url" readonly />
                 <button class="btn">Copy</button>
             </div>
         </div>
@@ -39,7 +46,7 @@
         <div class="clone-url-section">
             <p class="clone-title">Clone with Git</p>
             <div class="input-group">
-                <input type="text" value="@repo.git_url" readonly />
+                <input type="text" value="@repo.get.git_url" readonly />
                 <button class="btn">Copy</button>
             </div>
         </div>
@@ -48,42 +55,30 @@
     <div class="repo-contents">
         <h2>Files and Folders</h2>
         <ul>
-            @for(content <- contents) {
+            @for(dir <- contents if dir.`type` == "dir") {
             <li>
-                @if(content.`type` == "dir") {
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#8D96A0" class="bi bi-folder" viewBox="0 0 16 16">
                     <path d="M2.5 4a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1h4a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5H1a.5.5 0 0 1-.5-.5V4.5A.5.5 0 0 1 1 4h1z"/>
                 </svg>
-                <span class="folder-name">@content.name/</span>
-                } else {
+                <span class="folder-name">@dir.name/</span>
+            </li>
+                }
+                @for(file <- contents if file.`type` == "file") {
+            <li>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#8D96A0" class="bi bi-file-earmark" viewBox="0 0 16 16">
                     <path d="M9.293 3.293a1 1 0 0 0-.293-.207V1.5a.5.5 0 0 0-.5-.5H5a.5.5 0 0 0-.5.5v1H2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H9.293a1 1 0 0 0-.207-.293zM4.5 1a.5.5 0 0 1 .5.5v1H9a.5.5 0 0 1 .5.5V4h4a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5V4.5A.5.5 0 0 1 2 4h1V2a.5.5 0 0 1 .5-.5z"/>
                 </svg>
-                <span class="file-name">@content.name</span>
+                <span class="file-name">@file.name</span>
                 }
             </li>
-            }
         </ul>
     </div>
 
 
     <div class="repo-details">
-        <p><strong>Language:</strong> @repo.language.getOrElse("Not specified")</p>
-        <p><strong>Forks:</strong> @repo.forks</p>
-        <p><strong>Default Branch:</strong> @repo.default_branch</p>
+        <p><strong>Language:</strong> @repo.get.language.getOrElse("Not specified")</p>
+        <p><strong>Forks:</strong> @repo.get.forks</p>
+        <p><strong>Default Branch:</strong> @repo.get.default_branch</p>
     </div>
-
-    @helper.form(action = routes.ApplicationController.addUserToTheDatabase()) {
-    @helper.CSRF.formField
-    <input type="hidden" name="name" value=@repo.name />
-    <input type="hidden" name="clone_url" value=@repo.clone_url />
-    <input type="hidden" name="git_url" value=@repo.git_url />
-    <input type="hidden" name="ssh_url" value=@repo.ssh_url />
-    <input type="hidden" name="language" value=@repo.language.getOrElse("") />
-    <input type="hidden" name="forks" value=@repo.forks />
-    <input type="hidden" name="visibility" value=@repo.visibility />
-    <input type="hidden" name="default_branch" value=@repo.default_branch />
-    <input type="hidden" name="description" value=@repo.description.getOrElse("") />
-    <button type="submit" class="btn save-button">Add to Saved Repositories</button>
-    }
 </div>
+}
