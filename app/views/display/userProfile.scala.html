@@ -1,0 +1,15 @@
+@import models.github.GitHubUser
+
+@(readmeHtml: String, user: GitHubUser)(implicit request: RequestHeader, messages: Messages)
+
+@main("User Profile") {
+<div class="user-profile-container">
+    <div class="user-profile-left">
+        @views.html.display.githubUser(user)
+    </div>
+    <div class="user-profile-right">
+        <a href="@routes.ApplicationController.getUserRepos(user.login)"><button class="repo-button">Repositories</button></a>
+        @views.html.components.readme(readmeHtml)
+    </div>
+</div>
+}
