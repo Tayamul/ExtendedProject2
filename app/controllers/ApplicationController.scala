@@ -338,5 +338,4 @@ class ApplicationController @Inject()(
       }
     )
   }
-
 }
