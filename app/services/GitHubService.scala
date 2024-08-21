@@ -104,11 +104,13 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
 
 
   /** ---- Utility methods ---- */
-  def getPathSequence(path:String):List[(String, String)]={
+  def getPathSequence(path:String, includeLast:Boolean = false):List[(String, String)]={
     // Returns the (dir Name, path to that dir, encoded path to that dir)
+    val lastSegment = if(includeLast)0 else 1
+
     @tailrec
     def getPathSegments(path:Seq[String], prevPath:String, acc:List[(String, String)]):List[(String, String)] = {
-      if (path.length <= 1) acc
+      if (path.length <= lastSegment) acc
       else {
         val pathSegment = path.head
         val pathToSegment = if(prevPath.nonEmpty)s"$prevPath/$pathSegment" else s"$pathSegment"
@@ -116,6 +118,7 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
         getPathSegments(path.tail, pathToSegment, acc:+(path.head, encodedPathSegment))
       }
     }
+
     val decodedPath = convertContentToPlainText(path)
     val splitPath = decodedPath.split("/")
     getPathSegments(splitPath, "", List())
@@ -124,7 +127,7 @@ class GitHubService @Inject()(gitHubConnector: GitHubConnector) {
   def getCurrentPathLocation(path:String):(String, String) = {
     val decodedPath = convertContentToPlainText(path)
     val splitPath = decodedPath.split("/")
-    (splitPath.last, baseEncodePath(path))
+    (splitPath.last, path)
 
   }
   /** ---- Put methods for creating / updating ---- */
