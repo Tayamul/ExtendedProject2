@@ -491,6 +491,70 @@ user-blog a:hover {
 
 }
 
+/* ----------- REPO LIST VIEW PAGE ----------- */
+
+.container-repo {
+  width: var(--container-width-lg);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 33.33% 66.67%;
+  gap: 10px;
+  margin-top: 50px;
+}
+
+.col-4 {
+  padding: 10px;
+}
+
+.col-8 {
+  padding: 10px;
+}
+
+.repo-card {
+  border-top: 1px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+.repo-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.repo-title {
+  font-size: 25px;
+  color: var(--repo-text);
+  text-decoration: none;
+  padding-top: 20px;
+}
+
+.repo-title:hover {
+  text-decoration: underline;
+}
+
+.public-label {
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.7rem;
+    padding: 0 10px;
+    color: var(--secondary-text);
+    font-size: 12px;
+}
+
+.repo-language {
+  padding-top: 5px;
+  color: var(--secondary-text);
+}
+
+.repo-description {
+  padding-top: 5px;
+  color: var(--secondary-text);
+  font-size: 13px;
+}
+
+
+
+
 /* For mobile devices (screen width 480px and below) */
 @media (max-width: 480px) {
     .container {
