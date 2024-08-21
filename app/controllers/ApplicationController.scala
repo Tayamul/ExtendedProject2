@@ -33,8 +33,8 @@ class ApplicationController @Inject()(
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
-      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
-      case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
+      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Ok{views.html.error(upstreamStatus, upstreamMessage)}
+      case _ => Ok{views.html.error(error.httpResponseStatus, error.reason)}
     }
   }
 
