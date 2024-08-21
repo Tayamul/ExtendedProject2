@@ -3,7 +3,9 @@
 @(users: Seq[DataModel])
 
 @main("List of users") {
-
+    <div id="user-card-header">
+        <h1>List of users in the database</h1>
+    </div>
     @for(user <- users) {
         <div>
             @views.html.components.userCard(user)
