@@ -10,7 +10,7 @@ dirPath:String,
 createFileForm: Form[CreateFileForm],
 user:Option[GitHubUser],
 repo:Option[Repository],
-pathSeq:Option[Seq[(String,String)]]
+pathSeq:Option[List[(String,String)]]
 )(implicit request:RequestHeader, messages:Messages)
 
 @main("Add File") {
@@ -30,7 +30,7 @@ pathSeq:Option[Seq[(String,String)]]
         >@repo.get.name /</a>
         }
 
-        @for(pathSegment <- pathSeq.getOrElse(Seq())){
+        @for(pathSegment <- pathSeq.getOrElse(List())){
         <a href="@routes.ApplicationController.getUserRepoDirContent(owner, repoName, pathSegment._2)"
         > @pathSegment._1 /</a>
         }

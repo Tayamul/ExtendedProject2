@@ -1,0 +1,14 @@
+@(owner:String,repoName:String, pathSeq:Option[List[(String,String)]])
+
+<div id="add-file-path">
+    <div class="repo-segment">
+        <a href="@routes.ApplicationController.getUserRepoContent(owner, repoName)"
+        >@repoName /</a>
+    </div>
+    <div class="dir-segments">
+        @for(pathSegment <- pathSeq.getOrElse(Seq())){
+        <a href="@routes.ApplicationController.getUserRepoDirContent(owner, repoName, pathSegment._2)"
+        > @pathSegment._1 /</a>
+        }
+    </div>
+</div>
