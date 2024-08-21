@@ -14,12 +14,16 @@ pathSeq:Option[Seq[(String,String)]]
 )(implicit request:RequestHeader, messages:Messages)
 
 @main("Add File") {
-<div>
-    @if(user.isDefined){
-    @views.html.display.githubUser(user.get)
+
+<div id="add-new-file-container">
+    @if(user.isDefined && repo.isDefined){
+    @views.html.components.userRepoCard(user.get, repo.get)
     }
 
-
+    <div class="commit-file-container">
+        <button type="submit" class="commit-file-button">Commit file</button>
+    </div>
+    
     <h2>
         @if(repo.isDefined){
         <a href="@routes.ApplicationController.getUserRepoContent(owner, repoName)"
@@ -47,5 +51,6 @@ pathSeq:Option[Seq[(String,String)]]
     <!--    @helper.inputText(createFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")-->
     <!--    <input type="submit" class="btn btn-primary" value="Submit">-->
     <!--    }-->
+
 </div>
 }
