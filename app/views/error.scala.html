@@ -1,0 +1,13 @@
+@import models.error.APIError
+
+@(errorCode: Int, errorMessage: String)
+
+@main("Error Page") {
+
+<div id="error-container">
+    <h1 id="error-status">@errorCode</h1>
+    <p id="error-reason">@errorMessage</p>
+    <a href="@routes.HomeController.index"><button id="error-button">Return to home</button></a>
+</div>
+
+}
