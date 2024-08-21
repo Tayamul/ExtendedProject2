@@ -1,10 +1,15 @@
 @import models.github.Repository
+@import models.github.GitHubUser
 
-@(username: String, repos: Seq[Repository])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repos: Seq[Repository], user:Option[GitHubUser])(implicit request: RequestHeader, messages: Messages)
 
 @main(username){
 
 <div>
+    @if(user.isDefined){
+        @views.html.display.githubUser(user.get)
+    }
+
     <h1>
         <a href="@routes.ApplicationController.displayGitHubUser(username)"
         >@username</a>

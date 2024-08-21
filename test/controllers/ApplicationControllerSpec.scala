@@ -446,10 +446,15 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       "the user and repo exist" in {
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "TestRepoName"
-        val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
+        val testUrl1 = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
+        val testUrl2 = s"https://api.github.com/repos/$testUserName/$testRepoName"
         val testRepoContent = Seq(RepoContentItem("Test File Name", "testFilePath", "testSha", "file"), RepoContentItem("Test Dir Name", "testDirPath","testSha", "dir"))
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
-          .expects(testUrl, *, *)
+          .expects(testUrl1, *, *)
+          .returning(EitherT.rightT(testRepoContent))
+          .once()
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl2, *, *)
           .returning(EitherT.rightT(testRepoContent))
           .once()
 
@@ -463,10 +468,16 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testBadUserName = s"Invalid Username"
         val testRepoName = "TestRepoName"
         val testUrl = s"https://api.github.com/repos/$testBadUserName/$testRepoName/contents"
+        val testUrl2 = s"https://api.github.com/repos/$testBadUserName/$testRepoName"
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
           .expects(testUrl, *, *)
           .returning(EitherT.leftT(apiError))
           .once()
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl2, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+
 
         val getUserObjResult = TestControllerMockServices.getUserRepoContent(testBadUserName, testRepoName)(FakeRequest())
         status(getUserObjResult) shouldBe NOT_FOUND
@@ -476,8 +487,13 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testBadRepoName = "Invalid Repo Name"
         val testUrl = s"https://api.github.com/repos/$testUserName/$testBadRepoName/contents"
+        val testUrl2 = s"https://api.github.com/repos/$testUserName/$testBadRepoName"
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
           .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl2, *, *)
           .returning(EitherT.leftT(apiError))
           .once()
 
@@ -491,8 +507,13 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
         val testUserName = s"${testUserDataModel._id}"
         val testRepoName = "TestRepoName"
         val testUrl = s"https://api.github.com/repos/$testUserName/$testRepoName/contents"
+        val testUrl2 = s"https://api.github.com/repos/$testUserName/$testRepoName"
         (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
           .expects(testUrl, *, *)
+          .returning(EitherT.leftT(apiError))
+          .once()
+        (mockConnector.get(_: String)(_: Reads[Seq[RepoContentItem]], _: ExecutionContext))
+          .expects(testUrl2, *, *)
           .returning(EitherT.leftT(apiError))
           .once()
 

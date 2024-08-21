@@ -288,6 +288,7 @@ user-blog a:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: var(--transition);
 }
 
 .save-button:hover {
@@ -341,6 +342,65 @@ user-blog a:hover {
     color: var(--secondary-text);
     font-size: 1.2rem;
 }
+
+/* ----------- USER REPO CARD ----------- */
+#user-repo-card {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    gap: 10px;
+    padding: 30px 0;
+
+}
+
+#user-repo-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+#repo-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: (--primary-text);
+}
+
+#repo-visibility {
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.7rem;
+    padding: 0 10px;
+    color: var(--secondary-text);
+    font-size: 12px;
+}
+
+/* ----------- ADD A NEW FILE ----------- */
+#add-new-file-container {
+    width: 80%;
+    margin: auto;
+}
+
+.commit-file-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.commit-file-button {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 20px;
+}
+
+.commit-file-button:hover {
+    background-color: #218838;
+}
+
 
 /* ----------- Responsive Design ----------- */
 

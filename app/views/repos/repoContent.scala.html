@@ -1,4 +1,5 @@
 @import models.github.RepoContentItem
+@import models.github.Repository
 
 @(username: String, repoName: String, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
 
@@ -12,8 +13,8 @@
     <h2>@repoName</h2>
     @for(dir <- contents if dir.`type` == "dir") {
     <div>
-    <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
-    >@dir.name</a>
+        <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
+        >@dir.name</a>
     </div>
     }
     @for(file <- contents if file.`type` == "file") {
