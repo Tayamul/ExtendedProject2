@@ -288,6 +288,7 @@ user-blog a:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: var(--transition);
 }
 
 .save-button:hover {
@@ -349,8 +350,7 @@ user-blog a:hover {
     border-bottom: 1px solid var(--border-color);
     gap: 10px;
     padding: 30px 0;
-    width: 80%;
-    margin: auto;
+
 }
 
 #user-repo-avatar {
@@ -373,6 +373,32 @@ user-blog a:hover {
     padding: 0 10px;
     color: var(--secondary-text);
     font-size: 12px;
+}
+
+/* ----------- ADD A NEW FILE ----------- */
+#add-new-file-container {
+    width: 80%;
+    margin: auto;
+}
+
+.commit-file-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.commit-file-button {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 20px;
+}
+
+.commit-file-button:hover {
+    background-color: #218838;
 }
 
 
