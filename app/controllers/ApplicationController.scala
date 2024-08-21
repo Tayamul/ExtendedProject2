@@ -338,4 +338,25 @@ class ApplicationController @Inject()(
       }
     )
   }
+
+  def repoContentPage(owner: String, repoName: String): Action[AnyContent] = Action.async { implicit request =>
+    val repoFuture = gitHubService.getUserRepoByRepoName(None, owner, repoName)
+    val contentsFuture = gitHubService.getUserRepoContent(None, owner, repoName)
+
+    for {
+      repo <- repoFuture.value
+      contents <- contentsFuture.value
+    } yield {
+      repo match {
+        case Left(error) => resultError(error)
+        case Right(repository) =>
+          contents match {
+            case Left(error) => resultError(error)
+            case Right(contentsSeq) =>
+              val contentsList = contentsSeq.toList
+              Ok(views.html.display.repoContentPage(repository, contentsList))
+          }
+      }
+    }
+  }
 }

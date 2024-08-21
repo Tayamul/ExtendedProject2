@@ -2,7 +2,7 @@
 @import models.github.RepoContentItem
 @import helper._
 
-@(repo: Repository, contents: List[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(repo: Repository, contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
 
 <div class="repository-container">
 
@@ -73,7 +73,7 @@
         <p><strong>Default Branch:</strong> @repo.default_branch</p>
     </div>
 
-    @helper.form(action = routes.ApplicationController.addRepoToTheDatabase()) {
+    @helper.form(action = routes.ApplicationController.addUserToTheDatabase()) {
     @helper.CSRF.formField
     <input type="hidden" name="name" value=@repo.name />
     <input type="hidden" name="clone_url" value=@repo.clone_url />
