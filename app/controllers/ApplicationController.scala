@@ -360,4 +360,14 @@ class ApplicationController @Inject()(
     )
   }
 
+
+  /** ---- List of Users ---- */
+
+  def renderListOfUsers(): Action[AnyContent] = Action.async { result =>
+    repoService.index().map {
+      case Left(error) => resultError(error)
+      case Right(users: Seq[DataModel]) => Ok{views.html.display.listOfUsers(users)}
+    }
+  }
+
 }
