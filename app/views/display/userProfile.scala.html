@@ -5,8 +5,10 @@
 @main("User Profile") {
 <div class="user-profile-container">
     @views.html.display.githubUser(user)
-    <div class="repo-button-and-readme-container">
-        <div><a href="@routes.ApplicationController.getUserRepos(user.login)">Repositories</a></div>
+    <div class="repos-button-and-readme-container">
+        <div class="repo-button-container">
+            <a href="@routes.ApplicationController.getUserRepos(user.login)"><button class="repo-button">Repositories</button></a>
+        </div>
         @views.html.components.readme(readmeHtml)
     </div>
 </div>

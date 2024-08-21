@@ -297,6 +297,12 @@ user-blog a:hover {
 }
 /* ----------- USER PROFILE PAGE ----------- */
 .user-profile-container{
+    column-count: 2;
+    column-gap: 2rem;
+}
+
+.repo-button-container{
+
 }
 
 /* ----------- README COMPONENT ----------- */
