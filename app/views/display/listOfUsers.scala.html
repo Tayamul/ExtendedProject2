@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+@import models.mongo.DataModel
+
+@(users: Seq[DataModel])
+
+@main("List of users") {
+
+    @for(user <- users) {
+        <div>
+            @views.html.components.userCard(user)
+        </div>
+    }
+}
