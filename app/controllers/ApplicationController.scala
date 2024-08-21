@@ -1,9 +1,9 @@
 package controllers
 
-import cats.data.EitherT
+import cats.data.{EitherT, NonEmptyChain}
 import models.error._
 import models.forms._
-import models.github.GitHubUser
+import models.github.{GitHubUser, RepoContentItem, Repository}
 import models.github.delete.DeleteFile
 import models.github.put.{CreateFile, UpdateFile}
 import models.mongo._
@@ -24,6 +24,11 @@ class ApplicationController @Inject()(
                                        val repoService: RepositoryService,
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport with Logging {
+
+  private var currentUser:Option[GitHubUser] = None
+  private var currentRepo:Option[Repository] = None
+  private var currentPathSeq:Option[Seq[(String, String)]] = None
+
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
@@ -109,7 +114,8 @@ class ApplicationController @Inject()(
   def getUserRepos(username: String): Action[AnyContent] = Action.async { implicit request =>
     gitHubService.getUserRepos(None, username).value.map {
       case Left(error) => resultError(error)
-      case Right(repos) => Ok(views.html.repos.repos(username = username, repos = repos))
+      case Right(repos) =>
+        Ok(views.html.repos.repos(username = username, repos = repos, currentUser))
     }
   }
 
@@ -123,6 +129,10 @@ class ApplicationController @Inject()(
   }
 
   def getUserRepoContent(username: String, repoName: String): Action[AnyContent] = Action.async { implicit result =>
+    gitHubService.getUserRepoByRepoName(None, username, repoName).value.map {
+      case Right(repo) =>
+        currentRepo = Some(repo)
+    }
     gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
       case Right(repoContent) => Ok(views.html.repos.repoContent(username, repoName, repoContent))
@@ -134,6 +144,7 @@ class ApplicationController @Inject()(
       case Left(error) => resultError(error)
       case Right(repoContent) =>
         val pathSeq = gitHubService.getPathSequence(path)
+        currentPathSeq = Some(pathSeq)
         val dirName = gitHubService.getCurrentPathLocation(path)
         Ok(views.html.repos.dirContent(username, repoName, pathSeq, dirName, repoContent))
     }
@@ -144,6 +155,7 @@ class ApplicationController @Inject()(
       case Left(error) => resultError(error)
       case Right(repoFileItem) =>
         val pathSeq = gitHubService.getPathSequence(path)
+        currentPathSeq = Some(pathSeq)
         Ok(views.html.repos.fileContent(username, repoName, pathSeq, sha, repoFileItem))
     }
   }
@@ -172,6 +184,7 @@ class ApplicationController @Inject()(
 
   def getUsernameSearch(): Action[AnyContent] = Action { implicit request =>
     accessToken
+    currentUser = None
     Ok(views.html.forms.searchUsername(UsernameSearch.usernameSearchForm))
   }
 
@@ -186,6 +199,7 @@ class ApplicationController @Inject()(
         gitHubService.getUserByUserName(username = usernameSearch.username).value.flatMap {
           case Left(error) => Future.successful(resultError(error))
           case Right(user) =>
+            currentUser = Some(user)
             gitHubService.getRepoReadMe(None, usernameSearch.username, usernameSearch.username).value.map {
               case Left(error) => Ok(views.html.display.userProfile("", user))
               case Right(readme) => Ok(views.html.display.userProfile(readme, user))
@@ -197,9 +211,14 @@ class ApplicationController @Inject()(
 
 
   def displayGitHubUser(username: String): Action[AnyContent] = Action.async { implicit request =>
-    gitHubService.getUserByUserName(username = username).value.map {
-      case Left(error) => resultError(error)
-      case Right(user) => Ok(views.html.display.githubUser(user))
+    gitHubService.getUserByUserName(username = username).value.flatMap {
+      case Left(error) => Future.successful(resultError(error))
+      case Right(user) =>
+        currentUser = Some(user)
+        gitHubService.getRepoReadMe(None, username, username).value.map {
+          case Left(error) => Ok(views.html.display.userProfile("", user))
+          case Right(readme) => Ok(views.html.display.userProfile(readme, user))
+        }
     }
   }
 
@@ -223,7 +242,7 @@ class ApplicationController @Inject()(
   def getNewFileInput(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action { implicit request =>
     accessToken
     Ok {
-      views.html.forms.createFile(owner, repoName, dirPath, CreateFileForm.form)
+      views.html.forms.createFile(owner, repoName, dirPath, CreateFileForm.form, currentUser, currentRepo, currentPathSeq)
     }
   }
 
@@ -244,7 +263,7 @@ class ApplicationController @Inject()(
   def createNewFile(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     CreateFileForm.form.bindFromRequest().fold(
       formWithErrors => {
-        Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, dirPath, formWithErrors)))
+        Future.successful(BadRequest(views.html.forms.createFile(owner, repoName, dirPath, formWithErrors, currentUser, currentRepo, currentPathSeq)))
       },
       createFileForm => {
         gitHubService.convertCreateFileFormToCreateFile(createFileForm) match {
