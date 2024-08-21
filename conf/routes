@@ -34,7 +34,7 @@ GET     /users/search/:username       controllers.ApplicationController.displayG
 POST    /users/save-user-data       controllers.ApplicationController.addUserToTheDatabase()
 POST     /users/search                controllers.ApplicationController.getUsernameSearchResult()
 GET     /users/search                controllers.ApplicationController.getUsernameSearch()
-
+GET     /users/list                 controllers.ApplicationController.renderListOfUsers()
 
 # PUT REQUEST GITHUB API
 # CURL REQUEST ENDPOINTS
