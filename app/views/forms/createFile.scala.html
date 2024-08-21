@@ -1,10 +1,39 @@
 @import helper._
 @import models.forms.CreateFileForm
-@(owner:String, repoName:String, dirPath:String, createFileForm: Form[CreateFileForm])(implicit request:RequestHeader, messages:Messages)
+@import models.github.GitHubUser
+@import models.github.Repository
+
+
+@(owner:String,
+repoName:String,
+dirPath:String,
+createFileForm: Form[CreateFileForm],
+user:Option[GitHubUser],
+repo:Option[Repository],
+pathSeq:Option[Seq[(String,String)]]
+)(implicit request:RequestHeader, messages:Messages)
 
 @main("Add File") {
 <div>
+    @if(user.isDefined){
+        @views.html.display.githubUser(user.get)
+    }
 
+
+    <h2>
+        @if(repo.isDefined){
+        <a href="@routes.ApplicationController.getUserRepoContent(owner, repoName)"
+        >@repo.get.name /</a>
+        }
+
+        @if(pathSeq.isDefined){
+        @for(pathSegment <- pathSeq.get){
+        <a href="@routes.ApplicationController.getUserRepoDirContent(owner, repoName, pathSegment._2)"
+        > @pathSegment._1 /</a>
+        }
+        }
+        newFile.txt
+    </h2>
 
 <!--    <h2> @dirPath </h2>-->
 <!--    @helper.form(action =  routes.ApplicationController.createNewFile(owner, repoName, dirPath)) {-->
