@@ -342,6 +342,40 @@ user-blog a:hover {
     font-size: 1.2rem;
 }
 
+/* ----------- USER REPO CARD ----------- */
+#user-repo-card {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    gap: 10px;
+    padding: 30px 0;
+    width: 80%;
+    margin: auto;
+}
+
+#user-repo-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+#repo-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: (--primary-text);
+}
+
+#repo-visibility {
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.7rem;
+    padding: 0 10px;
+    color: var(--secondary-text);
+    font-size: 12px;
+}
+
+
 /* ----------- Responsive Design ----------- */
 
 /* For tablets (screen width 768px and below) */
