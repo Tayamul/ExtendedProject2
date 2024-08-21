@@ -145,8 +145,8 @@ class ApplicationController @Inject()(
       case Right(repoContent) =>
         val pathSeq = gitHubService.getPathSequence(path)
         currentPathSeq = Some(pathSeq)
-        val dirName = gitHubService.getCurrentPathLocation(path)
-        Ok(views.html.repos.dirContent(username, repoName, pathSeq, dirName, repoContent))
+        val currentLocation = gitHubService.getCurrentPathLocation(path)
+        Ok(views.html.repos.dirContent(username, repoName, pathSeq, currentLocation, repoContent))
     }
   }
 
@@ -241,6 +241,8 @@ class ApplicationController @Inject()(
   /** ---- Put requests GitHub service ---- */
   def getNewFileInput(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action { implicit request =>
     accessToken
+    val pathSeq = gitHubService.getPathSequence(dirPath, includeLast = true)
+    currentPathSeq = Some(pathSeq)
     Ok {
       views.html.forms.createFile(owner, repoName, dirPath, CreateFileForm.form, currentUser, currentRepo, currentPathSeq)
     }
