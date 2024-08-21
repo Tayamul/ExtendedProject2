@@ -27,10 +27,15 @@
                 <a class="repo-title" href="@routes.ApplicationController.getUserRepoContent(username, repo.name)">
                     @repo.name
                 </a>
-                <span class="public-label">Public</span>
+                @if(repo.visibility) {
+                  <span class="public-label">Public</span>
+                }
             </div>
             <div class="repo-language">
-                <span class="language">@repo.language</span>
+                <span>@repo.language</span>
+            </div>
+            <div class="repo-description">
+                <span>@repo.description</span>
             </div>
 
         </div>
