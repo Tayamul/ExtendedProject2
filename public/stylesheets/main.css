@@ -104,7 +104,7 @@ padding: 50px;
     text-align: justify;
 }
 
-.extra-content {
+.logo {
     background-color: var(--primary-bg);
     color: var(--primary-text);
     border-radius: 50%;
@@ -112,7 +112,6 @@ padding: 50px;
     height: 300px;
     display: flex;
     justify-content: center;
-    align-items: center;
     font-size: 14px;
     margin: 0 auto;
 }
@@ -129,6 +128,7 @@ padding: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 60px;
 }
 
 .navbar-brand {
@@ -137,6 +137,9 @@ padding: 50px;
     font-size: 24px;
 }
 
+.navbar-brand img {
+  max-height: 80px;
+}
 .navbar-nav {
     list-style: none;
     display: flex;
@@ -311,7 +314,7 @@ user-blog a:hover {
     margin: 40px 0.5rem 0 0;
 }
 
-.repo-button {
+.general-button {
     background-color: var(--button-bg);
     border: 1px solid var(--border-color);
     border-radius: 5px;
@@ -322,7 +325,7 @@ user-blog a:hover {
     cursor: pointer;
 }
 
-.repo-button:hover {
+.general-button:hover {
     box-shadow: 0 0 10px 1px var(--border-color);
 }
 
@@ -799,6 +802,12 @@ user-blog a:hover {
         font-size: 12px;
     }
 
+
+ .extra-content img {
+    max-height: 300px;
+    display: flex;
+  }
+
     .navbar-container {
         flex-direction: column;
         align-items: flex-start;
@@ -922,10 +931,6 @@ user-blog a:hover {
 
     .navbar-container {
         align-items: center;
-    }
-
-    .navbar-brand {
-        font-size: 20px;
     }
 
     .navbar-nav {
