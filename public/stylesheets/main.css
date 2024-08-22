@@ -311,7 +311,7 @@ user-blog a:hover {
     margin: 40px 0.5rem 0 0;
 }
 
-.repo-button {
+.general-button {
     background-color: var(--button-bg);
     border: 1px solid var(--border-color);
     border-radius: 5px;
@@ -322,7 +322,7 @@ user-blog a:hover {
     cursor: pointer;
 }
 
-.repo-button:hover {
+.general-button:hover {
     box-shadow: 0 0 10px 1px var(--border-color);
 }
 
