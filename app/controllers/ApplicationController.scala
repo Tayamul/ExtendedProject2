@@ -27,14 +27,16 @@ class ApplicationController @Inject()(
 
   private var currentUser:Option[GitHubUser] = None
   private var currentRepo:Option[Repository] = None
-  private var currentPathSeq:Option[Seq[(String, String)]] = None
+
+  private var currentPathSeq:Option[List[(String, String)]] = None
+
 
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
-      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Status(upstreamStatus)(Json.toJson(upstreamMessage))
-      case _ => Status(error.httpResponseStatus)(Json.toJson(error.reason))
+      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Ok{views.html.error(upstreamStatus, upstreamMessage)}
+      case _ => Ok{views.html.error(error.httpResponseStatus, error.reason)}
     }
   }
 
@@ -249,11 +251,12 @@ class ApplicationController @Inject()(
   }
 
   def getNewFilePath(dirPath: String, fileName: String) = {
-    if (dirPath.trim.isEmpty) {
+    val decodedDirPath = gitHubService.convertContentToPlainText(dirPath)
+    if (decodedDirPath.trim.isEmpty) {
       fileName
     }
     else {
-      s"$dirPath/$fileName"
+      s"$decodedDirPath/$fileName"
     }
   }
 
@@ -360,24 +363,13 @@ class ApplicationController @Inject()(
     )
   }
 
-//  def repoContentPage(owner: String, repoName: String): Action[AnyContent] = Action.async { implicit request =>
-//    val repoFuture = gitHubService.getUserRepoByRepoName(None, owner, repoName)
-//    val contentsFuture = gitHubService.getUserRepoContent(None, owner, repoName)
-//
-//    for {
-//      repo <- repoFuture.value
-//      contents <- contentsFuture.value
-//    } yield {
-//      repo match {
-//        case Left(error) => resultError(error)
-//        case Right(repository) =>
-//          contents match {
-//            case Left(error) => resultError(error)
-//            case Right(contentsSeq) =>
-//              val contentsList = contentsSeq.toList
-//              Ok(views.html.display.repoContentPage(repository, contentsList))
-//          }
-//      }
-//    }
-//  }
+
+  /** ---- List of Users ---- */
+
+  def renderListOfUsers(): Action[AnyContent] = Action.async { result =>
+    repoService.index().map {
+      case Left(error) => resultError(error)
+      case Right(users: Seq[DataModel]) => Ok{views.html.display.listOfUsers(users)}
+    }
+  }
 }

@@ -1,0 +1,14 @@
+@import models.mongo.DataModel
+
+@(users: Seq[DataModel])
+
+@main("List of users") {
+    <div id="user-card-header">
+        <h1>Saved Users</h1>
+    </div>
+    @for(user <- users) {
+        <div>
+            @views.html.components.userCard(user)
+        </div>
+    }
+}

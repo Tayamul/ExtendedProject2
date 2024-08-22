@@ -5,6 +5,7 @@
 
 @main(username){
 
+
 <div>
     @if(user.isDefined){
         @views.html.display.githubUser(user.get)
@@ -18,6 +19,44 @@
     <a href="@routes.ApplicationController.getUserRepoContent(username, repo.name)"
     >@repo.name</a>
     }
+
+
+<div class="container-repo">
+
+
+    <div class="col-4">
+<!--        <h1>-->
+<!--            <a href="@routes.ApplicationController.displayGitHubUser(username)"-->
+<!--            >@username</a>-->
+<!--        </h1>-->
+
+        @if(user.isDefined){
+          @views.html.display.githubUser(user.get)
+        }
+    </div>
+
+    <div class="col-8">
+        @for(repo <- repos) {
+        <div class="repo-card">
+            <div class="repo-info">
+                <a class="repo-title" href="@routes.ApplicationController.getUserRepoContent(username, repo.name)">
+                    @repo.name
+                </a>
+                @if(repo.visibility) {
+                  <span class="public-label">@repo.visibility.capitalize</span>
+                }
+            </div>
+            <div class="repo-language">
+                <span>@repo.language</span>
+            </div>
+            <div class="repo-description">
+                <span>@repo.description</span>
+            </div>
+
+        </div>
+        }
+    </div>
+
 </div>
 
 }
