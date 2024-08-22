@@ -41,7 +41,7 @@ GET     /users/list                 controllers.ApplicationController.renderList
 POST /github/:owner/repos/:repoName/file/create/:path    controllers.ApplicationController.createFile(owner: String, repoName: String, path:String)
 POST /github/:owner/repos/:repoName/file/update/:path    controllers.ApplicationController.updateFile(owner: String, repoName: String, path:String)
 GET /github/:owner/:repoName/:filePath/:fileSha/delete/form           controllers.ApplicationController.getDeleteFileForm(owner:String, repoName:String, filePath:String, fileSha:String)
-POST /github/:owner/:repoName/:filePath/:fileSha/delete/form          controllers.ApplicationController.deleteFile(owner:String, repoName:String, filePath:String, fileSha:String)
+POST /github/:owner/:repoName/:filePath/:fileSha/delete/form          controllers.ApplicationController.deleteFile(owner:String, repoName:String, filePath:String, fileSha:String, fileContent:String)
 
 # FrontEnd Endpoint
 

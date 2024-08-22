@@ -19,26 +19,20 @@ pathSeq:Option[List[(String,String)]]
     @views.html.components.userRepoCard(user.get, repo.get)
     }
 
-    <div class="file-content-header">
+    <div class="edit-file-form-header">
         @views.html.components.filePath(username, repoName, pathSeq)
         <p class="edit-file-name">@file.name</p>
 
 
-        <div class="edit-button">
-            <a href="@routes.ApplicationController.getEditFileInput(username, repoName, file.path, sha)"
-            >EDIT</a>
-        </div>
-        <div class="delete-button">
-            <a href="@routes.ApplicationController.getDeleteFileForm(username, repoName, file.path, sha)"
-            >DELETE</a>
-        </div>
+        @views.html.components.deleteButton(username, repoName, file.path, sha)
+        @views.html.components.editButton(username, repoName, file.path, sha)
     </div>
 
     <div class="file-content-body">
 
-        <p class="file-content">
+        <div class="file-content">
             @file.content
-        </p>
+        </div>
     </div>
 
 </div>

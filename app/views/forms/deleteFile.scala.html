@@ -1,19 +1,47 @@
 @import helper._
 @import models.forms.DeleteFileForm
-@(owner:String, repoName:String, filePath:String, fileSha:String, deleteFileForm: Form[DeleteFileForm])(implicit request:RequestHeader, messages:Messages)
+@import models.github.GitHubUser
+@import models.github.Repository
+
+@(owner:String,
+repoName:String,
+filePath:String,
+fileSha:String,
+deleteFileForm: Form[DeleteFileForm],
+user:Option[GitHubUser],
+repo:Option[Repository],
+pathSeq:Option[List[(String,String)]],
+fileName: String,
+fileContent:String
+)(implicit request:RequestHeader, messages:Messages)
 
 @main("Delete File") {
-<div>
-    <h2>Delete File: @filePath</h2>
-    @helper.form(action =  routes.ApplicationController.deleteFile(owner, repoName, filePath, fileSha)) {
-    @helper.CSRF.formField
-    @helper.inputText(deleteFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")
-    @helper.inputText(deleteFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")
-    @helper.inputText(deleteFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")
-    @helper.inputText(deleteFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")
-    @helper.inputText(deleteFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")
-    @helper.inputText(deleteFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")
-    <input type="submit" class="btn btn-primary" value="Delete">
+
+
+@helper.form(action =  routes.ApplicationController.deleteFile(owner, repoName, filePath, fileSha, fileContent)) {
+@helper.CSRF.formField
+<div id="delete-file-container">
+    @if(user.isDefined && repo.isDefined){
+    @views.html.components.userRepoCard(user.get, repo.get)
+    }
+    <div class="commit-file-container">
+        <button type="submit" class="delete-button" value="Delete">Delete File</button>
+    </div>
+
+    <div class="edit-file-form">
+        <div class="edit-file-form-header">
+            @views.html.components.filePath(owner, repoName, pathSeq)
+            <p class="edit-file-name">@fileName</p>
+        </div>
+        <div class="file-content">@fileContent</div>
+        @helper.inputText(deleteFileForm("message"), Symbol("placeholder") -> "Commit message...")
+    </div>
+
+    <input type="hidden" name="branch" value=""/>
+    <input type="hidden" name="committerName" value=""/>
+    <input type="hidden" name="committerEmail" value=""/>
+    <input type="hidden" name="authorName" value=""/>
+    <input type="hidden" name="authorEmail" value=""/>
     }
 </div>
 }
