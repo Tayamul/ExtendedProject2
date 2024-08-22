@@ -249,11 +249,12 @@ class ApplicationController @Inject()(
   }
 
   def getNewFilePath(dirPath: String, fileName: String) = {
-    if (dirPath.trim.isEmpty) {
+    val decodedDirPath = gitHubService.convertContentToPlainText(dirPath)
+    if (decodedDirPath.trim.isEmpty) {
       fileName
     }
     else {
-      s"$dirPath/$fileName"
+      s"$decodedDirPath/$fileName"
     }
   }
 
