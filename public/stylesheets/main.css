@@ -97,10 +97,11 @@ padding: 50px;
 }
 
 .description {
-    font-size: 24px;
+    font-size: 20px;
     color: var(--secondary-text);
     margin-bottom: 20px;
     max-width: 300px;
+    text-align: justify;
 }
 
 .extra-content {
