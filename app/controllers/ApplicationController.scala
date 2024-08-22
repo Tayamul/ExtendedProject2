@@ -13,6 +13,8 @@ import services.{GitHubService, RepositoryService}
 import views.html.helper.CSRF
 import play.api.Logger
 import play.api.Logging
+import play.api.data.Form
+import play.api.data.Forms.{nonEmptyText, single}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,6 +33,12 @@ class ApplicationController @Inject()(
   private var currentPathSeq: Option[List[(String, String)]] = None
   private var currentPathLocation: Option[(String, String)] = None
 
+
+  val deleteUserByUsernameForm: Form[String] = Form(
+    single(
+      "username"->nonEmptyText,
+    )
+  )
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
@@ -384,12 +392,26 @@ class ApplicationController @Inject()(
 
 
   /** ---- List of Users ---- */
+  def deleteSavedUser(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    accessToken
+    deleteUserByUsernameForm.bindFromRequest().fold(
+      invalidForm => Future.successful(Redirect(routes.ApplicationController.renderListOfUsers())),
+      validForm =>{
+        repoService.delete(validForm).map {
+          case Left(error) => resultError(error)
+          case Right(result) => Redirect(routes.ApplicationController.renderListOfUsers())
+        }
+      }
 
-  def renderListOfUsers(): Action[AnyContent] = Action.async { result =>
+    )
+  }
+
+  def renderListOfUsers(): Action[AnyContent] = Action.async {implicit result =>
+    accessToken
     repoService.index().map {
       case Left(error) => resultError(error)
       case Right(users: Seq[DataModel]) => Ok {
-        views.html.display.listOfUsers(users)
+        views.html.display.listOfUsers(users, deleteUserByUsernameForm)
       }
     }
   }
