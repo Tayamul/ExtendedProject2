@@ -27,7 +27,9 @@ class ApplicationController @Inject()(
 
   private var currentUser:Option[GitHubUser] = None
   private var currentRepo:Option[Repository] = None
+
   private var currentPathSeq:Option[List[(String, String)]] = None
+
 
 
   // convert api errors to Status result
@@ -135,7 +137,7 @@ class ApplicationController @Inject()(
     }
     gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok(views.html.repos.repoContent(username, repoName, repoContent))
+      case Right(repoContent) => Ok(views.html.display.repoContentPage(username, repoName, currentRepo, repoContent))
     }
   }
 
@@ -370,5 +372,4 @@ class ApplicationController @Inject()(
       case Right(users: Seq[DataModel]) => Ok{views.html.display.listOfUsers(users)}
     }
   }
-
 }

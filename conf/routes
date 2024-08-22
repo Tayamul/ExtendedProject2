@@ -53,3 +53,6 @@ POST /github/:owner/:repoName/:filePath/:fileSha/edit/form          controllers.
 
 
 GET /github/:owner/:repoName/readme                                 controllers.ApplicationController.getUserRepoReadMe(owner: String, repoName: String)
+
+# GitHub Repo Content Page
+#GET     /github/:owner/:repoName/contents          controllers.ApplicationController.repoContentPage(owner: String, repoName: String)

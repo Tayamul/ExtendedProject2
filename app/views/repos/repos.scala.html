@@ -6,6 +6,21 @@
 @main(username){
 
 
+<div>
+    @if(user.isDefined){
+        @views.html.display.githubUser(user.get)
+    }
+
+    <h1>
+        <a href="@routes.ApplicationController.displayGitHubUser(username)"
+        >@username</a>
+    </h1>
+    @for(repo <- repos) {
+    <a href="@routes.ApplicationController.getUserRepoContent(username, repo.name)"
+    >@repo.name</a>
+    }
+
+
 <div class="container-repo">
 
 
