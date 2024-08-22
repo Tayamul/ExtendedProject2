@@ -14,7 +14,7 @@ import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json, OFormat, Reads}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, ControllerHelpers, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsJson, contentAsString, defaultAwaitTimeout, status, stubControllerComponents}
+import play.api.test.Helpers.{await, contentAsJson, contentAsString, contentType, defaultAwaitTimeout, status, stubControllerComponents}
 import repositories.DataRepoMethods
 import services.{GitHubService, RepositoryService}
 import play.api.Configuration
@@ -156,7 +156,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       status(createdResult) shouldBe CREATED
 
       val createdResult2: Future[Result] = TestController.create()(request2)
-      status(createdResult2) shouldBe CONFLICT
+      status(createdResult2) shouldBe OK
+      contentType(createdResult2) shouldBe Some("text/html")
+      contentAsString(createdResult2) should include ("409")
 
       afterEach()
     }
@@ -233,7 +235,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
       val updateRequest: FakeRequest[JsValue] = testRequest.buildPut(s"/api/user/${testUserDataModel._id}").withBody[JsValue](Json.toJson(updateUserDataModel))
       val updateResult: Future[Result] = TestController.update("nonExistingUserName")(updateRequest)
 
-      status(updateResult) shouldBe NOT_FOUND
+      status(updateResult) shouldBe OK
+      contentType(updateResult) shouldBe Some("text/html")
+      contentAsString(updateResult) should include ("404")
 
       afterEach()
     }
@@ -271,7 +275,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
     "return 404 Not Found Error" in {
       beforeEach()
       val deleteResult = TestController.delete("abc")(FakeRequest())
-      status(deleteResult) shouldBe NOT_FOUND
+      status(deleteResult) shouldBe OK
+      contentType(deleteResult) shouldBe Some("text/html")
+      contentAsString(deleteResult) should include ("404")
       afterEach()
     }
   }
@@ -303,7 +309,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getGitHubUserResult = TestControllerMockGitService.getGitHubUser("testUserName")(FakeRequest())
-        status(getGitHubUserResult) shouldBe NOT_FOUND
+        status(getGitHubUserResult) shouldBe OK
+        contentType(getGitHubUserResult) shouldBe Some("text/html")
+        contentAsString(getGitHubUserResult) should include ("404")
       }
     }
   }
@@ -346,7 +354,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
-        status(getUserObjResult) shouldBe CONFLICT
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("409")
 
       }
     }
@@ -363,7 +373,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
-        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("500")
 
       }
       "internal server error from MongoDB" in {
@@ -382,7 +394,9 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
-        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("500")
 
 
       }
@@ -420,7 +434,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getReposResult = TestControllerMockServices.getUserRepos(testUserName)(FakeRequest())
-        status(getReposResult) shouldBe NOT_FOUND
+        status(getReposResult) shouldBe OK
+        contentType(getReposResult) shouldBe Some("text/html")
+        contentAsString(getReposResult) should include ("404")
+
       }
     }
     "return 500 internal server error" when {
@@ -436,7 +453,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserObj(testUserName)(FakeRequest())
-        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("500")
+
       }
     }
   }
@@ -480,7 +500,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
 
 
         val getUserObjResult = TestControllerMockServices.getUserRepoContent(testBadUserName, testRepoName)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
       "User doesn't exist" in {
         val apiError = APIError.BadAPIResponse(404, "Not Found")
@@ -498,10 +521,13 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoContent(testUserName, testBadRepoName)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
     }
-    "return 50 Internal service error" when {
+    "return 500 Internal service error" when {
       "GitHub API server error occurs" in {
         val apiError = APIError.BadAPIResponse(500, "Could not connect to API.")
         val testUserName = s"${testUserDataModel._id}"
@@ -518,7 +544,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoContent(testUserName, testRepoName)(FakeRequest())
-        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("500")
+
       }
     }
   }
@@ -557,7 +586,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testBadUserName, testRepoName, encodedPath)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
       "the repo doesn't exist" in {
         val apiError = APIError.BadAPIResponse(404, "Not Found")
@@ -573,7 +605,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testBadRepoName, encodedPath)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
       "the repo directory doesn't exist" in {
         val apiError = APIError.BadAPIResponse(404, "Not Found")
@@ -589,7 +624,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testBadRepoName, encodedBadPath)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
     }
     "return status 500 Internal server error" when {
@@ -607,7 +645,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testRepoName, encodedPath)(FakeRequest())
-        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("500")
+
       }
     }
   }
@@ -648,7 +689,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testBadUserName, testRepoName, encodedPath, testSha)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
       "the repo doesn't exist" in {
         val apiError = APIError.BadAPIResponse(404, "Not Found")
@@ -664,7 +708,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testBadRepoName, encodedPath)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
       "the repo directory doesn't exist" in {
         val apiError = APIError.BadAPIResponse(404, "Not Found")
@@ -681,7 +728,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoFileContent(testUserName, testRepoName, encodedBadPath, testSha)(FakeRequest())
-        status(getUserObjResult) shouldBe NOT_FOUND
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("404")
+
       }
     }
     "return status 500 Internal server error" when {
@@ -699,7 +749,10 @@ class ApplicationControllerSpec extends BaseSpecWithApplication with MockFactory
           .once()
 
         val getUserObjResult = TestControllerMockServices.getUserRepoDirContent(testUserName, testRepoName, encodedPath)(FakeRequest())
-        status(getUserObjResult) shouldBe INTERNAL_SERVER_ERROR
+        status(getUserObjResult) shouldBe OK
+        contentType(getUserObjResult) shouldBe Some("text/html")
+        contentAsString(getUserObjResult) should include ("500")
+
       }
     }
   }
