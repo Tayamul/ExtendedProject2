@@ -3,12 +3,15 @@
 @import models.github.GitHubUser
 @import helper._
 
+
 @(username: String, repoName: String, repo: Option[Repository], user: Option[GitHubUser], contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+
 
 @main("Repository Page"){
 
 <div class="main-container">
     <div class="repository-container">
+
         @if(repo.isDefined && user.isDefined) {
         @views.html.components.userRepoCard(user.get, repo.get)
         <p class="repo-description">@repo.get.description.getOrElse("No description available.")</p>
@@ -27,12 +30,16 @@
             <ul>
                 @for(dir <- contents if dir.`type` == "dir") {
                 <li>
+
                     @views.html.components.dirCard(username, repoName, dir)
+
                 </li>
                 }
                 @for(file <- contents if file.`type` == "file") {
                 <li>
+
                     @views.html.components.fileCard(username, repoName, file)
+
                 </li>
                 }
             </ul>
