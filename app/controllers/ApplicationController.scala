@@ -162,7 +162,7 @@ class ApplicationController @Inject()(
       case Right(repoFileItem) =>
         val pathSeq = gitHubService.getPathSequence(path)
         currentPathSeq = Some(pathSeq)
-        Ok(views.html.repos.fileContent(username, repoName, pathSeq, sha, repoFileItem))
+        Ok(views.html.repos.fileContent(username, repoName, sha, repoFileItem, currentUser, currentRepo, currentPathSeq))
     }
   }
 
