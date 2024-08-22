@@ -119,43 +119,42 @@ padding: 50px;
 /* -------- NAVBAR --------- */
 
 .navbar {
-background-color: var(--primary-bg);
-padding: 20px 30px;
-border-bottom: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .navbar-container {
-display: flex;
-justify-content: space-between;
-align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar-brand {
-color: var(--primary-text);
-text-decoration: none;
-font-size: 24px;
+    color: var(--primary-text);
+    text-decoration: none;
+    font-size: 24px;
 }
 
 .navbar-nav {
-list-style: none;
-margin: 0;
-padding: 0;
-display: flex;
-}
-
-.nav-item {
-margin-left: 20px;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
 }
 
 .nav-link {
-color: var(--primary-text);
-text-decoration: none;
-font-size: 16px;
-cursor: pointer;
+    color: var(--primary-text);
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: var(--transition);
 }
 
 .nav-link:hover {
-color: var(--repo-text);
+    color: var(--secondary-text);
 }
 
 /* ----------- SEARCH A USER PAGE ----------- */
@@ -323,7 +322,7 @@ user-blog a:hover {
 }
 
 .repo-button:hover {
-    box-shadow: 0 0 10px var(--border-color);
+    box-shadow: 0 0 10px 1px var(--border-color);
 }
 
 /* ----------- README COMPONENT ----------- */
@@ -524,6 +523,40 @@ user-blog a:hover {
     background-color: var(--border-color);
 }
 
+/* ----------- User Card Component ----------- */
+#user-card-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    margin: 0 auto 40px;
+    border-top: 2px solid rgba(177, 186, 196, 0.4);
+    width: 40%;
+    padding-top: 20px;
+}
+
+#user-card-header {
+    margin: 60px auto 50px;
+    width: 40%;
+}
+
+#user-card-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 2px solid var(--border-color);
+}
+
+#user-card-name {
+    font-size: 24px;
+    color: var(--repo-text);
+}
+
+#user-card-follow-stats {
+    font-size: 12px;
+    color: var(--secondary-text);
+}
+
 /* ----------- Responsive Design ----------- */
 
 /* For tablets (screen width 768px and below) */
@@ -602,7 +635,7 @@ user-blog a:hover {
 }
 
 .repo-card {
-  border-top: 1px solid var(--border-color);
+  border-top: 2px solid rgba(177, 186, 196, 0.4);
   padding-bottom: 15px;
 }
 
@@ -616,7 +649,8 @@ user-blog a:hover {
   font-size: 25px;
   color: var(--repo-text);
   text-decoration: none;
-  padding-top: 20px;
+  padding-top: 10px;
+  font-weight: bold;
 }
 
 .repo-title:hover {
@@ -633,12 +667,12 @@ user-blog a:hover {
 }
 
 .repo-language {
-  padding-top: 5px;
+
   color: var(--secondary-text);
 }
 
 .repo-description {
-  padding-top: 5px;
+  padding: 5px 0 40px 0;
   color: var(--secondary-text);
   font-size: 13px;
 }
