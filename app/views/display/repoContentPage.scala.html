@@ -15,36 +15,29 @@
 
         @if(repo.isDefined && user.isDefined) {
         @views.html.components.userRepoCard(user.get, repo.get)
-        <p class="repo-description">@repo.get.description.getOrElse("No description available.")</p>
-        }
-
-        <div class="repo-action-buttons">
-            <button class="btn">Fork</button>
-        </div>
-
-        @if(repo.isDefined){
-            @views.html.components.repoLinks(repo.get)
         }
 
         <div class="repo-contents">
-            <h2>Files and Folders</h2>
+            @if(user.isDefined) {
+                <div class="repo-contents-top">
+                    <img src="@user.get.avatar_url" alt="avatar of the user" class="repo-contents-avatar">
+                    <h2 class="repo-contents-name">@username</h2>
+                </div>
+            }
             <ul>
                 @for(dir <- contents if dir.`type` == "dir") {
-                <li>
+                <li class="repos-contents-dir-name">
                     @views.html.components.dirCard(username, repoName, dir)
                 </li>
                 }
                 @for(file <- contents if file.`type` == "file") {
-                <li>
+                <li class="repos-contents-file-name">
                     @views.html.components.fileCard(username, repoName, file)
                 </li>
                 }
             </ul>
         </div>
 
-        @if(repo.isDefined){
-            @views.html.components.repoDetails(repo.get)
-        }
     </div>
 </div>
 }
