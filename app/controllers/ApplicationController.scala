@@ -152,7 +152,7 @@ class ApplicationController @Inject()(
         val pathSeq = gitHubService.getPathSequence(path)
         currentPathSeq = Some(pathSeq)
         val currentLocation = gitHubService.getCurrentPathLocation(path)
-        Ok(views.html.repos.dirContent(username, repoName, pathSeq, currentLocation, repoContent))
+        Ok(views.html.repos.dirContent(username, repoName,currentUser, currentRepo, currentPathSeq, currentLocation, repoContent))
     }
   }
 
