@@ -1009,7 +1009,6 @@ user-blog a:hover {
    width: 100%;
    min-height: 30rem;
    height: 100%;
-   border: none;
    padding: 1rem;
    background-color: var(--button-bg);
    color: var(--button-text);
@@ -1019,4 +1018,53 @@ user-blog a:hover {
    border-bottom: 1px solid var(--border-color);
    border-radius: 0px 0px 10px 10px;
    padding: 20px;
+}
+
+
+#delete-file-container {
+    display:flex;
+    flex-direction: column;
+    width: 80%;
+    margin: auto;
+}
+#delete-file-container label{
+    display: none;
+    font-size: 1px;
+}
+
+#delete-file-container dd[class="info"]{
+    display: none;
+}
+.file-content{
+    min-height:20rem;
+    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0px 0px 10px 10px;
+    padding: 20px;
+    font-size: 1rem;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+
+
+.edit-delete-buttons{
+    display: flex;
+    flex-direction: row;
+    margin-right: 5rem;
+}
+
+.edit-button{
+    font-size: 14px;
+    padding: 7px 15px;
+}
+
+.delete-button{
+    font-size: 14px;
+    padding: 7px 15px;
+}
+.delete-button-container{
+    margin-top: 20px;
+    font-size: 14px;
+    padding: 7px 15px;
 }

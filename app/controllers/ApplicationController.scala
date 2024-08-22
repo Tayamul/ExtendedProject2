@@ -162,7 +162,7 @@ class ApplicationController @Inject()(
       case Right(repoFileItem) =>
         val pathSeq = gitHubService.getPathSequence(path)
         currentPathSeq = Some(pathSeq)
-        Ok(views.html.repos.fileContent(username, repoName, pathSeq, sha, repoFileItem))
+        Ok(views.html.repos.fileContent(username, repoName, sha, repoFileItem, currentUser, currentRepo, currentPathSeq))
     }
   }
 
@@ -348,23 +348,30 @@ class ApplicationController @Inject()(
 
   /** ---- Delete request GitHub service ---- */
 
-  def getDeleteFileForm(owner: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action { implicit request =>
+  def getDeleteFileForm(owner: String, repoName: String, path: String, sha: String): Action[AnyContent] = Action.async { implicit request =>
     accessToken
-    val decodedPath = gitHubService.convertContentToPlainText(path)
-    Ok {
-      views.html.forms.deleteFile(owner, repoName, decodedPath, sha, DeleteFileForm.form)
+    gitHubService.getUserRepoFileContent(None, owner, repoName, path).value.map {
+      case Left(error) => resultError(error)
+      case Right(repoFileItem) => {
+        val fileContent = repoFileItem.content
+        val fileName = gitHubService.getCurrentPathLocation(path)._1
+        Ok {
+          views.html.forms.deleteFile(owner, repoName, path, sha, DeleteFileForm.form, currentUser, currentRepo, currentPathSeq, fileName, fileContent)
+        }
+      }
     }
   }
 
-  def deleteFile(owner: String, repoName: String, filePath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def deleteFile(owner: String, repoName: String, encodedPath: String, fileSha: String, fileContent:String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     accessToken
-    val encodedPath = gitHubService.baseEncodePath(filePath)
     DeleteFileForm.form.bindFromRequest().fold(
       formWithErrors => {
-        Future.successful(BadRequest(views.html.forms.deleteFile(owner, repoName, filePath, fileSha, formWithErrors)))
+        val fileName = gitHubService.getCurrentPathLocation(encodedPath)._1
+        Future.successful(BadRequest(views.html.forms.deleteFile(owner, repoName, encodedPath, fileSha, formWithErrors, currentUser, currentRepo, currentPathSeq, fileName, fileContent)))
       },
       deleteFileForm => {
-        val deleteFile = DeleteFile(deleteFileForm.message, fileSha, None, None, None)
+        val message = gitHubService.baseEncodePath(deleteFileForm.message)
+        val deleteFile = DeleteFile(message, fileSha, None, None, None)
         gitHubService.deleteFileRequest(None, owner, repoName, encodedPath, deleteFile).value.map {
           case Left(error) => resultError(error)
           case Right(value) => Ok {
