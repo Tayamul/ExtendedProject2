@@ -1,20 +1,46 @@
 @import helper._
 @import models.forms.UpdateFileForm
-@(owner:String, repoName:String, filePath:String, fileSha:String, updateFileForm: Form[UpdateFileForm])(implicit request:RequestHeader, messages:Messages)
+@import models.github.GitHubUser
+@import models.github.Repository
+
+
+@(owner:String,
+repoName:String,
+filePath:String,
+fileSha:String,
+updateFileForm: Form[UpdateFileForm],
+user:Option[GitHubUser],
+repo:Option[Repository],
+pathSeq:Option[List[(String,String)]],
+fileName: String
+)(implicit request:RequestHeader, messages:Messages)
+
 
 @main("Edit File") {
-<div>
-    <h2>Edit File: @filePath</h2>
-    @helper.form(action =  routes.ApplicationController.editFile(owner, repoName, filePath, fileSha)) {
-    @helper.CSRF.formField
-    @helper.inputText(updateFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")
-    @helper.inputText(updateFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")
-    @helper.inputText(updateFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")
-    @helper.inputText(updateFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")
-    @helper.inputText(updateFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")
-    @helper.inputText(updateFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")
-    @helper.inputText(updateFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")
-    <input type="submit" class="btn btn-primary" value="Update">
+@helper.form(action =  routes.ApplicationController.editFile(owner, repoName, filePath, fileSha)) {
+@helper.CSRF.formField
+<div id="edit-file-container">
+        @if(user.isDefined && repo.isDefined){
+        @views.html.components.userRepoCard(user.get, repo.get)
+        }
+    <div class="commit-file-container">
+        <button type="submit" class="commit-file-button">Commit file</button>
+    </div>
+
+    <div class="edit-file-form">
+        <div class="edit-file-form-header">
+            @views.html.components.filePath(owner, repoName, pathSeq)
+            <p class="edit-file-name">@fileName</p>
+        </div>
+        @helper.textarea(updateFileForm("content"), Symbol("placeholder") -> "File content...")
+        @helper.inputText(updateFileForm("message"), Symbol("placeholder") -> "Commit message...")
+    </div>
+
+    <input type="hidden" name="branch" value=""/>
+    <input type="hidden" name="committerName" value=""/>
+    <input type="hidden" name="committerEmail" value=""/>
+    <input type="hidden" name="authorName" value=""/>
+    <input type="hidden" name="authorEmail" value=""/>
     }
 </div>
 }
