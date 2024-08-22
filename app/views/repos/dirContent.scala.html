@@ -1,38 +1,45 @@
 @import models.github.RepoContentItem
+@import models.github.GitHubUser
+@import models.github.Repository
 
-@(username: String, repoName: String, pathSeq:List[(String,String)], currentLocation:(String,String), contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(
+username: String,
+repoName: String,
+user:Option[GitHubUser],
+repo:Option[Repository],
+pathSeq:Option[List[(String,String)]],
+currentLocation:(String,String),
+contents: Seq[RepoContentItem]
+)(implicit request: RequestHeader, messages: Messages)
 
 @main(repoName){
-
-<div>
-    <h1>
-        <a href="@routes.ApplicationController.displayGitHubUser(username)"
-        >@username</a>
-    </h1>
-
-    <h2>
-        <a href="@routes.ApplicationController.getUserRepoContent(username, repoName)"
-        >@repoName /</a>
-
-        @for(pathSegment <- pathSeq){
-        <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, pathSegment._2)"
-        > @pathSegment._1 /</a>
-        }
-
+<div id="repo-dir-content-container">
+    @if(repo.isDefined && user.isDefined) {
+        @views.html.components.userRepoCard(user.get, repo.get)
+    }
+    <div class="repo-dir-header">
+        @views.html.components.filePath(username, repoName, pathSeq)
         @currentLocation._1
-    </h2>
-    @for(dir <- contents if dir.`type` == "dir") {
-    <a href="@routes.ApplicationController.getUserRepoDirContent(username, repoName, dir.path)"
-    >@dir.name</a>
-    }
-    @for(file <- contents if file.`type` == "file") {
-    <a href="@routes.ApplicationController.getUserRepoFileContent(username, repoName, file.path, file.sha)"
-    >@file.name</a>
-    }
-    <div>
+    </div>
+
+    <div class="repo-dir-body">
+        <ul>
+            @for(dir <- contents if dir.`type` == "dir") {
+            <li>
+                @views.html.components.dirCard(username, repoName, dir)
+            </li>
+            }
+            @for(file <- contents if file.`type` == "file") {
+            <li>
+                @views.html.components.fileCard(username, repoName, file)
+            </li>
+            }
+        </ul>
+    </div>
+
+    <div class = "add-file-button">
         <a href="@routes.ApplicationController.getNewFileInput(username, repoName, currentLocation._2)"
         >Add New File</a>
     </div>
 </div>
-
 }
