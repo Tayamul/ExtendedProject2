@@ -375,6 +375,25 @@ user-blog a:hover {
     font-size: 12px;
 }
 
+/* ----------- File Path ----------- */
+#add-file-path{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+repo-segment a{
+    color: var(--repo-text);
+}
+
+.dir-segments a{
+    color: var(--repo-text);
+}
+
+.separator{
+    color: white;
+}
+
 /* ----------- ADD NEW FILE FORM ----------- */
 #add-file-form{
     display: flex;
@@ -394,18 +413,6 @@ user-blog a:hover {
     border-radius: 10px 10px 0px 0px;
 }
 
-repo-segment a{
-    color: var(--repo-text);
-}
-
-.dir-segments a{
-    color: var(--repo-text);
-}
-
-.separator{
-    color: white;
-}
-
 .name-input input[type="text"]{
     min-height: 20px;
     padding: 5px;
@@ -414,9 +421,7 @@ repo-segment a{
     color: var(--button-text);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-
 }
-
 
 .add-file-form textarea{
    display:flex;
@@ -435,12 +440,6 @@ repo-segment a{
    border-bottom: 1px solid var(--border-color);
    border-radius: 0px 0px 10px 10px;
    padding: 20px;
-}
-
-#add-file-path{
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
 }
 
 /* ----------- ADD A NEW FILE ----------- */
