@@ -1,0 +1,9 @@
+@import models.github.Repository
+
+@(repo: Repository)
+
+<div class="repo-details">
+    <p><strong>Language:</strong> @repo.language.getOrElse("Not specified")</p>
+    <p><strong>Forks:</strong> @repo.forks</p>
+    <p><strong>Default Branch:</strong> @repo.default_branch</p>
+</div>

@@ -137,7 +137,7 @@ class ApplicationController @Inject()(
     }
     gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok(views.html.display.repoContentPage(username, repoName, currentRepo, repoContent))
+      case Right(repoContent) => Ok(views.html.display.repoContentPage(username, repoName, currentRepo, currentUser, repoContent))
     }
   }
 
