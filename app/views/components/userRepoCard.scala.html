@@ -4,7 +4,12 @@
 @(user: GitHubUser, repo: Repository)
 
 <div id="user-repo-card">
-    <img src="@user.avatar_url" alt="avatar of the user" id="user-repo-avatar">
-    <h2 id="repo-name">@repo.name</h2>
-    <p id="repo-visibility">@repo.visibility.capitalize</p>
+    <div id="user-repo-card-top">
+        <img src="@user.avatar_url" alt="avatar of the user" id="user-repo-avatar">
+        <h2 id="repo-name">@repo.name</h2>
+        <p id="repo-visibility">@repo.visibility.capitalize</p>
+    </div>
+    <div id="user-repo-card-bottom">
+        <button class="fork-btn">Fork: @repo.forks</button>
+    </div>
 </div>
