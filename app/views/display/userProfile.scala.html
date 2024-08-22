@@ -8,7 +8,7 @@
         @views.html.display.githubUser(user)
     </div>
     <div class="user-profile-right">
-        <a href="@routes.ApplicationController.getUserRepos(user.login)"><button class="repo-button">Repositories</button></a>
+        <a href="@routes.ApplicationController.getUserRepos(user.login)"><button class="general-button">Repositories</button></a>
         @views.html.components.readme(readmeHtml)
     </div>
 </div>
