@@ -56,3 +56,6 @@ GET /github/:owner/:repoName/readme                                 controllers.
 
 # GitHub Repo Content Page
 #GET     /github/:owner/:repoName/contents          controllers.ApplicationController.repoContentPage(owner: String, repoName: String)
+
+
+POST  /users/list/delete                 controllers.ApplicationController.deleteSavedUser()
