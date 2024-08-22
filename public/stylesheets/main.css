@@ -765,6 +765,22 @@ user-blog a:hover {
     border: 2px solid var(--border-color);
 }
 
+#user-card-right {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#user-card-right-bottom svg {
+    color: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+#user-card-right-bottom svg:hover {
+    color: #ff4d4d;
+}
+
 #user-card-name {
     font-size: 24px;
     color: var(--repo-text);
