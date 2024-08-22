@@ -347,10 +347,15 @@ user-blog a:hover {
 #user-repo-card {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     border-bottom: 1px solid var(--border-color);
-    gap: 10px;
     padding: 30px 0;
+}
 
+#user-repo-card-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 #user-repo-avatar {
@@ -363,7 +368,7 @@ user-blog a:hover {
 #repo-name {
     font-size: 24px;
     font-weight: bold;
-    color: (--primary-text);
+    color: var(--primary-text);
 }
 
 #repo-visibility {
@@ -371,7 +376,7 @@ user-blog a:hover {
     border: 1px solid var(--border-color);
     border-radius: 0.7rem;
     padding: 0 10px;
-    color: var(--secondary-text);
+    color: var(--button-text);
     font-size: 12px;
 }
 
@@ -402,54 +407,40 @@ user-blog a:hover {
 }
 
 /* Main container for the entire page */
-.main-container {
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
-    background-color: #f6f8fa;
-}
+
 
 /* General styling for the repository page */
 .repository-container {
-    background-color: #ffffff;
-    border: 1px solid #d1d5da;
     border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(27, 31, 35, 0.12), 0 8px 24px rgba(27, 31, 35, 0.12);
     padding: 30px;
-    max-width: 800px;
-    width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    color: #24292e;
+    width: 80%;
+    margin: auto;
+}
+
+.repository-container-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* Repository header */
 .repo-header {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
     align-items: center;
-    border-bottom: 1px solid #e1e4e8;
     padding-bottom: 15px;
-    margin-bottom: 20px;
-}
-
-.repo-name {
-    font-size: 24px;
-    font-weight: 600;
-    color: #0366d6;
-}
-
-.repo-name a {
-    text-decoration: none;
-    color: inherit;
+    margin-bottom: 10px;
 }
 
 .repo-visibility {
-    background-color: #e1e4e8;
-    border-radius: 2px;
-    padding: 2px 6px;
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.7rem;
+    padding: 0 10px;
+    color: var(--button-text);
     font-size: 12px;
-    font-weight: 500;
-    color: #586069;
 }
 
 .repo-description {
@@ -465,14 +456,14 @@ user-blog a:hover {
     margin-bottom: 20px;
 }
 
-.btn {
-    background-color: #f6f8fa;
-    border: 1px solid #d1d5da;
+.fork-btn, main-btn {
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 5px 12px;
     font-size: 14px;
     font-weight: 500;
-    color: #24292e;
+    color: var(--button-text);
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -524,43 +515,57 @@ user-blog a:hover {
 
 /* Files and Folders */
 .repo-contents {
-    margin-bottom: 20px;
+    margin: 40px 0 0 0;
+    border: 2px solid rgba(177, 186, 196, 0.7);
+    border-radius: 5px;
+    background-color: var(--secondary-bg);
+    display: flex;
+    flex-direction: column;
 }
 
-.repo-contents h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #24292e;
-}
-
-.repo-contents ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.repo-contents li {
+.repo-contents-top {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    background-color: #f9f9f9;
+    gap: 10px;
+    border-bottom: 2px solid rgba(177, 186, 196, 0.7);
+    padding: 10px 0 10px 10px;
 }
 
-.repo-contents li svg {
+.repo-contents-avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+.repo-contents-name {
+    font-size: 18px;
+    color: var(--primary-text);
+    font-weight: bold;
+}
+
+.repos-contents-dir-name, .repos-contents-file-name {
+    padding: 10px;
+    border-top: 1px solid rgba(177, 186, 196, 0.4);
+    color: var(--primary-text);
+}
+
+.repos-contents-dir-name:hover, .repos-contents-file-name:hover {
+    background-color: rgba(132,141,151,0.1);
+}
+
+.repos-contents-dir-name svg, .repos-contents-file-name svg {
     margin-right: 8px;
 }
 
-.folder-name, .file-name {
+.folder-name a, .file-name a {
     font-size: 14px;
-    color: #0366d6;
-    text-decoration: none;
+    color: var(--primary-text);
 }
 
-.folder-name:hover, .file-name:hover {
+.folder-name a:hover, .file-name a:hover {
     text-decoration: underline;
+    color: #4493F8;
 }
 
 /* Repository details */
