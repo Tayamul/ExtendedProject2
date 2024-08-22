@@ -5,7 +5,7 @@
 
 
 
-@(username: String, repoName: String, repo: Option[Repository], user: Option[GitHubUser], contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
+@(username: String, repoName: String, repo: Option[Repository], user: Option[GitHubUser], contents: Seq[RepoContentItem], currentLocation:(String,String))(implicit request: RequestHeader, messages: Messages)
 
 
 @main("Repository Page"){
@@ -16,6 +16,11 @@
         @if(repo.isDefined && user.isDefined) {
         @views.html.components.userRepoCard(user.get, repo.get)
         }
+
+        <div class="add-file-button">
+            <a href="@routes.ApplicationController.getNewFileInput(username, repoName)"
+            >Add New File</a>
+        </div>
 
         <div class="repo-contents">
             @if(user.isDefined) {

@@ -30,6 +30,7 @@
 
     --error-color: #ff4d4d;
 
+    --error-hover-color: #b32727;
     /* Transition */
     --transition: all 200ms ease;
 
@@ -1059,12 +1060,21 @@ user-blog a:hover {
     padding: 7px 15px;
 }
 
-.delete-button{
-    font-size: 14px;
-    padding: 7px 15px;
-}
-.delete-button-container{
+
+.delete-button-commit{
     margin-top: 20px;
     font-size: 14px;
     padding: 7px 15px;
+    background-color: var(--button-bg);
+    color: var(--primary-text);
+    cursor:pointer;
+}
+
+.delete-button-commit:hover{
+    box-shadow: 0 0 5px var(--error-color);
+}
+
+.delete-button-container {
+    display: flex;
+    justify-content: flex-end;
 }

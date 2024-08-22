@@ -18,6 +18,10 @@ contents: Seq[RepoContentItem]
         @if(repo.isDefined && user.isDefined) {
         @views.html.components.userRepoCard(user.get, repo.get)
         }
+        <div class="add-file-button">
+            <a href="@routes.ApplicationController.getNewFileInput(username, repoName, currentLocation._2)"
+            >Add New File</a>
+        </div>
         <div class="repo-contents">
             @if(user.isDefined) {
             <div class="repo-contents-top">
@@ -42,10 +46,6 @@ contents: Seq[RepoContentItem]
             </ul>
         </div>
 
-        <div class="add-file-button">
-            <a href="@routes.ApplicationController.getNewFileInput(username, repoName, currentLocation._2)"
-            >Add New File</a>
-        </div>
     </div>
 </div>
 }

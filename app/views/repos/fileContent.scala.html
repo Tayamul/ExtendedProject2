@@ -14,7 +14,7 @@ pathSeq:Option[List[(String,String)]]
 
 @main(file.name) {
 
-<div id="file-content-container">
+<div class="repository-container">
     @if(user.isDefined && repo.isDefined){
     @views.html.components.userRepoCard(user.get, repo.get)
     }
