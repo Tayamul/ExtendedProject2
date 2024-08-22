@@ -371,7 +371,7 @@ user-blog a:hover {
     border: 1px solid var(--border-color);
     border-radius: 0.7rem;
     padding: 0 10px;
-    color: var(--secondary-text);
+    color: var(--button-text);
     font-size: 12px;
 }
 
@@ -406,13 +406,12 @@ user-blog a:hover {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
-    background-color: #0d1117;
+    background-color: var(--secondary-bg);
 }
 
 /* General styling for the repository page */
 .repository-container {
-    background-color: #ffffff;
-    border: 1px solid #d1d5da;
+    background-color: var(--secondary-bg);
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(27, 31, 35, 0.12), 0 8px 24px rgba(27, 31, 35, 0.12);
     padding: 30px;
@@ -442,7 +441,7 @@ border-bottom: 1px solid var(--border-color);
 .repo-name {
     font-size: 24px;
     font-weight: 600;
-    color: #0366d6;
+    color: var(--repo-text);
 }
 
 .repo-name a {
@@ -451,12 +450,12 @@ border-bottom: 1px solid var(--border-color);
 }
 
 .repo-visibility {
-    background-color: #e1e4e8;
-    border-radius: 2px;
-    padding: 2px 6px;
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.7rem;
+    padding: 0 10px;
+    color: var(--button-text);
     font-size: 12px;
-    font-weight: 500;
-    color: #586069;
 }
 
 .repo-description {
@@ -472,14 +471,14 @@ border-bottom: 1px solid var(--border-color);
     margin-bottom: 20px;
 }
 
-.btn {
-    background-color: #f6f8fa;
-    border: 1px solid #d1d5da;
+.fork-btn {
+    background-color: var(--button-bg);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 5px 12px;
     font-size: 14px;
     font-weight: 500;
-    color: #24292e;
+    color: var(--button-text);
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -531,39 +530,36 @@ border-bottom: 1px solid var(--border-color);
 
 /* Files and Folders */
 .repo-contents {
-    margin-bottom: 20px;
+    margin: 30px 0;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        background-color: var(--secondary-color);
 }
 
-.repo-contents h2 {
+.repo-contents-name {
     font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #24292e;
+    color: var(--primary-text);
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.repo-contents ul {
-    list-style-type: none;
-    padding-left: 0;
-}
+.repos-contents-dir-name, .repos-contents-file-name {
 
-.repo-contents li {
-    display: flex;
-    align-items: center;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    background-color: #f9f9f9;
+    border-bottom: 1px solid #e1e4e8;
+    color: var(--primary-text);
 }
 
-.repo-contents li svg {
+.repos-contents-file-name svg {
     margin-right: 8px;
 }
 
 .folder-name, .file-name {
     font-size: 14px;
-    color: #0366d6;
-    text-decoration: none;
+    color: (var--primary-text);
+
 }
 
 .folder-name:hover, .file-name:hover {
