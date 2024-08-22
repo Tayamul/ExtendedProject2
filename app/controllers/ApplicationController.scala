@@ -141,7 +141,9 @@ class ApplicationController @Inject()(
     }
     gitHubService.getUserRepoContent(None, username, repoName).value.map {
       case Left(error) => resultError(error)
-      case Right(repoContent) => Ok(views.html.display.repoContentPage(username, repoName, currentRepo, currentUser, repoContent))
+      case Right(repoContent) =>
+        val currentLocation = gitHubService.getCurrentPathLocation(gitHubService.baseEncodePath(repoName))
+        Ok(views.html.display.repoContentPage(username, repoName, currentRepo, currentUser, repoContent, currentLocation))
     }
   }
 
@@ -245,7 +247,7 @@ class ApplicationController @Inject()(
 
 
   /** ---- Put requests GitHub service ---- */
-  def getNewFileInput(owner: String, repoName: String, dirPath: String): Action[AnyContent] = Action { implicit request =>
+  def getNewFileInput(owner: String, repoName: String, dirPath: String=""): Action[AnyContent] = Action { implicit request =>
     accessToken
     val pathSeq = gitHubService.getPathSequence(dirPath, includeLast = true)
     currentPathSeq = Some(pathSeq)

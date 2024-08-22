@@ -14,32 +14,38 @@ contents: Seq[RepoContentItem]
 
 @main(repoName){
 <div id="repo-dir-content-container">
-    @if(repo.isDefined && user.isDefined) {
+    <div class="repository-container">
+        @if(repo.isDefined && user.isDefined) {
         @views.html.components.userRepoCard(user.get, repo.get)
-    }
-    <div class="repo-dir-header">
-        @views.html.components.filePath(username, repoName, pathSeq)
-        @currentLocation._1
-    </div>
-
-    <div class="repo-dir-body">
-        <ul>
-            @for(dir <- contents if dir.`type` == "dir") {
-            <li>
-                @views.html.components.dirCard(username, repoName, dir)
-            </li>
+        }
+        <div class="add-file-button">
+            <a href="@routes.ApplicationController.getNewFileInput(username, repoName, currentLocation._2)"
+            >Add New File</a>
+        </div>
+        <div class="repo-contents">
+            @if(user.isDefined) {
+            <div class="repo-contents-top">
+                <img src="@user.get.avatar_url" alt="avatar of the user" class="repo-contents-avatar">
+                <h2 class="repo-contents-name">@username <span class="separator"> / </span></h2>
+                @views.html.components.filePath(username, repoName, pathSeq)
+                @currentLocation._1
+            </div>
             }
-            @for(file <- contents if file.`type` == "file") {
-            <li>
-                @views.html.components.fileCard(username, repoName, file)
-            </li>
-            }
-        </ul>
-    </div>
 
-    <div class = "add-file-button">
-        <a href="@routes.ApplicationController.getNewFileInput(username, repoName, currentLocation._2)"
-        >Add New File</a>
+            <ul>
+                @for(dir <- contents if dir.`type` == "dir") {
+                <li class="repos-contents-dir-name">
+                    @views.html.components.dirCard(username, repoName, dir)
+                </li>
+                }
+                @for(file <- contents if file.`type` == "file") {
+                <li class="repos-contents-file-name">
+                    @views.html.components.fileCard(username, repoName, file)
+                </li>
+                }
+            </ul>
+        </div>
+
     </div>
 </div>
 }

@@ -20,12 +20,12 @@ fileContent:String
 
 @helper.form(action =  routes.ApplicationController.deleteFile(owner, repoName, filePath, fileSha, fileContent)) {
 @helper.CSRF.formField
-<div id="delete-file-container">
+<div id="edit-file-container">
     @if(user.isDefined && repo.isDefined){
     @views.html.components.userRepoCard(user.get, repo.get)
     }
     <div class="delete-button-container">
-        <button type="submit" class="delete-button" value="Delete">Delete File</button>
+        <button type="submit" class="delete-button-commit" value="Delete">Delete File</button>
     </div>
 
     <div class="edit-file-form">
