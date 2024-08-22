@@ -406,7 +406,7 @@ user-blog a:hover {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
-    background-color: #f6f8fa;
+    background-color: #0d1117;
 }
 
 /* General styling for the repository page */
@@ -422,14 +422,21 @@ user-blog a:hover {
     color: #24292e;
 }
 
+.repository-container-top {
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 1px solid var(--border-color);
+}
+
 /* Repository header */
 .repo-header {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
     align-items: center;
-    border-bottom: 1px solid #e1e4e8;
     padding-bottom: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .repo-name {
