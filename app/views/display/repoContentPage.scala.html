@@ -4,6 +4,7 @@
 @import helper._
 
 
+
 @(username: String, repoName: String, repo: Option[Repository], user: Option[GitHubUser], contents: Seq[RepoContentItem])(implicit request: RequestHeader, messages: Messages)
 
 
@@ -30,16 +31,12 @@
             <ul>
                 @for(dir <- contents if dir.`type` == "dir") {
                 <li>
-
                     @views.html.components.dirCard(username, repoName, dir)
-
                 </li>
                 }
                 @for(file <- contents if file.`type` == "file") {
                 <li>
-
                     @views.html.components.fileCard(username, repoName, file)
-
                 </li>
                 }
             </ul>
