@@ -10,11 +10,12 @@ dirPath:String,
 createFileForm: Form[CreateFileForm],
 user:Option[GitHubUser],
 repo:Option[Repository],
-pathSeq:Option[Seq[(String,String)]]
+pathSeq:Option[List[(String,String)]]
 )(implicit request:RequestHeader, messages:Messages)
 
 @main("Add File") {
-
+@helper.form(action =  routes.ApplicationController.createNewFile(owner, repoName, dirPath)) {
+@helper.CSRF.formField
 <div id="add-new-file-container">
     @if(user.isDefined && repo.isDefined){
     @views.html.components.userRepoCard(user.get, repo.get)
@@ -23,34 +24,31 @@ pathSeq:Option[Seq[(String,String)]]
     <div class="commit-file-container">
         <button type="submit" class="commit-file-button">Commit file</button>
     </div>
-    
-    <h2>
-        @if(repo.isDefined){
-        <a href="@routes.ApplicationController.getUserRepoContent(owner, repoName)"
-        >@repo.get.name /</a>
-        }
 
-        @for(pathSegment <- pathSeq.getOrElse(Seq())){
-        <a href="@routes.ApplicationController.getUserRepoDirContent(owner, repoName, pathSegment._2)"
-        > @pathSegment._1 /</a>
-        }
+    <div class="add-file-form">
+        <div class="add-file-form-header">
+            @views.html.components.filePath(owner, repoName, pathSeq)
 
-        newFile.txt
-    </h2>
+            @helper.inputText(createFileForm("name"), Symbol("placeholder") -> "filename.txt...")
 
-<!--        <h2> @dirPath </h2>-->
-    <!--    @helper.form(action =  routes.ApplicationController.createNewFile(owner, repoName, dirPath)) {-->
-    <!--    @helper.CSRF.formField-->
-    <!--    @helper.inputText(createFileForm("name"), Symbol("type") -> "hidden")-->
-    <!--    @helper.inputText(createFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")-->
-    <!--    @helper.inputText(createFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")-->
-    <!--    @helper.inputText(createFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")-->
-    <!--    @helper.inputText(createFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")-->
-    <!--    @helper.inputText(createFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")-->
-    <!--    @helper.inputText(createFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")-->
-    <!--    @helper.inputText(createFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")-->
-    <!--    <input type="submit" class="btn btn-primary" value="Submit">-->
-    <!--    }-->
+        </div>
+        @helper.textarea(createFileForm("content"), Symbol("placeholder") -> "File content...")
+        @helper.inputText(createFileForm("message"), Symbol("placeholder") -> "Commit message...")
+    </div>
+<!--    @helper.inputText(createFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional", Symbol("type") -> "hidden")-->
+<!--    @helper.inputText(createFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name", Symbol("type") -> "hidden")-->
+<!--    @helper.inputText(createFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email", Symbol("type") -> "hidden")-->
+<!--    @helper.inputText(createFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)", Symbol("type") -> "hidden")-->
+<!--    @helper.inputText(createFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)", Symbol("type") -> "hidden")-->
 
+    <input type="hidden" name="branch" value=""/>
+    <input type="hidden" name="committerName" value=""/>
+    <input type="hidden" name="committerEmail" value=""/>
+    <input type="hidden" name="authorName" value=""/>
+    <input type="hidden" name="authorEmail" value=""/>
+    }
 </div>
 }
+
+
+

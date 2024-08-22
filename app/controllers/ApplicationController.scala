@@ -27,7 +27,7 @@ class ApplicationController @Inject()(
 
   private var currentUser:Option[GitHubUser] = None
   private var currentRepo:Option[Repository] = None
-  private var currentPathSeq:Option[Seq[(String, String)]] = None
+  private var currentPathSeq:Option[List[(String, String)]] = None
 
 
   // convert api errors to Status result
@@ -249,11 +249,12 @@ class ApplicationController @Inject()(
   }
 
   def getNewFilePath(dirPath: String, fileName: String) = {
-    if (dirPath.trim.isEmpty) {
+    val decodedDirPath = gitHubService.convertContentToPlainText(dirPath)
+    if (decodedDirPath.trim.isEmpty) {
       fileName
     }
     else {
-      s"$dirPath/$fileName"
+      s"$decodedDirPath/$fileName"
     }
   }
 
