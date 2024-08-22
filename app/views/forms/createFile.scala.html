@@ -28,25 +28,27 @@ pathSeq:Option[List[(String,String)]]
     <div class="add-file-form">
         <div class="add-file-form-header">
             @views.html.components.filePath(owner, repoName, pathSeq)
-            <div class="name-input">
-                @helper.inputText(createFileForm("name"), Symbol("placeholder") -> "file.txt...")
-            </div>
+
+            @helper.inputText(createFileForm("name"), Symbol("placeholder") -> "filename.txt...")
+
         </div>
-            @helper.textarea(createFileForm("content"), Symbol("placeholder") -> "Enter file content...")
+        @helper.textarea(createFileForm("content"), Symbol("placeholder") -> "File content...")
+
+        @helper.inputText(createFileForm("message"), Symbol("placeholder") -> "Commit message...")
     </div>
 </div>
 }
-    <!--        <h2> @dirPath </h2>-->
+<!--        <h2> @dirPath </h2>-->
 
-    <!--    @helper.inputText(createFileForm("name"), Symbol("type") -> "hidden")-->
-    <!--    @helper.inputText(createFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")-->
-    <!--    @helper.inputText(createFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")-->
-    <!--    @helper.inputText(createFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")-->
-    <!--    @helper.inputText(createFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")-->
-    <!--    @helper.inputText(createFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")-->
-    <!--    @helper.inputText(createFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")-->
-    <!--    @helper.inputText(createFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")-->
-    <!--    <input type="submit" class="btn btn-primary" value="Submit">-->
-    <!--    }-->
+<!--    @helper.inputText(createFileForm("name"), Symbol("type") -> "hidden")-->
+<!--    @helper.inputText(createFileForm("message"), Symbol("_label") -> "Commit Message", Symbol("placeholder") -> "Enter commit message")-->
+<!--    @helper.inputText(createFileForm("content"), Symbol("_label") -> "Content", Symbol("placeholder") -> "Enter file content")-->
+<!--    @helper.inputText(createFileForm("branch"), Symbol("_label") -> "Branch", Symbol("placeholder") -> "Enter branch optional")-->
+<!--    @helper.inputText(createFileForm("committerName"), Symbol("_label") -> "Committer Name", Symbol("placeholder") -> "Enter committer name")-->
+<!--    @helper.inputText(createFileForm("committerEmail"), Symbol("_label") -> "Committer Email", Symbol("placeholder") -> "Enter committer email")-->
+<!--    @helper.inputText(createFileForm("authorName"), Symbol("_label") -> "Author Name", Symbol("placeholder") -> "Enter author name (optional)")-->
+<!--    @helper.inputText(createFileForm("authorEmail"), Symbol("_label") -> "Author Email", Symbol("placeholder") -> "Enter author email (optional)")-->
+<!--    <input type="submit" class="btn btn-primary" value="Submit">-->
+<!--    }-->
 
 

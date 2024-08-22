@@ -382,7 +382,7 @@ user-blog a:hover {
     gap: 5px;
 }
 
-repo-segment a{
+.repo-segment a{
     color: var(--repo-text);
 }
 
@@ -403,7 +403,8 @@ repo-segment a{
 .add-file-form-header{
     margin-top: 20px;
     background-color: var(--secondary-bg);
-    padding: 0.5rem; color: var(--repo-text);
+    padding: 0.5rem;
+    color: var(--repo-text);
     display: flex;
     flex-direction: row;
     align-items: baseline;
@@ -413,7 +414,7 @@ repo-segment a{
     border-radius: 10px 10px 0px 0px;
 }
 
-.name-input input[type="text"]{
+.add-file-form input[type="text"]{
     min-height: 20px;
     padding: 5px;
     font-size: 1rem;
@@ -442,6 +443,17 @@ repo-segment a{
    padding: 20px;
 }
 
+#message_field {
+    margin-top: 20px;
+    min-height: 20px;
+    width: 100%;
+    padding: 5px;
+    font-size: 1rem;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;}
+
 /* ----------- ADD A NEW FILE ----------- */
 #add-new-file-container {
     display:flex;
@@ -451,6 +463,7 @@ repo-segment a{
 }
 #add-new-file-container label{
     display: none;
+    font-size: 1px;
 }
 
 #add-new-file-container dd[class="info"]{
