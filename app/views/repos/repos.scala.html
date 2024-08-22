@@ -28,7 +28,7 @@
                     @repo.name
                 </a>
                 @if(repo.visibility) {
-                  <span class="public-label">Public</span>
+                  <span class="public-label">@repo.visibility.capitalize</span>
                 }
             </div>
             <div class="repo-language">
