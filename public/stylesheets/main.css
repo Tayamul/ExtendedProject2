@@ -104,7 +104,7 @@ padding: 50px;
     text-align: justify;
 }
 
-.extra-content {
+.logo {
     background-color: var(--primary-bg);
     color: var(--primary-text);
     border-radius: 50%;
@@ -112,7 +112,6 @@ padding: 50px;
     height: 300px;
     display: flex;
     justify-content: center;
-    align-items: center;
     font-size: 14px;
     margin: 0 auto;
 }
@@ -794,6 +793,12 @@ user-blog a:hover {
         height: 130px;
         font-size: 12px;
     }
+
+
+ .extra-content img {
+    max-height: 300px;
+    display: flex;
+  }
 
     .navbar-container {
         flex-direction: column;
