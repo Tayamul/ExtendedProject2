@@ -13,7 +13,7 @@ contents: Seq[RepoContentItem]
 )(implicit request: RequestHeader, messages: Messages)
 
 @main(repoName){
-<div>
+<div id="repo-dir-content-container">
     @if(repo.isDefined && user.isDefined) {
         @views.html.components.userRepoCard(user.get, repo.get)
     }
