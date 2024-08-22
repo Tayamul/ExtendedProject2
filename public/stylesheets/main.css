@@ -374,7 +374,6 @@ user-blog a:hover {
     font-size: 12px;
 }
 
-
 /* ----------- ADD A NEW FILE ----------- */
 #add-new-file-container {
     width: 80%;
@@ -938,4 +937,75 @@ user-blog a:hover {
 }
 
 
+/* ----------- EDIT A NEW FILE ----------- */
 
+#edit-file-container {
+    display:flex;
+    flex-direction: column;
+    width: 80%;
+    margin: auto;
+}
+#edit-file-container label{
+    display: none;
+    font-size: 1px;
+}
+
+#edit-file-container dd[class="info"]{
+    display: none;
+}
+
+.edit-file-form-header{
+    display:flex;
+    flex-direction:row;
+}
+
+.edit-file-name{
+    color:white;
+}
+
+#edit-file-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-file-form-header{
+    margin-top: 20px;
+    background-color: var(--secondary-bg);
+    padding: 0.5rem;
+    color: var(--repo-text);
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 5px;
+    font-size: 1.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px 10px 0px 0px;
+}
+
+.edit-file-form input[type="text"]{
+    width: 100%;
+    min-height: 20px;
+    padding: 5px;
+    font-size: 1rem;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+
+.edit-file-form textarea{
+   display:flex;
+   font-size: 1rem;
+   flex-grow: 1;
+   width: 100%;
+   min-height: 30rem;
+   height: 100%;
+   border: none;
+   padding: 1rem;
+   background-color: var(--button-bg);
+   color: var(--button-text);
+   resize: none;
+   border-right: 1px solid var(--border-color);
+   border-left: 1px solid var(--border-color);
+   border-bottom: 1px solid var(--border-color);
+   border-radius: 0px 0px 10px 10px;
+   padding: 20px;
+}

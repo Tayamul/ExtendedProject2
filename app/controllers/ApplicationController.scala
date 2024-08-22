@@ -25,18 +25,22 @@ class ApplicationController @Inject()(
                                        val gitHubService: GitHubService
                                      )(implicit val ec: ExecutionContext) extends BaseController with play.api.i18n.I18nSupport with Logging {
 
-  private var currentUser:Option[GitHubUser] = None
-  private var currentRepo:Option[Repository] = None
+  private var currentUser: Option[GitHubUser] = None
+  private var currentRepo: Option[Repository] = None
 
-  private var currentPathSeq:Option[List[(String, String)]] = None
-
+  private var currentPathSeq: Option[List[(String, String)]] = None
+  private var currentPathLocation: Option[(String, String)] = None
 
 
   // convert api errors to Status result
   private def resultError(error: APIError): Result = {
     error match {
-      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Ok{views.html.error(upstreamStatus, upstreamMessage)}
-      case _ => Ok{views.html.error(error.httpResponseStatus, error.reason)}
+      case APIError.BadAPIResponse(upstreamStatus, upstreamMessage) => Ok {
+        views.html.error(upstreamStatus, upstreamMessage)
+      }
+      case _ => Ok {
+        views.html.error(error.httpResponseStatus, error.reason)
+      }
     }
   }
 
@@ -169,7 +173,7 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getUserReadMe(username:String):Action[AnyContent] = Action.async{result =>
+  def getUserReadMe(username: String): Action[AnyContent] = Action.async { result =>
     gitHubService.getRepoReadMe(None, username, username).value.map {
       case Left(error) => resultError(error)
       case Right(readme) => Ok(readme).as(HTML)
@@ -295,19 +299,27 @@ class ApplicationController @Inject()(
     }
   }
 
-  def getEditFileInput(owner: String, repoName: String, encodedPath: String, fileSha: String): Action[AnyContent] = Action { implicit request =>
+  def getEditFileInput(owner: String, repoName: String, encodedPath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request =>
     accessToken
-    val decodedPath = gitHubService.convertContentToPlainText(encodedPath)
-    Ok {
-      views.html.forms.editFile(owner, repoName, decodedPath, fileSha, UpdateFileForm.form)
+    gitHubService.getUserRepoFileContent(None, owner, repoName, encodedPath).value.map {
+      case Left(error) => resultError(error)
+      case Right(repoFileItem) => {
+        val currentContent = repoFileItem.content
+        val editForm = UpdateFileForm.form.fill(new UpdateFileForm(message = "", content = currentContent));
+        val fileName = gitHubService.getCurrentPathLocation(encodedPath)._1
+        Ok {
+          views.html.forms.editFile(owner, repoName, encodedPath, fileSha, editForm, currentUser, currentRepo, currentPathSeq, fileName)
+        }
+      }
     }
   }
 
-  def editFile(owner: String, repoName: String, decodedPath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    val encodedPath = gitHubService.baseEncodePath(decodedPath)
+  def editFile(owner: String, repoName: String, encodedPath: String, fileSha: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    val decodedPath = gitHubService.convertContentToPlainText(encodedPath)
     UpdateFileForm.form.bindFromRequest().fold(
       formWithErrors => {
-        Future.successful(BadRequest(views.html.forms.editFile(owner, repoName, decodedPath, fileSha, formWithErrors)))
+        val fileName = gitHubService.getCurrentPathLocation(encodedPath)._1
+        Future.successful(BadRequest(views.html.forms.editFile(owner, repoName, encodedPath, fileSha, formWithErrors, currentUser, currentRepo, currentPathSeq, fileName)))
       },
       updateFileForm => {
         gitHubService.convertUpdateFileFormToUpdateFile(updateFileForm, fileSha, decodedPath) match {
@@ -369,7 +381,9 @@ class ApplicationController @Inject()(
   def renderListOfUsers(): Action[AnyContent] = Action.async { result =>
     repoService.index().map {
       case Left(error) => resultError(error)
-      case Right(users: Seq[DataModel]) => Ok{views.html.display.listOfUsers(users)}
+      case Right(users: Seq[DataModel]) => Ok {
+        views.html.display.listOfUsers(users)
+      }
     }
   }
 }
