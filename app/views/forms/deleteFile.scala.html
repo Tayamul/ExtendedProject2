@@ -24,7 +24,7 @@ fileContent:String
     @if(user.isDefined && repo.isDefined){
     @views.html.components.userRepoCard(user.get, repo.get)
     }
-    <div class="commit-file-container">
+    <div class="delete-button-container">
         <button type="submit" class="delete-button" value="Delete">Delete File</button>
     </div>
 

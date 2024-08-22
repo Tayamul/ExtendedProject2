@@ -1037,12 +1037,24 @@ user-blog a:hover {
     color: var(--button-text);
 }
 
+
+.edit-delete-buttons{
+    display: flex;
+    flex-direction: row;
+    margin-right: 5rem;
+}
+
 .edit-button{
     font-size: 14px;
     padding: 7px 15px;
 }
 
 .delete-button{
+    font-size: 14px;
+    padding: 7px 15px;
+}
+.delete-button-container{
+    margin-top: 20px;
     font-size: 14px;
     padding: 7px 15px;
 }
