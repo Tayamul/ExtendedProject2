@@ -337,7 +337,7 @@ class ApplicationController @Inject()(
           case Right(file) =>
             gitHubService.updateFileRequest(None, owner, repoName, encodedPath, file).value.map {
               case Left(error) => resultError(error)
-              case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
+              case Right(value) => Redirect(routes.ApplicationController.getUserRepoFileContent(owner, repoName, encodedPath, fileSha))
             }
         }
       }
@@ -384,9 +384,7 @@ class ApplicationController @Inject()(
         val deleteFile = DeleteFile(message, fileSha, None, None, None)
         gitHubService.deleteFileRequest(None, owner, repoName, encodedPath, deleteFile).value.map {
           case Left(error) => resultError(error)
-          case Right(value) => Ok {
-            Json.toJson(value)
-          }
+          case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
         }
       }
     )

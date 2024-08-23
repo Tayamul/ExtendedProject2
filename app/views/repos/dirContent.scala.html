@@ -25,7 +25,7 @@ contents: Seq[RepoContentItem]
             <div class="repo-contents-top">
                 <div class="repo-contents-user">
                     <img src="@user.get.avatar_url" alt="avatar of the user" class="repo-contents-avatar">
-                    <h2 class="repo-contents-name">@username <span class="separator"> / </span></h2>
+                    <a class="repo-contents-name" href="@routes.ApplicationController.displayGitHubUser(username)">@username<span class="separator"> / </span></a>
                     @views.html.components.filePath(username, repoName, pathSeq)
                     @currentLocation._1
                 </div>

@@ -23,7 +23,7 @@
             <div class="repo-contents-top">
                 <div class="repo-contents-user">
                     <img src="@user.get.avatar_url" alt="avatar of the user" class="repo-contents-avatar">
-                    <h2 class="repo-contents-name">@username</h2>
+                    <a class="repo-contents-name" href="@routes.ApplicationController.displayGitHubUser(username)">@username</a>
                 </div>
                 <div class="add-file-button">
                     <a href="@routes.ApplicationController.getNewFileInput(username, repoName)"
