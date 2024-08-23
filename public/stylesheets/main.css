@@ -1079,15 +1079,16 @@ user-blog a:hover {
 
 .delete-button-commit{
     margin-top: 20px;
+    border-radius: 5px;
     font-size: 14px;
     padding: 7px 15px;
-    background-color: var(--button-bg);
+    background-color: #D11A2A;
     color: var(--primary-text);
     cursor:pointer;
 }
 
 .delete-button-commit:hover{
-    box-shadow: 0 0 5px var(--error-color);
+    background-color: #b3000c;
 }
 
 .delete-button-container {
