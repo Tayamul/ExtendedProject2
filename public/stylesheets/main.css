@@ -531,6 +531,7 @@ user-blog a:hover {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 1.2rem;
     border-bottom: 2px solid rgba(177, 186, 196, 0.7);
     padding: 10px 0 10px 10px;
 }
@@ -967,18 +968,21 @@ user-blog a:hover {
 
 /* ----------- EDIT A NEW FILE ----------- */
 
-#edit-file-container {
+.edit-file-container {
     display:flex;
     flex-direction: column;
     width: 80%;
     margin: auto;
+    padding: 30px;
 }
-#edit-file-container label{
+
+
+.edit-file-container label{
     display: none;
     font-size: 1px;
 }
 
-#edit-file-container dd[class="info"]{
+.edit-file-container dd[class="info"]{
     display: none;
 }
 
@@ -986,12 +990,19 @@ user-blog a:hover {
     color:white;
 }
 
-#edit-file-form{
+.edit-file-form{
     display: flex;
     flex-direction: column;
 }
 
+.edit-file-form{
+    margin-top: 0;
+}
+
 .edit-file-form-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin-top: 20px;
     background-color: var(--secondary-bg);
     padding: 0.5rem;
@@ -1048,7 +1059,10 @@ user-blog a:hover {
     display: none;
 }
 .file-content{
+    flex-grow: 1;
     min-height:20rem;
+    height: 100%;
+    width: 100%;
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
@@ -1060,16 +1074,12 @@ user-blog a:hover {
 }
 
 
-
-
 .edit-button, .delete-button{
     font-size: 14px;
     padding: 8px 15px 3px 15px;
 }
 
-
 .delete-button-commit{
-    margin-top: 20px;
     border-radius: 5px;
     font-size: 14px;
     padding: 7px 15px;
@@ -1082,9 +1092,21 @@ user-blog a:hover {
     background-color: #b3000c;
 }
 
+.edit-button-commit{
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 7px 15px;
+    background-color: #28a745;
+    color: white;
+    cursor:pointer;
+}
+
+.edit-button-commit:hover{
+    background-color: #218838;;
+}
+
 .delete-button-container {
     display: flex;
-    justify-content: flex-end;
 }
 
 .edit-delete-buttons{

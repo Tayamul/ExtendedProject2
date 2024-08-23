@@ -20,18 +20,21 @@ fileContent:String
 
 @helper.form(action =  routes.ApplicationController.deleteFile(owner, repoName, filePath, fileSha, fileContent)) {
 @helper.CSRF.formField
-<div id="edit-file-container">
+<div class="edit-file-container">
     @if(user.isDefined && repo.isDefined){
     @views.html.components.userRepoCard(user.get, repo.get)
     }
-    <div class="delete-button-container">
-        <button type="submit" class="delete-button-commit" value="Delete">Delete File</button>
-    </div>
+
 
     <div class="edit-file-form">
         <div class="edit-file-form-header">
-            @views.html.components.filePath(owner, repoName, pathSeq)
-            <p class="edit-file-name">@fileName</p>
+            <div class="file-content-path">
+                @views.html.components.filePath(owner, repoName, pathSeq)
+                <p class="edit-file-name">@fileName</p>
+            </div>
+            <div class="delete-button-container">
+                <button type="submit" class="delete-button-commit" value="Delete">Delete File</button>
+            </div>
         </div>
         <div class="file-content">@fileContent</div>
         @helper.inputText(deleteFileForm("message"), Symbol("placeholder") -> "Commit message...")
