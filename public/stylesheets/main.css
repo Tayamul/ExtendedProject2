@@ -793,6 +793,10 @@ user-blog a:hover {
     width: 100%;
 }
 
+#user-card-delete-button {
+    background-color: transparent;
+}
+
 #user-card-right-bottom svg {
     color: rgba(255, 255, 255, 0.5);
     transition: var(--transition);
