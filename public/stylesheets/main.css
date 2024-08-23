@@ -1062,9 +1062,9 @@ user-blog a:hover {
 
 
 
-.edit-button{
+.edit-button, .delete-button{
     font-size: 14px;
-    padding: 7px 15px;
+    padding: 8px 15px 3px 15px;
 }
 
 
@@ -1090,7 +1090,26 @@ user-blog a:hover {
 .edit-delete-buttons{
     display: flex;
     flex-direction: row;
+    gap: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
 }
+
+.edit-button svg, .delete-button svg{
+    color: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.edit-button:hover{
+    box-shadow: 0 0 5px white;
+}
+
+.delete-button:hover{
+    box-shadow: 0 0 5px white;
+}
+
+
 .file-content-path{
     display: flex;
     gap: 5px;
