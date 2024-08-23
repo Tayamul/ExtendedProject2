@@ -527,10 +527,17 @@ user-blog a:hover {
     flex-direction: column;
 }
 
+.repo-contents-user{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    }
+
 .repo-contents-top {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    font-size: 1.2rem;
     border-bottom: 2px solid rgba(177, 186, 196, 0.7);
     padding: 10px 0 10px 10px;
 }
@@ -665,6 +672,21 @@ user-blog a:hover {
    padding: 20px;
 }
 
+.add-file-button {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-right: 1rem;
+}
+.add-file-button a{
+    color: var(--primary-text);
+    font-size: 1rem;
+    }
+
 #message_field {
     margin-top: 20px;
     min-height: 20px;
@@ -763,6 +785,22 @@ user-blog a:hover {
     border-radius: 50%;
     margin-bottom: 20px;
     border: 2px solid var(--border-color);
+}
+
+#user-card-right {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#user-card-right-bottom svg {
+    color: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+#user-card-right-bottom svg:hover {
+    color: #ff4d4d;
 }
 
 #user-card-name {
@@ -951,36 +989,41 @@ user-blog a:hover {
 
 /* ----------- EDIT A NEW FILE ----------- */
 
-#edit-file-container {
+.edit-file-container {
     display:flex;
     flex-direction: column;
     width: 80%;
     margin: auto;
+    padding: 30px;
 }
-#edit-file-container label{
+
+
+.edit-file-container label{
     display: none;
     font-size: 1px;
 }
 
-#edit-file-container dd[class="info"]{
+.edit-file-container dd[class="info"]{
     display: none;
-}
-
-.edit-file-form-header{
-    display:flex;
-    flex-direction:row;
 }
 
 .edit-file-name{
     color:white;
 }
 
-#edit-file-form{
+.edit-file-form{
     display: flex;
     flex-direction: column;
 }
 
+.edit-file-form{
+    margin-top: 0;
+}
+
 .edit-file-form-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin-top: 20px;
     background-color: var(--secondary-bg);
     padding: 0.5rem;
@@ -1037,7 +1080,10 @@ user-blog a:hover {
     display: none;
 }
 .file-content{
+    flex-grow: 1;
     min-height:20rem;
+    height: 100%;
+    width: 100%;
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
@@ -1049,32 +1095,81 @@ user-blog a:hover {
 }
 
 
-.edit-delete-buttons{
-    display: flex;
-    flex-direction: row;
-    margin-right: 5rem;
-}
-
-.edit-button{
+.edit-button, .delete-button{
     font-size: 14px;
-    padding: 7px 15px;
+    padding: 8px 15px 3px 15px;
 }
-
 
 .delete-button-commit{
-    margin-top: 20px;
+    border-radius: 5px;
     font-size: 14px;
     padding: 7px 15px;
-    background-color: var(--button-bg);
+    background-color: #D11A2A;
     color: var(--primary-text);
     cursor:pointer;
 }
 
 .delete-button-commit:hover{
-    box-shadow: 0 0 5px var(--error-color);
+    background-color: #b3000c;
+}
+
+.edit-button-commit{
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 7px 15px;
+    background-color: #28a745;
+    color: white;
+    cursor:pointer;
+}
+
+.edit-button-commit:hover{
+    background-color: #218838;;
 }
 
 .delete-button-container {
     display: flex;
-    justify-content: flex-end;
+}
+
+.edit-delete-buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+.edit-button svg, .delete-button svg{
+    color: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.edit-button:hover{
+    box-shadow: 0 0 5px white;
+}
+
+.delete-button:hover{
+    box-shadow: 0 0 5px white;
+}
+
+
+.file-content-path{
+    display: flex;
+    gap: 5px;
+    flex-direction: row;
+    }
+
+
+.file-content-header{
+    margin-top: 20px;
+    background-color: var(--secondary-bg);
+    padding: 0.5rem;
+    color: var(--repo-text);
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px 10px 0px 0px;
 }

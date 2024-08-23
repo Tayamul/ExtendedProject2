@@ -1,6 +1,6 @@
 @import models.mongo.DataModel
 
-@(users: Seq[DataModel])
+@(users: Seq[DataModel], deleteForm: Form[String])(implicit request:RequestHeader, messages:Messages)
 
 @main("List of users") {
     <div id="user-card-header">
@@ -8,7 +8,7 @@
     </div>
     @for(user <- users) {
         <div>
-            @views.html.components.userCard(user)
+            @views.html.components.userCard(user, deleteForm)
         </div>
     }
 }

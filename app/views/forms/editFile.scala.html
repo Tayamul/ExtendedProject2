@@ -19,18 +19,22 @@ fileName: String
 @main("Edit File") {
 @helper.form(action =  routes.ApplicationController.editFile(owner, repoName, filePath, fileSha)) {
 @helper.CSRF.formField
-<div id="edit-file-container">
+<div class="edit-file-container">
         @if(user.isDefined && repo.isDefined){
         @views.html.components.userRepoCard(user.get, repo.get)
         }
-    <div class="commit-file-container">
-        <button type="submit" class="commit-file-button">Commit file</button>
-    </div>
 
     <div class="edit-file-form">
         <div class="edit-file-form-header">
-            @views.html.components.filePath(owner, repoName, pathSeq)
-            <p class="edit-file-name">@fileName</p>
+            <div class="file-content-path">
+                @views.html.components.filePath(owner, repoName, pathSeq)
+                <p class="edit-file-name">@fileName</p>
+            </div>
+
+            <div class="delete-button-container">
+                <button type="submit" class="edit-button-commit">Commit file</button>
+            </div>
+
         </div>
         @helper.textarea(updateFileForm("content"), Symbol("placeholder") -> "File content...")
         @helper.inputText(updateFileForm("message"), Symbol("placeholder") -> "Commit message...")
