@@ -527,10 +527,16 @@ user-blog a:hover {
     flex-direction: column;
 }
 
+.repo-contents-user{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    }
+
 .repo-contents-top {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
     font-size: 1.2rem;
     border-bottom: 2px solid rgba(177, 186, 196, 0.7);
     padding: 10px 0 10px 10px;
@@ -665,6 +671,21 @@ user-blog a:hover {
    border-radius: 0px 0px 10px 10px;
    padding: 20px;
 }
+
+.add-file-button {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-right: 1rem;
+}
+.add-file-button a{
+    color: var(--primary-text);
+    font-size: 1rem;
+    }
 
 #message_field {
     margin-top: 20px;
