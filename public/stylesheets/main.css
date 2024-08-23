@@ -982,11 +982,6 @@ user-blog a:hover {
     display: none;
 }
 
-.edit-file-form-header{
-    display:flex;
-    flex-direction:row;
-}
-
 .edit-file-name{
     color:white;
 }
@@ -1065,11 +1060,7 @@ user-blog a:hover {
 }
 
 
-.edit-delete-buttons{
-    display: flex;
-    flex-direction: row;
-    margin-right: 5rem;
-}
+
 
 .edit-button{
     font-size: 14px;
@@ -1094,4 +1085,29 @@ user-blog a:hover {
 .delete-button-container {
     display: flex;
     justify-content: flex-end;
+}
+
+.edit-delete-buttons{
+    display: flex;
+    flex-direction: row;
+}
+.file-content-path{
+    display: flex;
+    gap: 5px;
+    flex-direction: row;
+    }
+
+
+.file-content-header{
+    margin-top: 20px;
+    background-color: var(--secondary-bg);
+    padding: 0.5rem;
+    color: var(--repo-text);
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px 10px 0px 0px;
 }
