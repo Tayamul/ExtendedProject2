@@ -291,7 +291,8 @@ class ApplicationController @Inject()(
             val encodedPath = getEncodedFilePath(dirPath, createFileForm.name)
             gitHubService.createFileRequest(None, owner, repoName, encodedPath, file).value.map {
               case Left(error) => resultError(error)
-              case Right(value) => Ok(views.html.display.createFileDisplay(createFileForm.name, file))
+              case Right(value) => Redirect(routes.ApplicationController.getUserRepoContent(owner, repoName))
+              //Ok(views.html.display.(createFileForm.name, file))
             }
         }
       }
